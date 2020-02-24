@@ -56,13 +56,13 @@ class DrawItTest {
 		assert doubleVector2.getX() == doubleVector2x;
 		assert doubleVector2.getY() == doubleVector2y;
 			
-		// IntVector: Dot product tests		
+		// DoubleVector: Dot product tests		
 		long doubleDotProduct = (long) doubleVector1.getX() * doubleVector2.getX()
 				+ (long) doubleVector1.getY() * doubleVector2.getY();
 		assert doubleVector1.dotProduct(doubleVector2) == doubleDotProduct;
 		assert doubleVector2.dotProduct(doubleVector1) == doubleDotProduct;
 
-		// IntVector: Cross product tests
+		// DoubleVector: Cross product tests
 		long doubleCrossProduct1 = (long) doubleVector1.getX() * doubleVector2.getY() - (long) doubleVector1.getY() * doubleVector2.getX();
 		long doubleCrossProduct2 = (long) doubleVector2.getX() * doubleVector1.getY() - (long) doubleVector2.getY() * doubleVector1.getX();
 		assert doubleVector1.crossProduct(doubleVector2) == doubleCrossProduct1;
