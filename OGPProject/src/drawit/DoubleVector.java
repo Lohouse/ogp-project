@@ -36,20 +36,39 @@ public class DoubleVector {
 		return x * other.getX() + y * other.getY();
 	}
 	
+	/**
+	 * Returns a DoubleVector object representing the vector obtained by adding the given vector to this vector.
+	 */
 	public DoubleVector plus(DoubleVector other) {
-		throw new RuntimeException("Not yet implemented");		
+		return new DoubleVector(x + other.getX(), y + other.getY());
 	}
 	
+	/**
+	 * Returns a DoubleVector object whose coordinates are obtained by multiplying this vector's coordinates by the given scale factor.
+	 */
 	public DoubleVector scale(double d) {
-		throw new RuntimeException("Not yet implemented");
+		return new DoubleVector(d * x, d * y);
 	}
 	
+	/**
+	 * Returns the angle from positive X to this vector, in radians. The angle from positive X to positive Y is Math.PI / 2;
+	 * the angle from positive X to negative Y is -Math.PI / 2.
+	 * 
+	 * @post The result is equal to the inverse tangent function of the Y coordinate divided by the X coordinate.
+	 *    | result == Math.atan2(this.getY(), this.getX())
+	 */
 	public double asAngle() {
-		throw new RuntimeException("Not yet implemented");		
+		return Math.atan2(y, x);
 	}
-
+	
+	/**
+	 * Returns the size of this vector.
+	 * 
+	 * @post The result is equal to the Euclidean distance from the origin to the point in 2D space to which this vector points.
+	 *    | result == Math.sqrt(Math.pow(this.getX(), 2) + Math.pow(this.getY(), 2))
+	 */
 	public double getSize() {
-		throw new RuntimeException("Not yet implemented");		
+		return Math.pow(Math.pow(x, 2) + Math.pow(y, 2), 0.5);
 	}
 	
 	/**
