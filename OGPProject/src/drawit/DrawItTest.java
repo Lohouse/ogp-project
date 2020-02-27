@@ -1,12 +1,14 @@
 package drawit;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
+
 import org.junit.jupiter.api.Test;
 
 class DrawItTest {
 
 	@Test
-	void test() {
-		// IntVector: Constructor tests
+	void test() {		
+		// IntVector: Constructor, getX, getY tests
 		int intVector1x = -3;
 		int intVector1y = 9;
 		int intVector2x = 5;
@@ -111,5 +113,142 @@ class DrawItTest {
 		assert doubleVector5.getSize() == 0;
 		assert doubleVector1.getSize() == Math.sqrt(Math.pow(doubleVector1x, 2) + Math.pow(doubleVector1y, 2));
 		assert doubleVector2.getSize() == Math.sqrt(Math.pow(doubleVector2x, 2) + Math.pow(doubleVector2y, 2));
+		
+		// RoundedPolygon: constructor tests
+		RoundedPolygon polygon1 = new RoundedPolygon();
+		RoundedPolygon polygon2 = new RoundedPolygon();
+		assert polygon1.getVertices().length == 0;
+		assert polygon2.getVertices().length == 0;
+		assert polygon1.getRadius() == 0;
+		assert polygon2.getRadius() == 0;
+		
+		// RoundedPolygon: getVertices, setVertices tests
+		IntPoint[] vertices0 = new IntPoint[] {
+				new IntPoint(0, 0),
+				new IntPoint(5, 5),
+				new IntPoint(0, 5),
+				new IntPoint(5, 0)
+		};
+		IntPoint[] vertices1 = new IntPoint[] {
+				new IntPoint(0, 0),
+				new IntPoint(7, 5),
+				new IntPoint(5, -3)
+		};
+		IntPoint[] vertices2 = new IntPoint[] {
+				new IntPoint(0, 5),
+				new IntPoint(3, 10),
+				new IntPoint(6, 5),
+				new IntPoint(9, 10),
+				new IntPoint(12, 5),
+				new IntPoint(15, 10),
+				new IntPoint(18, 5),
+				new IntPoint(20, 3),
+				new IntPoint(18, 1),
+				new IntPoint(20, -1),
+				new IntPoint(18, -3),
+				new IntPoint(-1, -2),
+		};
+		boolean thrownVertices = false;
+		try {
+			polygon1.setVertices(vertices0);
+		} catch (IllegalArgumentException e) {
+			thrownVertices = true;
+		}
+		assert thrownVertices;
+		assert polygon1.getVertices().length == 0;
+		polygon1.setVertices(vertices1);
+		polygon2.setVertices(vertices2);
+		for (int i = 0; i < polygon1.getVertices().length; i++) {
+			assert polygon1.getVertices()[i].getX() == vertices1[i].getX() 
+					&& polygon1.getVertices()[i].getY() == vertices1[i].getY();
+		}
+		for (int i = 0; i < polygon2.getVertices().length; i++) {
+			assert polygon2.getVertices()[i].getX() == vertices2[i].getX() 
+					&& polygon2.getVertices()[i].getY() == vertices2[i].getY();
+		}
+		
+		// RoundedPolygon: getRadius, setRadius tests
+		int radius0 = -3;
+		int radius1 = 5;
+		int radius2 = 0;
+		boolean thrownRadius = false;
+		try {
+			polygon1.setRadius(radius0);
+		} catch (IllegalArgumentException e) {
+			thrownRadius = true;
+		}
+		assert thrownRadius;
+		assert polygon1.getRadius() == 0;
+		polygon1.setRadius(radius1);
+		polygon2.setRadius(radius2);
+		assert polygon1.getRadius() == radius1;
+		assert polygon2.getRadius() == radius2;
+
+		IntPoint extraPoint1 = new IntPoint(6, 100);
+		IntPoint extraPoint2 = new IntPoint(8, -75);
+
+		// RoundedPolygon: insert tests
+		IntPoint[] prevVertices1 = polygon1.getVertices();
+		int insertIndex = 1;
+		polygon1.insert(insertIndex, extraPoint1);
+		assert polygon1.getVertices().length == prevVertices1.length + 1;
+		assert polygon1.getVertices()[insertIndex].getX() == extraPoint1.getX() 
+				&& polygon1.getVertices()[insertIndex].getY() == extraPoint1.getY();
+		for (int i = insertIndex; i < prevVertices1.length; i++) {
+			assert prevVertices1[i].getX() == polygon1.getVertices()[i + 1].getX() 
+					&& prevVertices1[i].getY() == polygon1.getVertices()[i + 1].getY();
+		}
+		
+		// RoundedPolygon: update tests
+		IntPoint[] prevVertices2 = polygon1.getVertices();
+		polygon1.update(insertIndex, extraPoint2);
+		assert polygon1.getVertices().length == prevVertices2.length;
+		assert polygon1.getVertices()[insertIndex].getX() == extraPoint2.getX() 
+				&& polygon1.getVertices()[insertIndex].getY() == extraPoint2.getY();
+
+		// RoundedPolygon: remove tests
+		IntPoint[] prevVertices3 = polygon1.getVertices();
+		polygon1.remove(insertIndex);
+		assert polygon1.getVertices().length == prevVertices3.length - 1;
+		for (int i = insertIndex; i < polygon1.getVertices().length; i++) {
+			assert prevVertices3[i + 1].getX() == polygon1.getVertices()[i].getX() 
+					&& prevVertices3[i + 1].getY() == polygon1.getVertices()[i].getY();
+		}
+		
+		// RoundedPolygon: contains test
+		IntPoint testPoint1 = new IntPoint(15, 8);
+		IntPoint testPoint2 = new IntPoint(12, 8);
+		IntPoint testPoint3 = new IntPoint(15, 10);
+		IntPoint testPoint4 = new IntPoint(-2, 0);
+		IntPoint testPoint5 = new IntPoint(2, 0);
+		IntPoint testPoint6 = new IntPoint(10, -5);
+		IntPoint testPoint7 = new IntPoint(19, 1);
+		IntPoint testPoint8 = new IntPoint(19, 3);
+		IntPoint testPoint9 = new IntPoint(20, 3);
+		IntPoint testPoint10 = new IntPoint(19, 4);
+		IntPoint testPoint11 = new IntPoint(19, 2);
+		assert polygon2.contains(testPoint1);
+		assert !polygon2.contains(testPoint2);
+		assert polygon2.contains(testPoint3);
+		assert !polygon2.contains(testPoint4);
+		assert polygon2.contains(testPoint5);
+		assert !polygon2.contains(testPoint6);
+		assert !polygon2.contains(testPoint7);
+		assert polygon2.contains(testPoint8);
+		assert polygon2.contains(testPoint9);
+		assert polygon2.contains(testPoint10);
+		assert polygon2.contains(testPoint11);
+		
+		// RoundedPolygon: getDrawingCommands tests
+		IntPoint[] vertices3 = new IntPoint[] {
+				new IntPoint(100, 100),
+				new IntPoint(200, 100),
+				new IntPoint(200, 200),
+				new IntPoint(100, 200),
+		};
+		RoundedPolygon polygon3 = new RoundedPolygon();
+		polygon3.setVertices(vertices3);
+		polygon3.setRadius(10);
+		//TODO: Implement tests for getDrawingCommands
 	}
 }

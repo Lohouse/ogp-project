@@ -19,7 +19,7 @@ public class IntVector {
 	/**
 	 * Returns the cross product of this vector and the given vector.
 	 * 
-	 * @post The result is equal to the subtraction of the product of the opposite coordinates of each vector.
+	 * @post The result is a long with a value equal to the subtraction of the product of the opposite coordinates of each vector.
 	 *    | result == (long) this.getX() * other.getY() - (long) this.getY() * other.getX()
 	 */
 	public long crossProduct(IntVector other) {
@@ -29,7 +29,7 @@ public class IntVector {
 	/**
 	 * Returns the dot product of this vector and the given vector.
 	 * 
-	 * @post The result is equal to the sum of the product of the respective coordinates of each vector.
+	 * @post The result is a long with a value equal to the sum of the product of the respective coordinates of each vector.
 	 *    | result == (long) this.getX() * other.getX() + (long) this.getY() * other.getY()
 	 */
 	public long dotProduct(IntVector other) {
@@ -39,7 +39,7 @@ public class IntVector {
 	/**
 	 * Returns whether this vector is collinear with the given vector.
 	 * 
-	 * @post The result will be true when the cross product of the vectors is equal to zero.
+	 * @post The result is a boolean value indicating whether the cross product of the vectors is equal to zero.
 	 *    | result == (this.crossProduct(other) == 0)
 	 */
 	public boolean isCollinearWith(IntVector other) {
@@ -48,6 +48,11 @@ public class IntVector {
 	
 	/**
 	 * Returns a DoubleVector object that represents the same vector represented by this IntVector object.
+	 * 
+	 * @post The result is a vector with its X coordinate being a double with the same value as the X coordinate of the original vector.
+	 *    | result.getX() == (double) this.getX()
+	 * @post The result is a vector with its Y coordinate being a double with the same value as the Y coordinate of the original vector.
+	 *    | result.getY() == (double) this.getY()
 	 */
 	public DoubleVector asDoubleVector() {
 		return new DoubleVector(x, y);
