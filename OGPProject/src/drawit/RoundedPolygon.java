@@ -182,10 +182,10 @@ public class RoundedPolygon {
 	}
 	
 	/**
-	 * Returns the radius of the corners of this rounded polygon.
+	 * Returns a new array whose elements are the vertices of this rounded polygon.
 	 */
 	public IntPoint[] getVertices() {
-		return vertices;
+		return vertices.clone();
 	}
 	
 	/**
@@ -201,6 +201,6 @@ public class RoundedPolygon {
 			throw new IllegalArgumentException(polygonError);
 		}
 		
-		vertices = newVertices;
+		vertices = newVertices.clone();
 	}
 }

@@ -166,6 +166,15 @@ class DrawItTest {
 			assert polygon2.getVertices()[i].getX() == vertices2[i].getX() 
 					&& polygon2.getVertices()[i].getY() == vertices2[i].getY();
 		}
+		IntPoint wrongPoint1 = new IntPoint(-999, -999);
+		IntPoint tempPoint1 = vertices1[0];
+		vertices1[0] = wrongPoint1;
+		assert polygon1.getVertices()[0].getX() != wrongPoint1.getX()
+				&& polygon1.getVertices()[0].getY() != wrongPoint1.getY();
+		vertices1[0] = tempPoint1;
+		polygon1.getVertices()[0] = wrongPoint1;
+		assert polygon1.getVertices()[0].getX() != wrongPoint1.getX()
+				&& polygon1.getVertices()[0].getY() != wrongPoint1.getY();
 		
 		// RoundedPolygon: getRadius, setRadius tests
 		int radius0 = -3;

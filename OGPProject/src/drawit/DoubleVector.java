@@ -5,8 +5,8 @@ package drawit;
  */
 public class DoubleVector {
 	
-	private double x;
-	private double y;
+	private final double x;
+	private final double y;
 	
 	/**
 	 * Initializes this vector with the given coordinates.

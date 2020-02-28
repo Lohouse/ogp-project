@@ -5,8 +5,8 @@ package drawit;
  */
 public class IntVector {
 	
-	private int x;
-	private int y;
+	private final int x;
+	private final int y;
 	
 	/**
 	 * Initializes this vector with the given coordinates.
