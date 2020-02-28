@@ -38,9 +38,9 @@ public class IntPoint {
 		IntVector ba = new IntVector(b.getX() - x, b.getY() - y);
 		IntVector bc = new IntVector(b.getX() - c.getX(), b.getY() - c.getY());
 		
-		if(ba.isCollinearWith(bc)) {
+		if(!ba.isCollinearWith(bc)) {
 			return false;
-		} else if(0 < ba.crossProduct(bc) && ba.crossProduct(bc) < bc.crossProduct(bc) ) {
+		} else if(0 < ba.dotProduct(bc) && ba.dotProduct(bc) < bc.dotProduct(bc) ) {
 			return true;
 		}
 		return false;

@@ -43,8 +43,10 @@ public class DoublePoint {
 	/**
 	 * Returns an IntPoint object whose coordinates are obtained by rounding the coordinates of this point to the nearest integer.
 	 * 
-	 * @post The result is an IntPoint whose coordinates are rounded to the nearest integer.
-	 *    | result == new IntPoint((int) Math.round(this.getX()), (int) Math.round(this.getY()))
+	 * @post The x-coordinate of the result is this x-coordinate rounded to the nearest integer.
+	 * 	  | result.getX() == Math.round(this.getX())
+	 * @post The y-coordinate of the result is this y-coordinate rounded to the nearest integer.
+	 * 	  | result.getY() == Math.round(this.getY())
 	 */
 	public IntPoint round() {
 		return new IntPoint((int) Math.round(x), (int) Math.round(y));
