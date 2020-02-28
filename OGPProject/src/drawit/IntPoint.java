@@ -18,9 +18,6 @@ public class IntPoint {
 	
 	/**
 	 * Returns true iff the open line segment ab intersects the open line segment cd.
-	 * 
-	 * @pre The line segments have at most one point in common.
-	 *     | 0 <= x
 	 */
 	public static boolean lineSegmentsIntersect(IntPoint a, IntPoint b, IntPoint c, IntPoint d) {
 		IntVector ab = new IntVector(a.getX() - b.getX(), a.getY() - b.getY());

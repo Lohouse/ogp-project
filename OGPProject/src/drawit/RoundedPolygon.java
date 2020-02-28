@@ -103,11 +103,11 @@ public class RoundedPolygon {
 	/**
 	 * Returns a textual representation of a set of drawing commands for drawing this rounded polygon.
      * The returned text consists of a sequence of drawing operators and arguments, separated by spaces. 
-       The drawing operators are line and arc. Each argument is a decimal representation of a floating-point number.
+     * The drawing operators are line and arc. Each argument is a decimal representation of a floating-point number.
      * Operator line takes four arguments: X1 Y1 X2 Y2; it draws a line between (X1, Y1) and (X2, Y2). 
      * Operator arc takes five arguments: X Y R S E. It draws a part of a circle. The circle is defined by its center (X, Y) 
-       and its radius R. The part to draw is defined by the start angle A and angle extent E, both in radians. 
-       Positive X is angle zero; positive Y is angle Math.PI / 2; negative Y is angle -Math.PI / 2.
+     * and its radius R. The part to draw is defined by the start angle A and angle extent E, both in radians. 
+     * Positive X is angle zero; positive Y is angle Math.PI / 2; negative Y is angle -Math.PI / 2.
 	 */
 	public String getDrawingCommands() {
 		if (vertices.length < 3) {
