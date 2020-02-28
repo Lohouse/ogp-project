@@ -120,8 +120,8 @@ class DrawItTest {
 		DoublePoint doublePoint1 = intPoint1.asDoublePoint();
 		assert intPoint1.getX() == 5;
 		assert intPoint1.getY() == -9;
-		assert intPoint1.getX() == 2;
-		assert intPoint1.getY() == 4;
+		assert intPoint2.getX() == 2;
+		assert intPoint2.getY() == 4;
 		assert intPoint1.getX() == doublePoint1.getX();
 		assert intPoint1.getY() == doublePoint1.getY();
 		
@@ -143,26 +143,26 @@ class DrawItTest {
 		IntPoint intPoint6 = new IntPoint(6, -8);
 		IntPoint intPoint7 = new IntPoint(3, 5);
 		assert IntPoint.lineSegmentsIntersect(intPoint1, intPoint2, intPoint4, intPoint5) == true;
-		assert IntPoint.lineSegmentsIntersect(intPoint1, intPoint2, intPoint1, intPoint3) == true;
-		assert IntPoint.lineSegmentsIntersect(intPoint1, intPoint4, intPoint2, intPoint5) == true;
+		assert IntPoint.lineSegmentsIntersect(intPoint1, intPoint2, intPoint1, intPoint3) == true; // TODO: AssertionError
+		assert IntPoint.lineSegmentsIntersect(intPoint1, intPoint4, intPoint2, intPoint5) == true; // TODO: AssertionError
 		assert IntPoint.lineSegmentsIntersect(intPoint1, intPoint2, intPoint6, intPoint7) == false;
 		
 		// IntPoint: isOneLineSegment tests
 		assert intPoint5.isOnLineSegment(intPoint1, intPoint2) == false;
 		assert intPoint1.isOnLineSegment(intPoint1, intPoint2) == false;
 		IntPoint intPointOnLine = new IntPoint(6, 4);
-		assert intPointOnLine.isOnLineSegment(intPoint3, intPoint5) == true;
+		assert intPointOnLine.isOnLineSegment(intPoint3, intPoint5) == true; // TODO: AssertionError
 		
 		// DoublePoint: constructor, round, getX and getY tests
 		DoublePoint doublePoint2 = new DoublePoint(2.75, -3.40);
 		DoublePoint doublePoint3 = new DoublePoint(1, 10.01);
-		IntPoint doublePointRounded = doublePoint2.round();
+		IntPoint doublePointRounded = doublePoint2.round(); //TODO: Post-condition error at DoublePoint.round()
 		assert doublePoint2.getX() == 2.75;
-		assert doublePoint2.getY() == -3.50;
+		assert doublePoint2.getY() == -3.50; //TODO: AssertionError
 		assert doublePoint3.getX() == 1;
 		assert doublePoint3.getY() == 10.01;
-		assert doublePointRounded.getX() == 3;
-		assert doublePointRounded.getY() == -3;
+		assert doublePointRounded.getX() == 3; //TODO: Post-condition error at DoublePoint.round()
+		assert doublePointRounded.getY() == -3; //TODO: Post-condition error at DoublePoint.round()
 		
 		// DoublePoint: plus and minus tests
 		DoubleVector doubleVectorPlus = new DoubleVector(1.5, 0.3);
