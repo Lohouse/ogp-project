@@ -104,7 +104,7 @@ class DrawItTest {
 		double doubleVector4y = 1.9;
 		DoubleVector doubleVector4 = new DoubleVector(doubleVector4x, doubleVector4y);
 		assert doubleVector1.asAngle() == Math.atan(doubleVector1y / doubleVector1x);
-		assert 0 > doubleVector2.asAngle() && doubleVector2.asAngle() > -Math.PI / 2; // Is in 4th quadrant ?
+		assert 0 > doubleVector2.asAngle() && doubleVector2.asAngle() > -Math.PI / 2;
 		assert doubleVector3.asAngle() == Math.PI;
 		assert doubleVector4.asAngle() == Math.PI / 2;
 		
@@ -146,6 +146,11 @@ class DrawItTest {
 		assert IntPoint.lineSegmentsIntersect(intPoint1, intPoint2, intPoint1, intPoint4) == false; // Common point
 		assert IntPoint.lineSegmentsIntersect(intPoint1, intPoint4, intPoint2, intPoint5) == false; // Carrier lines intersect, line segments don't
 		assert IntPoint.lineSegmentsIntersect(intPoint1, intPoint2, intPoint6, intPoint7) == false;
+		IntPoint intPoint8 = new IntPoint(3, 10);
+		IntPoint intPoint9 = new IntPoint(6, 5);
+		IntPoint intPoint10 = new IntPoint(18, -3);
+		IntPoint intPoint11 = new IntPoint(-1, -2);
+		assert !IntPoint.lineSegmentsIntersect(intPoint8, intPoint9, intPoint10, intPoint11);
 		
 		// IntPoint: isOneLineSegment tests
 		assert intPoint5.isOnLineSegment(intPoint1, intPoint2) == false;
@@ -219,22 +224,18 @@ class DrawItTest {
 		polygon1.setVertices(vertices1);
 		polygon2.setVertices(vertices2);
 		for (int i = 0; i < polygon1.getVertices().length; i++) {
-			assert polygon1.getVertices()[i].getX() == vertices1[i].getX() 
-					&& polygon1.getVertices()[i].getY() == vertices1[i].getY();
+			assert polygon1.getVertices()[i].equals(vertices1[i]);
 		}
 		for (int i = 0; i < polygon2.getVertices().length; i++) {
-			assert polygon2.getVertices()[i].getX() == vertices2[i].getX() 
-					&& polygon2.getVertices()[i].getY() == vertices2[i].getY();
+			assert polygon2.getVertices()[i].equals(vertices2[i]);
 		}
 		IntPoint wrongPoint1 = new IntPoint(-999, -999);
 		IntPoint tempPoint1 = vertices1[0];
 		vertices1[0] = wrongPoint1;
-		assert polygon1.getVertices()[0].getX() != wrongPoint1.getX()
-				&& polygon1.getVertices()[0].getY() != wrongPoint1.getY();
+		assert !polygon1.getVertices()[0].equals(wrongPoint1);
 		vertices1[0] = tempPoint1;
 		polygon1.getVertices()[0] = wrongPoint1;
-		assert polygon1.getVertices()[0].getX() != wrongPoint1.getX()
-				&& polygon1.getVertices()[0].getY() != wrongPoint1.getY();
+		assert !polygon1.getVertices()[0].equals(wrongPoint1);
 		
 		// RoundedPolygon: getRadius, setRadius tests
 		int radius0 = -3;
@@ -261,27 +262,23 @@ class DrawItTest {
 		int insertIndex = 1;
 		polygon1.insert(insertIndex, extraPoint1);
 		assert polygon1.getVertices().length == prevVertices1.length + 1;
-		assert polygon1.getVertices()[insertIndex].getX() == extraPoint1.getX() 
-				&& polygon1.getVertices()[insertIndex].getY() == extraPoint1.getY();
+		assert polygon1.getVertices()[insertIndex].equals(extraPoint1);
 		for (int i = insertIndex; i < prevVertices1.length; i++) {
-			assert prevVertices1[i].getX() == polygon1.getVertices()[i + 1].getX() 
-					&& prevVertices1[i].getY() == polygon1.getVertices()[i + 1].getY();
+			assert prevVertices1[i].equals(polygon1.getVertices()[i + 1]);
 		}
 		
 		// RoundedPolygon: update tests
 		IntPoint[] prevVertices2 = polygon1.getVertices();
 		polygon1.update(insertIndex, extraPoint2);
 		assert polygon1.getVertices().length == prevVertices2.length;
-		assert polygon1.getVertices()[insertIndex].getX() == extraPoint2.getX() 
-				&& polygon1.getVertices()[insertIndex].getY() == extraPoint2.getY();
+		assert polygon1.getVertices()[insertIndex].equals(extraPoint2);
 
 		// RoundedPolygon: remove tests
 		IntPoint[] prevVertices3 = polygon1.getVertices();
 		polygon1.remove(insertIndex);
 		assert polygon1.getVertices().length == prevVertices3.length - 1;
 		for (int i = insertIndex; i < polygon1.getVertices().length; i++) {
-			assert prevVertices3[i + 1].getX() == polygon1.getVertices()[i].getX() 
-					&& prevVertices3[i + 1].getY() == polygon1.getVertices()[i].getY();
+			assert prevVertices3[i + 1].equals(polygon1.getVertices()[i]);
 		}
 		
 		// RoundedPolygon: contains test
