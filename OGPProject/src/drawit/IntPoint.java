@@ -23,9 +23,14 @@ public class IntPoint {
 		IntVector ab = new IntVector(a.getX() - b.getX(), a.getY() - b.getY());
 		IntVector ac = new IntVector(a.getX() - c.getX(), a.getY() - c.getY());
 		IntVector ad = new IntVector(a.getX() - d.getX(), a.getY() - d.getY());
-		int val = (int) (Math.signum(ac.crossProduct(ab)) * (Math.signum(ad.crossProduct(ab))));
+		int val1 = (int) (Math.signum(ac.crossProduct(ab)) * (Math.signum(ad.crossProduct(ab))));
 		
-		if(val < 0) {
+		IntVector cd = new IntVector(c.getX() - d.getX(), c.getY() - d.getY());
+		IntVector ca = new IntVector(c.getX() - a.getX(), c.getY() - a.getY());
+		IntVector cb = new IntVector(c.getX() - b.getX(), c.getY() - b.getY());
+		int val2 = (int) (Math.signum(ca.crossProduct(cd)) * (Math.signum(cb.crossProduct(cd))));
+		
+		if(val1 < 0 && val2 < 0) {
 			return true;
 		}
 		return false;

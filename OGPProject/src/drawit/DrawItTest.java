@@ -127,8 +127,8 @@ class DrawItTest {
 		
 		// IntPoint: equals, plus and minus tests
 		IntPoint intPoint3 = new IntPoint(2, 4);
-		assert intPoint2.equals(intPoint3) == true;
-		assert intPoint1.equals(intPoint3) == false;
+		assert intPoint2.equals(intPoint3);
+		assert !intPoint1.equals(intPoint3);
 		IntVector intVectorPlus = new IntVector(1, -5);
 		IntPoint intPointPlus = intPoint1.plus(intVectorPlus);
 		assert intPointPlus.getX() == 6;
@@ -142,10 +142,10 @@ class DrawItTest {
 		IntPoint intPoint5 = new IntPoint(10, 4);
 		IntPoint intPoint6 = new IntPoint(6, -8);
 		IntPoint intPoint7 = new IntPoint(3, 5);
-		assert IntPoint.lineSegmentsIntersect(intPoint1, intPoint2, intPoint4, intPoint5) == true;
-		assert IntPoint.lineSegmentsIntersect(intPoint1, intPoint2, intPoint1, intPoint4) == false; // Common point
-		assert IntPoint.lineSegmentsIntersect(intPoint1, intPoint4, intPoint2, intPoint5) == false; // Carrier lines intersect, line segments don't
-		assert IntPoint.lineSegmentsIntersect(intPoint1, intPoint2, intPoint6, intPoint7) == false;
+		assert IntPoint.lineSegmentsIntersect(intPoint1, intPoint2, intPoint4, intPoint5);
+		assert !IntPoint.lineSegmentsIntersect(intPoint1, intPoint2, intPoint1, intPoint4); // Common point
+		assert !IntPoint.lineSegmentsIntersect(intPoint1, intPoint4, intPoint2, intPoint5); // Carrier lines intersect, line segments don't
+		assert !IntPoint.lineSegmentsIntersect(intPoint1, intPoint2, intPoint6, intPoint7);
 		IntPoint intPoint8 = new IntPoint(3, 10);
 		IntPoint intPoint9 = new IntPoint(6, 5);
 		IntPoint intPoint10 = new IntPoint(18, -3);
@@ -153,10 +153,10 @@ class DrawItTest {
 		assert !IntPoint.lineSegmentsIntersect(intPoint8, intPoint9, intPoint10, intPoint11);
 		
 		// IntPoint: isOneLineSegment tests
-		assert intPoint5.isOnLineSegment(intPoint1, intPoint2) == false;
-		assert intPoint1.isOnLineSegment(intPoint1, intPoint2) == false;
+		assert !intPoint5.isOnLineSegment(intPoint1, intPoint2);
+		assert !intPoint1.isOnLineSegment(intPoint1, intPoint2);
 		IntPoint intPointOnLine = new IntPoint(6, 4);
-		assert intPointOnLine.isOnLineSegment(intPoint3, intPoint5) == true;
+		assert intPointOnLine.isOnLineSegment(intPoint3, intPoint5);
 		
 		// DoublePoint: constructor, round, getX and getY tests
 		DoublePoint doublePoint2 = new DoublePoint(2.75, -3.40);
