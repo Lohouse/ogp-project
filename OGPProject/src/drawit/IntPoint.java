@@ -49,7 +49,8 @@ public class IntPoint {
 	/**
 	 * Returns true if this point has the same coordinates as the given point; returns false otherwise.
 	 * 
-	 * 
+	 * @post The result equals true when both coordinates of this point match those of the given point.
+	 *    | result ==  ((this.getX() == other.getX() && this.getY() == other.getY()) ? true: false)
 	 */
 	public boolean equals(IntPoint other) {
 		if(x == other.getX() && y == other.getY()) {
@@ -60,6 +61,7 @@ public class IntPoint {
 	
 	/**
 	 * Returns an IntPoint object representing the point obtained by displacing this point by the given vector.
+	 * 
 	 * @post The result is a vector with its x-coordinate being the sum of the x-coordinates of both points
 	 *    | result.getX() == this.getX() + vector.getX()
 	 * @post The result is a vector with its y-coordinate being the sum of the y-coordinates of both points
