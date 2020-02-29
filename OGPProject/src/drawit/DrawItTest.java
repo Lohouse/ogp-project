@@ -293,6 +293,7 @@ class DrawItTest {
 		IntPoint testPoint9 = new IntPoint(20, 3);
 		IntPoint testPoint10 = new IntPoint(19, 4);
 		IntPoint testPoint11 = new IntPoint(19, 2);
+		IntPoint testPoint12 = new IntPoint(22, 1);
 		assert polygon2.contains(testPoint1);
 		assert !polygon2.contains(testPoint2);
 		assert polygon2.contains(testPoint3);
@@ -304,6 +305,7 @@ class DrawItTest {
 		assert polygon2.contains(testPoint9);
 		assert polygon2.contains(testPoint10);
 		assert polygon2.contains(testPoint11);
+		assert !polygon2.contains(testPoint12);
 		
 		// RoundedPolygon: getDrawingCommands tests
 		IntPoint[] vertices3 = new IntPoint[] {

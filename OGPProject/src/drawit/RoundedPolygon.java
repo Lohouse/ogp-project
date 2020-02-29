@@ -35,7 +35,7 @@ public class RoundedPolygon {
 			IntPoint p1 = vertices[i];
 			IntPoint p2 = vertices[j];
 			
-			if (p1.getY() == p2.getY()) {
+			if ((point.getY() > p1.getY()) == point.getY() > p2.getY()) {
 				continue;
 			}
 			
@@ -44,7 +44,7 @@ public class RoundedPolygon {
 				return true;
 			}
 			
-			if ((p1.getY() > point.getY()) != (p2.getY() > point.getY()) && (point.getX() < intersectX)) {
+			if (point.getX() < intersectX) {
 				contains = !contains;
 			}
 		}

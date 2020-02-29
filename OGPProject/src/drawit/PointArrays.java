@@ -44,13 +44,14 @@ public class PointArrays {
 					if (p1.getY() == pA.getY() && ((p1.getX() > pA.getX() && p1.getX() < pB.getX())
 							|| (p1.getX() > pB.getX() && p1.getX() < pA.getX()))) {
 						return "Vertex (" + p1.getX() + ", " + p1.getY() + ") at index " + i + " lies on edge from (" + pA.getX() 
-						+ ", " + pA.getY() + ") at index " + x + " to (" + pB.getX() + ", " + pB.getX() + " at index " + y;
+						+ ", " + pA.getY() + ") at index " + x + " to (" + pB.getX() + ", " + pB.getY() + ") at index " + y;
 					}
-				} else {
+				} else if ((p1.getY() > pA.getY() && p1.getY() < pB.getY())
+							|| (p1.getY() > pB.getY() && p1.getY() < pA.getY())){
 					int intersectX = pA.getX() + (pB.getX() - pA.getX()) * (p1.getY() - pA.getY()) / (pB.getY() - pA.getY());
 					if (p1.getX() == intersectX) {
 						return "Vertex (" + p1.getX() + ", " + p1.getY() + ") at index " + i + " lies on edge from (" + pA.getX() 
-								+ ", " + pA.getY() + ") at index " + x + " to (" + pB.getX() + ", " + pB.getX() + " at index " + y;
+								+ ", " + pA.getY() + ") at index " + x + " to (" + pB.getX() + ", " + pB.getY() + ") at index " + y;
 					}				
 				}			
 			}
