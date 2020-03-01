@@ -2,6 +2,8 @@ package drawit;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import java.util.Arrays;
+
 import org.junit.jupiter.api.Test;
 
 class DrawItTest {
@@ -318,5 +320,25 @@ class DrawItTest {
 		polygon3.setVertices(vertices3);
 		polygon3.setRadius(10);
 		//TODO: Implement tests for getDrawingCommands
+		
+		// PointArrays: copy test
+		IntPoint[] array1 = {intPoint1, intPoint2, intPoint3, intPoint4, intPoint5};
+		IntPoint[] arrayCopy = PointArrays.copy(array1);
+		assert Arrays.equals(array1, arrayCopy);
+		
+		// PointArrays: update test
+		IntPoint[] array1Updated = {intPoint1, intPoint2, intPoint6, intPoint4, intPoint5};
+		IntPoint[] arrayUpdate = PointArrays.update(array1, 2, intPoint6);
+		assert Arrays.equals(array1Updated, arrayUpdate);
+		
+		// PointArrays: insert test
+		IntPoint[] array1Inserted = {intPoint1, intPoint2, intPoint6, intPoint3, intPoint4, intPoint5};
+		IntPoint[] arrayInsert = PointArrays.insert(array1, 2, intPoint6);
+		assert Arrays.equals(array1Inserted, arrayInsert);
+		
+		// PointArrays: remove test
+		IntPoint[] array1Removed = {intPoint1, intPoint2, intPoint4, intPoint5};
+		IntPoint[] arrayRemove = PointArrays.remove(array1, 2);
+		assert Arrays.equals(array1Removed, arrayRemove);
 	}
 }
