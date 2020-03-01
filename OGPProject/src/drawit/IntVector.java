@@ -2,6 +2,8 @@ package drawit;
 
 /**
  * An instance of this class represents a displacement in the two-dimensional plane.
+ * 
+ * @immutable
  */
 public class IntVector {
 	
@@ -10,6 +12,13 @@ public class IntVector {
 	
 	/**
 	 * Initializes this vector with the given coordinates.
+	 * 
+	 * @mutates | this
+	 * 
+	 * @post This IntVector's X coordinate is equal to the given x.
+	 *    | getX() == x
+	 * @post This IntVector's Y coordinate is equal to the given y.
+	 *    | getY() == y
 	 */
 	public IntVector(int x, int y) {
 		this.x = x;
@@ -19,8 +28,14 @@ public class IntVector {
 	/**
 	 * Returns the cross product of this vector and the given vector.
 	 * 
-	 * @post The result is a long with a value equal to the subtraction of the product of the opposite coordinates of each vector.
-	 *    | result == (long) this.getX() * other.getY() - (long) this.getY() * other.getX()
+	 * @pre Argument {@code other} is not {@code null}.
+     *    | other != null
+     * 
+	 * @post The result is a long with a value equal to the product of the X coordinate of
+	 *       this vector and the Y coordinate of the other vector, subtracted by the
+	 *       product of the Y vector of this vector and the X coordinate of the other vector.
+	 *       the product of .
+	 *    | result == (long) getX() * other.getY() - (long) getY() * other.getX()
 	 */
 	public long crossProduct(IntVector other) {
 		return x * other.getY() - y * other.getX();

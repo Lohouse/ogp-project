@@ -2,20 +2,26 @@ package drawit;
 
 /**
  * An instance of this class is a mutable abstraction storing a rounded polygon defined
- * by a set of 2D points with integer coordinates and a nonnegative corner radius.
+   by a set of 2D points with integer coordinates and a nonnegative corner radius.
+ * 
+ * @invar This RoundedPolygon's radius is 0 or higher.
+ *    | 0 <= getRadius()
  */
 public class RoundedPolygon {
 	
+	/**
+	 * @invar | 0 <= radius
+	 */
 	private int radius;
 	private IntPoint[] vertices;
 	
 	/**
 	 * Initializes an unrounded (radius 0) and empty (no intial vertices) polygon.
 	 * 
-	 * @post This polygon will initially not contain any vertices.
-	 *    | this.getVertices().length == 0
-	 * @post This polygon will initially have a radius of 0.
-	 *    | this.getRadius() == 0
+	 * @post This RoundedPolygon will initially not contain any vertices.
+	 *    | getVertices().length == 0
+	 * @post This RoundedPolygon will initially have a radius of 0.
+	 *    | getRadius() == 0
 	 */
 	public RoundedPolygon() {
 		vertices = new IntPoint[]{};
