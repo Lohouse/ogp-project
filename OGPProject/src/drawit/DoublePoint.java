@@ -2,11 +2,13 @@ package drawit;
 
 /**
  * An immutable abstraction for a point in the two-dimensional plane with double coordinates.
+ * 
+ * @immutable
  */
 public class DoublePoint {
 	
-	private double x;
-	private double y;
+	private final double x;
+	private final double y;
 	
 	/**
 	 * Initializes this point with the given coordinates.

@@ -2,11 +2,13 @@ package drawit;
 
 /**
  * An immutable abstraction for a point in the two-dimensional plane with int coordinates.
+ * 
+ * @immutable
  */
 public class IntPoint {
 	
-	private int x;
-	private int y;
+	private final int x;
+	private final int y;
 	
 	/**
 	 * Initializes this point with the given coordinates.
@@ -37,7 +39,7 @@ public class IntPoint {
 	}	
 	
 	/**
-	 * Returns true iff this point is on open line segment bc. An open line segment does not include its endpoints.
+	 * Returns true if this point is on open line segment bc. An open line segment does not include its endpoints.
 	 */
 	public boolean isOnLineSegment(IntPoint b, IntPoint c) {
 		IntVector ba = new IntVector(b.getX() - x, b.getY() - y);

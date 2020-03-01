@@ -7,6 +7,8 @@ import java.util.Arrays;
  */
 public class PointArrays {
 	
+	private PointArrays() {}
+	
 	/**
 	 * Returns null if the given array of points defines a proper polygon; otherwise, returns a string describing why it does not.
 	 */

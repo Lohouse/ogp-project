@@ -10,6 +10,8 @@ public class DoubleVector {
 	
 	/**
 	 * Initializes this vector with the given coordinates.
+	 * 
+	 * @immutable
 	 */
 	public DoubleVector(double x, double y) {
 		this.x = x;
