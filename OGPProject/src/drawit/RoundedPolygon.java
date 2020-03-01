@@ -1,5 +1,7 @@
 package drawit;
 
+import java.util.stream.IntStream;
+
 /**
  * An instance of this class is a mutable abstraction storing a rounded polygon defined
    by a set of 2D points with integer coordinates and a nonnegative corner radius.
@@ -11,12 +13,18 @@ public class RoundedPolygon {
 	
 	/**
 	 * @invar | 0 <= radius
+	 * @invar | vertices != null
+	 * @invar | Arrays.stream(vertices).allMatch(e -> e != null)
+	 * 
+	 * @representationObject
 	 */
-	private int radius;
 	private IntPoint[] vertices;
+	private int radius;
 	
 	/**
 	 * Initializes an unrounded (radius 0) and empty (no intial vertices) polygon.
+	 * 
+	 * @mutates | this
 	 * 
 	 * @post This RoundedPolygon will initially not contain any vertices.
 	 *    | getVertices().length == 0
@@ -29,12 +37,24 @@ public class RoundedPolygon {
 	}
 	
 	/**
+	 * @inspects | this, other
+	 * 
 	 * Returns true if the given point is contained by the (non-rounded) polygon defined by this rounded polygon's vertices.
 	 * This method does not take into account this rounded polygon's corner radius; it assumes a corner radius of zero.
 	 * A point is contained by a polygon if it coincides with one of its vertices, or if it is on one of its edges,
-	   or if it is in the polygon's interior.
+	 * or if it is in the polygon's interior.
+	 * 
+	 * @throws IllegalArgumentException if argument {@code point} is {@code null}
+     *    | point == null
+	 * 
+	 * @post The result is {@code true} iff the given point coincides with one of this polygon's vertices,
+	 *       or if the given point is on one of this polygon's edges, or if the given point is in this polygon's interior.
 	 */
 	public boolean contains(IntPoint point) {
+		if (point == null) {
+			throw new IllegalArgumentException("point is null");
+		}
+		
 		boolean contains = false;
 		for (int i = 0; i < vertices.length; i++) {
 			int j = (i + 1) % vertices.length;
@@ -58,12 +78,31 @@ public class RoundedPolygon {
 	}
 	
 	/**
-	 * Changes the point at the given index in vertices to the given point.
+	 * Changes the point at the given index in this polygon's vertices to the given point.
 	 * 
-	 * @pre The given index is less than the current amount of vertices in this polygon.
-	 *    | index < this.getVertices().length
+	 * @mutates | this
+	 * @inspects | point
+	 * 
+	 * @throws IllegalArgumentException if argument {@code point} is {@code null}
+     *    | point == null
+	 * @throws IllegalArgumentException if argument {@code index} is not between 0 (inclusive)
+	 *         and the current amount of vertices in this polygon (exclusive).
+	 *    | 0 <= index && index < getVertices().length
+	 * 
+	 * @post This polygon's number of vertices equals its old number of vertices.
+	 *    | old(getVertices()).length == getVertices().length
+	 * @post This polygon's vertices remain unchanged at all indexes except at the given index.
+	 *    | IntStream.range(0, getVertices().length).allMatch(i -> 
+	 *    |     i == index || getVertices()[i].equals(old(getVertices())[i]))
 	 */
 	public void update(int index, IntPoint point) {
+		if (point == null) {
+			throw new IllegalArgumentException("point is null");
+		}
+		if (0 <= index && index < getVertices().length) {
+			throw new IllegalArgumentException("invalid index");
+		}
+		
 		vertices[index] = point;
 	}
 	
