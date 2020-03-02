@@ -193,21 +193,18 @@ public class RoundedPolygon {
 			IntPoint a = vertices[i];
 			IntPoint b = vertices[j];
 			IntPoint c = vertices[k];
-			
-			//TODO: Radius == 0
-			//TODO: Does not work yet
 
 			DoubleVector baVector = new DoubleVector((a.getX() - b.getX()), a.getY() - b.getY());
 			DoubleVector bcVector = new DoubleVector((c.getX() - b.getX()), c.getY() - b.getY());
-			DoubleVector bisectorVector = baVector.plus(bcVector);
 			DoubleVector baUnitVector = new DoubleVector(baVector.getX() / baVector.getSize(), baVector.getY() / baVector.getSize());
+			DoubleVector bcUnitVector = new DoubleVector(bcVector.getX() / bcVector.getSize(),bcVector.getY() / bcVector.getSize());
+			DoubleVector bisectorVector = baUnitVector.plus(bcUnitVector);
 			DoubleVector bisectorUnitVector = new DoubleVector(bisectorVector.getX() / bisectorVector.getSize(), 
 					bisectorVector.getY() / bisectorVector.getSize());
 			
 			double unitCutOff = Math.abs(baUnitVector.dotProduct(bisectorUnitVector));
 			double unitRadius = Math.abs(bisectorUnitVector.crossProduct(baUnitVector));
 			double scaleFactor = Math.min(radius / unitRadius, Math.min(baVector.getSize() / 2, bcVector.getSize() / 2) / unitCutOff);
-			System.out.println("ScaleFactor: " + scaleFactor);
 			double cutOff = unitCutOff * scaleFactor;
 			
 			DoublePoint baCutPoint = new DoublePoint(b.getX() + baVector.getX() / baVector.getSize() * cutOff, 
@@ -231,10 +228,7 @@ public class RoundedPolygon {
 					+ bc + "line " + bcCutPoint.getX() + " " + bcCutPoint.getY();
 
 		}
-		String c = commands.substring(commands.lastIndexOf(bc) + 1, commands.length()) + commands.substring(0, commands.lastIndexOf(bc));
-		System.out.println("");
-		System.out.println(c);
-		return c;
+		return commands.substring(commands.lastIndexOf(bc) + 1, commands.length()) + commands.substring(0, commands.lastIndexOf(bc));
 	}
 	
 	/**
