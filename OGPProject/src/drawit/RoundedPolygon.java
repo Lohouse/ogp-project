@@ -1,6 +1,7 @@
 package drawit;
 
 import java.util.Arrays;
+import java.util.stream.IntStream;
 
 /**
  * An instance of this class is a mutable abstraction storing a rounded polygon defined
@@ -49,8 +50,9 @@ public class RoundedPolygon {
      * @throws IllegalArgumentException if this polygon has not been initialized with any vertices yet.
      *    | getVertices().length == 0
 	 * 
-	 * @post The result is {@code true} iff the given point coincides with one of this polygon's vertices,
-	 *       or if the given point is on one of this polygon's edges, or if the given point is in this polygon's interior.
+	 * @post
+	 *      The result is {@code true} iff the given point coincides with one of this polygon's vertices,
+	 *      or if the given point is on one of this polygon's edges, or if the given point is in this polygon's interior.
 	 */
 	public boolean contains(IntPoint point) {
 		if (point == null) {
@@ -94,8 +96,13 @@ public class RoundedPolygon {
 	 *         and the current amount of vertices in this polygon (exclusive).
 	 *    | !(0 <= index && index < getVertices().length)
 	 * 
-	 * @post The vertex at the given index of this polygon's vertices is updated to the given point.
-	 *    | getVertices() == PointArrays.update(old(getVertices()), index, point)
+	 * @post This polygon's number of vertices equals its old number of vertices.
+	 *    | getVertices().length == old(getVertices().length)
+	 * @post This polygon's vertices remain unchanged at all indexes except at the given index.
+	 *    | IntStream.range(0, getVertices().length).allMatch(i -> 
+	 *    |     i == index || getVertices()[i].equals(old(getVertices())[i]))
+	 * @post This polygon's vertex at the given index is equal to the given point.
+	 *    | getVertices()[index] == point
 	 */
 	public void update(int index, IntPoint point) {
 		if (point == null) {
@@ -166,8 +173,9 @@ public class RoundedPolygon {
      * 
      * @inspects | this
      * 
-     * @post The result is an empty string if this polygon has less than 3 vertices. If this polygon has 3 or more vertices,
-     *       the result is a string detailing the drawing instructions of this polygon using the 'line' and 'arc' drawing operators.
+     * @post
+     *      The result is an empty string if this polygon has less than 3 vertices. If this polygon has 3 or more vertices,
+     *      the result is a string detailing the drawing instructions of this polygon using the 'line' and 'arc' drawing operators.
 	 */
 	public String getDrawingCommands() {
 		if (vertices.length < 3) {
@@ -185,6 +193,7 @@ public class RoundedPolygon {
 			IntPoint c = vertices[k];
 			
 			//TODO: Radius == 0
+			//TODO: Does not work yet
 
 			DoubleVector baVector = new DoubleVector((a.getX() - b.getX()), a.getY() - b.getY());
 			DoubleVector bcVector = new DoubleVector((c.getX() - b.getX()), c.getY() - b.getY());
@@ -193,9 +202,10 @@ public class RoundedPolygon {
 			DoubleVector bisectorUnitVector = new DoubleVector(bisectorVector.getX() / bisectorVector.getSize(), 
 					bisectorVector.getY() / bisectorVector.getSize());
 			
-			double unitCutOff = baUnitVector.dotProduct(bisectorUnitVector);
+			double unitCutOff = Math.abs(baUnitVector.dotProduct(bisectorUnitVector));
 			double unitRadius = Math.abs(bisectorUnitVector.crossProduct(baUnitVector));
 			double scaleFactor = Math.min(radius / unitRadius, Math.min(baVector.getSize() / 2, bcVector.getSize() / 2) / unitCutOff);
+			System.out.println("ScaleFactor: " + scaleFactor);
 			double cutOff = unitCutOff * scaleFactor;
 			
 			DoublePoint baCutPoint = new DoublePoint(b.getX() + baVector.getX() / baVector.getSize() * cutOff, 
@@ -215,10 +225,14 @@ public class RoundedPolygon {
 			}
 			
 			commands += " " + baCutPoint.getX() + " " + baCutPoint.getY() + bc + "arc " + cornerCenterPoint.getX() + " "
-					+ cornerCenterPoint.getY() + " " + radius + " " + startAngle + " " + extentAngle + bc + "line " + bcCutPoint.getX() + " " + bcCutPoint.getY();
+					+ cornerCenterPoint.getY() + " " + unitRadius * scaleFactor + " " + startAngle + " " + extentAngle
+					+ bc + "line " + bcCutPoint.getX() + " " + bcCutPoint.getY();
 
 		}
-		return commands.substring(commands.lastIndexOf(bc) + 1, commands.length()) + commands.substring(0, commands.lastIndexOf(bc));
+		String c = commands.substring(commands.lastIndexOf(bc) + 1, commands.length()) + commands.substring(0, commands.lastIndexOf(bc));
+		System.out.println("");
+		System.out.println(c);
+		return c;
 	}
 	
 	/**

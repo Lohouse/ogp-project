@@ -77,6 +77,13 @@ public class IntVector {
 	
 	/**
 	 * Returns a DoubleVector object that represents the same vector represented by this IntVector object.
+	 * 
+	 * @creates | result
+	 * @inspects | this
+	 * 
+	 * @post The result is a DoubleVector object.
+	 * @post The resulting DoubleVector's X coordinate will have the same value as this vector's X coordinate.
+	 * @post The resulting DoubleVector's Y coordinate will have the same value as this vector's Y coordinate.
 	 */
 	public DoubleVector asDoubleVector() {
 		return new DoubleVector(x, y);
