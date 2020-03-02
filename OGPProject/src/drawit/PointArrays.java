@@ -1,6 +1,7 @@
 package drawit;
 
 import java.util.Arrays;
+import java.util.stream.IntStream;
 
 /**
  * Declares a number of methods useful for working with arrays of IntPoint objects.
@@ -69,7 +70,7 @@ public class PointArrays {
 	 * 
 	 * @post The result has the same size as points.
 	 *    | result.length == points.length
-	 * @post Each element of result is the same as the corresponding element of points.
+	 * @post Each element of result is the same as the corresponding element of {@code points}.
 	 *    | Arrays.equals(result, points) == true
 	 */
 	public static IntPoint[] copy(IntPoint[] points) {
@@ -83,19 +84,20 @@ public class PointArrays {
 	
 	/**
 	 * Returns a new array whose elements are the elements of the given array with the element at the given index replaced by the given point.
-	 * @pre index must be greater than or equal to zero, index must be smaller than or equal to the amount of elements.
+	 * 
+	 * @pre {@code index} must be greater than or equal to zero, {@code index} must be smaller than or equal to the amount of elements in {@code points}.
 	 *    | index >= 0 &&
 	 *    | index <= points.length
-	 * @post The result has the same size as points.
+	 * @post The result has the same size as {@code points}.
 	 *    | result.length == points.length
-	 * @post Each element of result, before index, is the same as the corresponding element of points.
-	 *    | Arrays.equals(result, 0, index - 1, points, 0, index - 1) == true
-	 * @post The element of result at index 'index' equals the given value.
-	 *    | result[index] == value
-	 * @post Each element of result, after index, is the same as the corresponding element of points.
-	 *    | Arrays.equals(result, index + 1, result.length, points, index + 1, result.length) == true	  	 
+	 * @post Each element of the result, except at index {@code index}, is the same as the corresponding element of {@code points}.
+	 *    | IntStream.range(0, result.length).allMatch(i -> 
+	 *    |     i == index || result[i].equals(points[i]))
+	 * @post The element of the result at index {@code index} equals the given value.
+	 *    | result[index] == value 	 
 	 */
 	public static IntPoint[] update(IntPoint[] points, int index, IntPoint value) {
+		//TODO: newArray = points.clone() and newArray[index] = value ?
 		IntPoint[] newArray = new IntPoint[points.length];
 		
 		for(int i = 0; i < points.length; i++) {
@@ -108,18 +110,20 @@ public class PointArrays {
 		return newArray;
 	}
 	
+	//TODO: Change post-conditions to account for index + 1 >= length, index -1 < 0
 	/**
 	 * Returns a new array whose elements are the elements of the given array with the given point inserted at the given index.
-	 * @pre index must be greater than or equal to zero, index must be smaller than or equal to the amount of elements.
+	 * 
+	 * @pre {@code index} must be greater than or equal to zero, {@code index} must be smaller than or equal to the amount of elements in {@code points}.
 	 *    | index >= 0 &&
 	 *    | index <= points.length
-	 * @post The result has the same size as points, plus 1.
+	 * @post The result has the same size as {@code points}, plus 1.
 	 *    | result.length == points.length + 1
-	 * @post Each element of result, before index, is the same as the corresponding element of points.
+	 * @post Each element of the result, before the given index, is the same as the corresponding element of {@code points}.
 	 *    | Arrays.equals(result, 0, index - 1, points, 0, index - 1) == true
-	 * @post The element of result at index 'index' equals the given value.
+	 * @post The element of the result at index {@code index} equals the given value.
 	 *    | result[index] == point
-	 * @post Each element of result, after index, is the same as the element of points at (the corresponding position - 1)
+	 * @post Each element of the result, after index, is the same as the element of {@code points} at (the corresponding position - 1)
 	 *    | Arrays.equals(result, index + 1, result.length, points, index, result.length - 1) == true	
 	 */
 	public static IntPoint[] insert(IntPoint[] points, int index, IntPoint point) {
@@ -138,17 +142,19 @@ public class PointArrays {
 		}
 		return newArray;
 	}
-	
+
+	//TODO: Change post-conditions to account for index + 1 >= length, index -1 < 0
 	/**
 	 * Returns a new array whose elements are the elements of the given array with the element at the given index removed.
-	 * @pre index must be greater than or equal to zero, index must be smaller than or equal to the amount of elements.
+	 * 
+	 * @pre {@code index} must be greater than or equal to zero, {@code index} must be smaller than or equal to the amount of elements.
 	 *    | index >= 0 &&
 	 *    | index <= points.length
-	 * @post The result has the same size as points, minus 1.
+	 * @post The result has the same size as {@code points}, minus 1.
 	 *    | result.length == points.length - 1
 	 * @post Each element of result, before index, is the same as the corresponding element of points.
 	 *    | Arrays.equals(result, 0, index - 1, points, 0, index - 1) == true
-	 * @post Each element of result, starting from index, is the same as the element of points at (the corresponding position + 1)
+	 * @post Each element of result, starting from index, is the same as the element of {@code points} at (the corresponding position + 1)
 	 *    | Arrays.equals(result, index, result.length, points, index + 1, result.length + 1) == true	
 	 */
 	public static IntPoint[] remove(IntPoint[] points, int index) {
