@@ -115,6 +115,7 @@ public class RoundedPolygon {
 		vertices = PointArrays.update(vertices, index, point);
 	}
 	
+	//TODO: Add post-conditions from PointArrays.insert(...)
 	/**
 	 * Inserts a given point into the existing vertices at the specified index.
 	 * 
@@ -140,7 +141,8 @@ public class RoundedPolygon {
 		
 		vertices = PointArrays.insert(vertices, index, point);
 	}
-	
+
+	//TODO: Add post-conditions from PointArrays.remove(...)
 	/**
 	 * Removes the point from vertices at the given index.
 	 * 
@@ -281,6 +283,9 @@ public class RoundedPolygon {
 	
 	/**
 	 * Sets the vertices of this rounded polygon to be equal to the elements of the given array.
+	 * 
+	 * @mutates | this
+	 * @inspects | newVertices
 	 * 
 	 * @throws IllegalArgumentException
 	 *      The given vertices do not define a proper polygon.
