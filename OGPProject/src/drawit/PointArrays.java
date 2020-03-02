@@ -65,6 +65,7 @@ public class PointArrays {
 		return null;
 	}
 	
+	//TODO: creates result
 	/**
 	 * Returns a new array with the same contents as the given array.
 	 * 
@@ -110,7 +111,7 @@ public class PointArrays {
 		return newArray;
 	}
 	
-	//TODO: Change post-conditions to account for index + 1 >= length, index -1 < 0
+	//TODO: Change post-conditions to account for index + 1 >= length, index -1 < 0, creates result
 	/**
 	 * Returns a new array whose elements are the elements of the given array with the given point inserted at the given index.
 	 * 
@@ -143,7 +144,7 @@ public class PointArrays {
 		return newArray;
 	}
 
-	//TODO: Change post-conditions to account for index + 1 >= length, index -1 < 0
+	//TODO: Change post-conditions to account for index + 1 >= length, index -1 < 0, creates result
 	/**
 	 * Returns a new array whose elements are the elements of the given array with the element at the given index removed.
 	 * 
