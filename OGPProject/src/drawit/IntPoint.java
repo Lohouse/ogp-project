@@ -12,6 +12,13 @@ public class IntPoint {
 	
 	/**
 	 * Initializes this point with the given coordinates.
+	 * 
+	 * @mutates | this
+	 * 
+	 * @post This IntPoints's X coordinate is equal to the given x.
+	 *    | getX() == x
+	 * @post This IntPoints's Y coordinate is equal to the given y.
+	 *    | getY() == y
 	 */
 	public IntPoint(int x, int y) {
 		this.x = x;
@@ -20,6 +27,21 @@ public class IntPoint {
 	
 	/**
 	 * Returns true iff the open line segment ab intersects the open line segment cd.
+	 * 
+	 * @inspects | a, b, c, d
+	 * 
+	 * @pre Argument {@code a} is not {@code null}.
+     *    | a != null
+     * @pre Argument {@code b} is not {@code null}.
+     *    | b != null
+     * @pre Argument {@code c} is not {@code null}.
+     *    | c != null
+     * @pre Argument {@code d} is not {@code null}.
+     *    | d != null
+     * @pre The line segments have at most one point in common.
+     *    | !((a.isOnLineSegment(c, d) && b.isOnLineSegment(c, d) || (c.isOnLineSegment(a, b) && d.isOnLineSegment(a, b)))) // TODO: Parallel lines can still cause issue
+     *    
+     * @post The result is {@code true} if the line segment through a and b intersects the line segment through c and d
 	 */
 	public static boolean lineSegmentsIntersect(IntPoint a, IntPoint b, IntPoint c, IntPoint d) {
 		IntVector ab = new IntVector(a.getX() - b.getX(), a.getY() - b.getY());
@@ -40,6 +62,15 @@ public class IntPoint {
 	
 	/**
 	 * Returns true if this point is on open line segment bc. An open line segment does not include its endpoints.
+	 * 
+	 * @inspects | this, a, b, c, d
+	 * 
+	 * @pre Argument {@code b} is not {@code null}.
+     *    | b != null
+	 * @pre Argument {@code c} is not {@code null}.
+     *    | c != null
+     *    
+	 * @post The result is {@code true} when this point is on the line segment through b and c. //TODO: formal documentation
 	 */
 	public boolean isOnLineSegment(IntPoint b, IntPoint c) {
 		IntVector ba = new IntVector(b.getX() - x, b.getY() - y);
@@ -56,7 +87,13 @@ public class IntPoint {
 	/**
 	 * Returns true if this point has the same coordinates as the given point; returns false otherwise.
 	 * 
-	 * @post The result equals true when both coordinates of this point match those of the given point.
+	 * @creates | result
+	 * @inspects | this, other
+	 * 
+	 * @pre Argument {@code other} is not {@code null}.
+     *    | other != null
+	 * 
+	 * @post The result is {@code true} when both coordinates of this point match those of the given point.
 	 *    | result ==  ((this.getX() == other.getX() && this.getY() == other.getY()) ? true: false)
 	 */
 	public boolean equals(IntPoint other) {
@@ -68,6 +105,12 @@ public class IntPoint {
 	
 	/**
 	 * Returns an IntPoint object representing the point obtained by displacing this point by the given vector.
+	 * 
+	 * @creates | result
+	 * @inspects | this, other
+	 * 
+	 * @pre Argument {@code vector} is not {@code null}.
+     *    | vector != null
 	 * 
 	 * @post The result is a vector with its x-coordinate being the sum of the x-coordinates of both points
 	 *    | result.getX() == this.getX() + vector.getX()
@@ -81,6 +124,12 @@ public class IntPoint {
 	/**
 	 * Returns an IntVector object representing the displacement from other to this.
 	 * 
+	 * @creates | result
+	 * @inspects | this, other
+	 * 
+	 * @pre Argument {@code other} is not {@code null}.
+     *    | other != null
+	 * 
 	 * @post The result is a vector with its x-coordinate being the subtraction of the x-coordinate of the given point from that of this point.
 	 *    | result.getX() == this.getX() - other.getX()
 	 * @post The result is a vector with its y-coordinate being the subtraction of the y-coordinate of the given point from that of this point.
@@ -92,6 +141,9 @@ public class IntPoint {
 	
 	/**
 	 * Returns a DoublePoint object that represents the same 2D point represented by this IntPoint object.
+	 * 
+	 * @creates | result
+	 * @inspects | this
 	 * 
 	 * @post The x-coordinate of the result is the same as this x-coordinate
 	 *    | result.getX() == this.getX()
