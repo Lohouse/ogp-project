@@ -37,6 +37,7 @@ public class RoundedPolygon {
 		radius = 0;
 	}
 	
+	//TODO: 0, 1 or 2 points
 	/** 
 	 * Returns true if the given point is contained by the (non-rounded) polygon defined by this rounded polygon's vertices.
 	 * This method does not take into account this rounded polygon's corner radius; it assumes a corner radius of zero.
@@ -47,19 +48,17 @@ public class RoundedPolygon {
 	 * 
 	 * @throws IllegalArgumentException if argument {@code point} is {@code null}.
      *    | point == null
-     * @throws IllegalArgumentException if this polygon has not been initialized with any vertices yet.
-     *    | getVertices().length == 0
 	 * 
 	 * @post
-	 *      The result is {@code true} iff the given point coincides with one of this polygon's vertices,
-	 *      or if the given point is on one of this polygon's edges, or if the given point is in this polygon's interior.
+	 *      The result is {@code true} iff {@code point} coincides with one of this polygon's vertices,
+	 *      or if {@code point} is on one of this polygon's edges, or if {@code point} is in this polygon's interior.
 	 */
 	public boolean contains(IntPoint point) {
 		if (point == null) {
 			throw new IllegalArgumentException("point is null");
 		}
-		if (getVertices().length == 0) {
-			throw new IllegalArgumentException("polygon has not been initialized with any vertices yet");
+		if (vertices.length == 0) {
+			return false;
 		}
 		
 		boolean contains = false;
@@ -96,12 +95,12 @@ public class RoundedPolygon {
 	 *         and the current amount of vertices in this polygon (exclusive).
 	 *    | !(0 <= index && index < getVertices().length)
 	 * 
-	 * @post This polygon's number of vertices equals its old number of vertices.
-	 *    | getVertices().length == old(getVertices().length)
-	 * @post This polygon's vertices remain unchanged at all indexes except at the given index.
+	 * @post The amount of vertices of this polygon remains unchanged.
+	 *    | getVertices().length == old(getVertices()).length
+	 * @post This polygon's vertices remain unchanged at all indexes except at index {@code index}.
 	 *    | IntStream.range(0, getVertices().length).allMatch(i -> 
 	 *    |     i == index || getVertices()[i].equals(old(getVertices())[i]))
-	 * @post This polygon's vertex at the given index is equal to the given point.
+	 * @post This polygon's vertex at index {@code index} is equal to {@code point}.
 	 *    | getVertices()[index] == point
 	 */
 	public void update(int index, IntPoint point) {
@@ -128,8 +127,16 @@ public class RoundedPolygon {
 	 *         and the current amount of vertices in this polygon (inclusive).
 	 *    | !(0 <= index || index <= getVertices().length)
 	 * 
-	 * @post The given point is inserted into this polygon's vertices at the given index.
-	 *    | getVertices() == PointArrays.insert(old(getVertices()), index, point)
+	 * @post The amount of vertices of this polygon is increased by 1.
+	 *    | getVertices().length == old(getVertices()).length + 1
+	 * @post This polygon's vertices before index {@code index} remain unchanged.
+	 *    | IntStream.range(0, index).allMatch(i -> 
+	 *    |     getVertices()[i].equals(old(getVertices())[i]))
+	 * @post The vertex of this polygon at {@code index} is equal to {@code point}.
+	 *    | getVertices()[index].equals(point)
+	 * @post This polygon's vertices after index {@code index} have its place within the polygon shifted up by 1 compared to the previous state of this polygon.
+	 *    | IntStream.range(index + 1, getVertices().length).allMatch(i -> 
+	 *    |     getVertices()[i].equals(old(getVertices())[i - 1]))
 	 */
 	public void insert(int index, IntPoint point) {
 		if (point == null) {
@@ -153,8 +160,14 @@ public class RoundedPolygon {
 	 *         and the current amount of vertices in this polygon (exclusive).
 	 *    | !(0 <= index || index < getVertices().length)
 	 * 
-	 * @post The vertex at the given index is removed from this polygon's vertices.
-	 *    | getVertices() == PointArrays.remove(old(getVertices()), index)
+	 * @post The amount of vertices of this polygon is decreased by 1.
+	 *    | getVertices().length == old(getVertices()).length - 1
+	 * @post This polygon's vertices before index {@code index} remain unchanged.
+	 *    | IntStream.range(0, index).allMatch(i -> 
+	 *    |     getVertices()[i].equals(old(getVertices())[i]))
+	 * @post This polygon's vertices starting at index {@code index} have its place within the polygon shifted down by 1 compared to the previous state of this polygon.
+	 *    | IntStream.range(index, getVertices().length).allMatch(i -> 
+	 *    |     getVertices()[i].equals(old(getVertices())[i + 1]))
 	 */
 	public void remove(int index) {
 		if (!(0 <= index || index < getVertices().length)) {
@@ -285,8 +298,9 @@ public class RoundedPolygon {
 	 *      The given vertices do not define a proper polygon.
 	 *    | PointArrays.checkDefinesProperPolygon(newVertices) != null
 	 * 
-	 * @post This polygon's vertices are equal to the given vertices.
-	 *    | getVertices() == newVertices
+	 * @post This polygon's vertices are equal to the elements of {@code newVertices}.
+	 *    | IntStream.range(0, getVertices().length).allMatch(i -> 
+	 *    |     getVertices()[i].equals(newVertices[i]))
 	 */
 	public void setVertices(IntPoint[] newVertices) {
 		String polygonError = PointArrays.checkDefinesProperPolygon(newVertices);

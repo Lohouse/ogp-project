@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 class DrawItTest {
 
 	@Test
-	void test() {		
+	void test() {
 		// IntVector: Constructor, getX, getY tests
 		int intVector1x = -3;
 		int intVector1y = 9;
