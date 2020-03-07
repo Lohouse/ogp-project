@@ -1,6 +1,5 @@
 package drawit;
 
-import java.util.Arrays;
 import java.util.stream.IntStream;
 
 /**
@@ -12,6 +11,27 @@ public class PointArrays {
 	
 	/**
 	 * Returns null if the given array of points defines a proper polygon; otherwise, returns a string describing why it does not.
+	 * 
+	 * @pre {@code points} is not {@code null}
+	 *    | points != null
+	 * 
+	 * @post 
+	 *      The result is {@code null} if the elements of {@code points} define a proper polygon. 
+	 *      The result is a {@code String} if {@code points} contains less than 3 vertices, or if 2 vertices coincide, 
+	 *      or if a vertex lies on an edge, or if 2 edges intersect.
+	 *    | points.length < 3 || 
+	 *    | IntStream.range(0, points.length).anyMatch(i -> 
+	 *    |     IntStream.range(0, points.length).anyMatch(x -> 
+	 *    |         (i != x &&
+	 *    |         (points[i].equals(points[x]) ||
+	 *    |         IntPoint.lineSegmentsIntersect(points[i], points[(i + 1) % points.length], points[x], points[(x + 1) % points.length]))) ||
+	 *    |         (i != (x + 1) % points.length &&
+	 *    |         ( (points[x].getY() == points[(x + 1) % points.length].getY() && (points[i].getY() == points[x].getY() && ((points[i].getX() > points[x].getX() && points[i].getX() < points[(x + 1) % points.length].getX()) || (points[i].getX() > points[(x + 1) % points.length].getX() && points[i].getX() < points[x].getX())))) || 
+	 *    |         ( ((points[i].getY() > points[x].getY() && points[i].getY() < points[(x + 1) % points.length].getY()) || (points[i].getY() > points[(x + 1) % points.length].getY() && points[i].getY() < points[x].getY())) && (points[i].getX() == points[x].getX() + (points[(x + 1) % points.length].getX() - points[x].getX()) * (points[i].getY() - points[x].getY()) / (points[(x + 1) % points.length].getY() - points[x].getY())) )  ))
+	 *    |     )
+	 *    | ) ?
+	 *    | 	result instanceof String : 
+	 *    | 	result == null
 	 */
 	public static String checkDefinesProperPolygon(IntPoint[] points) {
 		if (points.length < 3) {
@@ -65,7 +85,7 @@ public class PointArrays {
 		return null;
 	}
 	
-	//TODO: creates result, change to clone() ?
+	//TODO: Precondition if points is null, creates result, change to clone() ?
 	/**
 	 * Returns a new array with the same contents as the given array.
 	 * 
@@ -79,7 +99,7 @@ public class PointArrays {
 		return points.clone();
 	}
 	
-	//TODO: What if points is empty? --> Pre-condition, only smaller than elements (not equal)
+	//TODO: Precondition if points is null, what if points is empty? --> Pre-condition, only smaller than elements (not equal)
 	/**
 	 * Returns a new array whose elements are the elements of the given array with the element at the given index replaced by the given point.
 	 * 
@@ -101,7 +121,7 @@ public class PointArrays {
 		return newArray;
 	}
 	
-	//TODO: Change post-conditions to account for index + 1 >= length, index -1 < 0, creates result
+	//TODO: Precondition if points is null, change post-conditions to account for index + 1 >= length, index -1 < 0, creates result
 	/**
 	 * Returns a new array whose elements are the elements of the given array with the given point inserted at the given index.
 	 * 
@@ -137,7 +157,7 @@ public class PointArrays {
 		return newArray;
 	}
 
-	//TODO: Change post-conditions to account for index + 1 >= length, index -1 < 0, creates result, only smaller than elements (not equal), points empty? --> Precondition
+	//TODO: Precondition if points is null, change post-conditions to account for index + 1 >= length, index -1 < 0, creates result, only smaller than elements (not equal), points empty? --> Precondition
 	/**
 	 * Returns a new array whose elements are the elements of the given array with the element at the given index removed.
 	 * 

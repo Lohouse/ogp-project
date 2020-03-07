@@ -81,9 +81,9 @@ public class IntVector {
 	 * @creates | result
 	 * @inspects | this
 	 * 
-	 * @post The result is a DoubleVector object.
-	 * @post The resulting DoubleVector's X coordinate will have the same value as this vector's X coordinate.
-	 * @post The resulting DoubleVector's Y coordinate will have the same value as this vector's Y coordinate.
+	 * @post The result is a {@code DoubleVector} object.
+	 * @post The result's X coordinate will have the same value as this vector's X coordinate.
+	 * @post The result's Y coordinate will have the same value as this vector's Y coordinate.
 	 */
 	public DoubleVector asDoubleVector() {
 		return new DoubleVector(x, y);

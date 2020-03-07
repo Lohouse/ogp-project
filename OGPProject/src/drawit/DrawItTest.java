@@ -160,22 +160,13 @@ class DrawItTest {
 		IntPoint intPointOnLine = new IntPoint(6, 4);
 		assert intPointOnLine.isOnLineSegment(intPoint3, intPoint5);
 		
-		// IntPoint: areCollinear tests
-		IntPoint intPoint12 = new IntPoint(1 , 3);
-		IntPoint intPoint13 = new IntPoint(2 , 6);
-		IntPoint intPoint14 = new IntPoint(3 , 9);
-		IntPoint intPoint15 = new IntPoint(4 , 12);
-		IntPoint intPoint16 = new IntPoint(4, 11);
-		assert IntPoint.areCollinear(intPoint12, intPoint13, intPoint14, intPoint15);
-		assert !IntPoint.areCollinear(intPoint12, intPoint13, intPoint14, intPoint16);
-		
 		// IntPoint: dotProduct tests
-		IntVector intPoint17 = new IntVector(-3, 9);
-		IntVector intPoint18 = new IntVector(5, 2);
-		long intPointDotProduct = (long) intPoint17.getX() * intPoint18.getX()
-				+ (long) intPoint17.getY() * intPoint18.getY();
-		assert intPoint17.dotProduct(intPoint18) == intPointDotProduct;
-		assert intPoint18.dotProduct(intPoint17) == intPointDotProduct;
+		IntVector intVector4 = new IntVector(-3, 9);
+		IntVector intVector5 = new IntVector(5, 2);
+		long intPointDotProduct = (long) intVector4.getX() * intVector5.getX()
+				+ (long) intVector4.getY() * intVector5.getY();
+		assert intVector4.dotProduct(intVector5) == intPointDotProduct;
+		assert intVector5.dotProduct(intVector4) == intPointDotProduct;
 		
 		// DoublePoint: constructor, round, getX and getY tests
 		DoublePoint doublePoint2 = new DoublePoint(2.75, -3.40);
@@ -207,6 +198,7 @@ class DrawItTest {
 		assert polygon2.getRadius() == 0;
 		
 		// RoundedPolygon: getVertices, setVertices tests
+		// PointArrays: checkDefinesProperPolygon tests
 		IntPoint[] vertices0 = new IntPoint[] {
 				new IntPoint(0, 0),
 				new IntPoint(5, 5),
@@ -232,6 +224,9 @@ class DrawItTest {
 				new IntPoint(18, -3),
 				new IntPoint(-1, -2),
 		};
+		assert PointArrays.checkDefinesProperPolygon(vertices0) instanceof String;
+		assert PointArrays.checkDefinesProperPolygon(vertices1) == null;
+		assert PointArrays.checkDefinesProperPolygon(vertices2) == null;
 		boolean thrownVertices = false;
 		try {
 			polygon1.setVertices(vertices0);

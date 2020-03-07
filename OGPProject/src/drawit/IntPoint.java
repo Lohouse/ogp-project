@@ -39,7 +39,12 @@ public class IntPoint {
      * @pre Argument {@code d} is not {@code null}.
      *    | d != null
      * @pre The line segments have at most one point in common.
-     * 	  | !(((a.isOnLineSegment(c, d) || b.isOnLineSegment(c, d)) && areCollinear(a, b, c, d)) || ((c.isOnLineSegment(a, b) || d.isOnLineSegment(a, b)) && areCollinear(a, b, c, d)))
+     * 	  | !(((a.isOnLineSegment(c, d) || 
+     *    | b.isOnLineSegment(c, d)) && 
+     *    | (new IntVector(a.getX() - b.getX(), a.getY() - b.getY())).isCollinearWith(new IntVector(c.getX() - d.getX(), c.getY() - d.getY()))) || 
+     *    | ((c.isOnLineSegment(a, b) || 
+     *    | d.isOnLineSegment(a, b)) && 
+     *    | (new IntVector(a.getX() - b.getX(), a.getY() - b.getY())).isCollinearWith(new IntVector(c.getX() - d.getX(), c.getY() - d.getY()))))
      *    
      * @post The result is {@code true} if the line segment through a and b intersects the line segment through c and d
 	 */
@@ -71,7 +76,14 @@ public class IntPoint {
      *    | c != null
      *    
 	 * @post The result is {@code true} when this point is on the line segment through b and c.
-	 *    | (!areCollinear(b, this, b, c) ? false : ((0 < dotProduct(b, this, b, c)) && (dotProduct(b, this, b, c) < dotProduct(b, c, b, c)) ? true : false)) //TODO: this isn't correct
+	 *    | result == (!(new IntVector(b.getX() - this.getX(), b.getY() - this.getY())).isCollinearWith(new IntVector(b.getX() - c.getX(), b.getY() - c.getY())) ?
+	 *    | 	false : 
+	 *    | 	0 < (new IntVector(b.getX() - this.getX(), b.getY() - this.getY())).dotProduct(new IntVector(b.getX() - c.getX(), b.getY() - c.getY())) && 
+	 *    |		(new IntVector(b.getX() - this.getX(), b.getY() - this.getY())).dotProduct(new IntVector(b.getX() - c.getX(), b.getY() - c.getY())) <
+	 *    |		(new IntVector(b.getX() - c.getX(), b.getY() - c.getY())).dotProduct(new IntVector(b.getX() - c.getX(), b.getY() - c.getY())) ? 
+	 *    | 		true : 
+	 *    | 		false
+	 *    | )
 	 */
 	public boolean isOnLineSegment(IntPoint b, IntPoint c) {
 		IntVector ba = new IntVector(b.getX() - x, b.getY() - y);
@@ -83,54 +95,7 @@ public class IntPoint {
 			return true;
 		}
 		return false;
-	}
-	
-	/**
-	 * Returns true if the vector between IntPoints a and b is collinear with the vector between c and d.
-	 * 
-	 * @inspects | a, b, c, d
-	 * 
-	 * @pre Argument {@code a} is not {@code null}.
-     *    | a != null
-	 * @pre Argument {@code b} is not {@code null}.
-     *    | b != null
-	 * @pre Argument {@code c} is not {@code null}.
-     *    | c != null
-	 * @pre Argument {@code d} is not {@code null}.
-     *    | d != null
-     *    
-	 * @post The result is {@code true} when the vector between IntPoints a and b is collinear with the vector between c and d.
-	 */
-	public static boolean areCollinear(IntPoint a, IntPoint b, IntPoint c, IntPoint d) {
-		IntVector ab = new IntVector(a.getX() - b.getX(), a.getY() - b.getY());
-		IntVector cd = new IntVector(c.getX() - d.getX(), c.getY() - d.getY());
-		
-		return ab.isCollinearWith(cd);
-	}
-	
-	/**
-	 * Returns the dot product of the vector between a and b, and the vector between c and d.
-	 * 
-	 * @inspects | a, b, c, d
-	 * 
-	 * @pre Argument {@code a} is not {@code null}.
-     *    | a != null
-	 * @pre Argument {@code b} is not {@code null}.
-     *    | b != null
-	 * @pre Argument {@code c} is not {@code null}.
-     *    | c != null
-	 * @pre Argument {@code d} is not {@code null}.
-     *    | d != null
-     *    
-	 * @post The result is the dot product of the vector between a and b, and the vector between c and d.
-	 */
-	public static long dotProduct(IntPoint a, IntPoint b, IntPoint c, IntPoint d) {
-		IntVector ab = new IntVector(a.getX() - b.getX(), a.getY() - b.getY());
-		IntVector cd = new IntVector(c.getX() - d.getX(), c.getY() - d.getY());
-		
-		return ab.dotProduct(cd);
-	}
-	
+	}	
 	
 	/**
 	 * Returns true if this point has the same coordinates as the given point; returns false otherwise.
