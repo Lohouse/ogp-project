@@ -28,8 +28,6 @@ public class IntVector {
 	/**
 	 * Returns the cross product of this vector and the given vector.
 	 * 
-	 * @inspects | this, other
-	 * 
 	 * @pre Argument {@code other} is not {@code null}.
      *    | other != null
      * 
@@ -46,8 +44,6 @@ public class IntVector {
 	/**
 	 * Returns the dot product of this vector and the given vector.
 	 * 
-	 * @inspects | this, other
-	 * 
 	 * @pre Argument {@code other} is not {@code null}.
      *    | other != null
 	 * 
@@ -63,8 +59,6 @@ public class IntVector {
 	/**
 	 * Returns whether this vector is collinear with the given vector.
 	 * 
-	 * @inspects | this, other
-	 * 
 	 * @pre Argument {@code other} is not {@code null}.
      *    | other != null
 	 * 
@@ -77,9 +71,6 @@ public class IntVector {
 	
 	/**
 	 * Returns a DoubleVector object that represents the same vector represented by this IntVector object.
-	 * 
-	 * @creates | result
-	 * @inspects | this
 	 * 
 	 * @post The result is a {@code DoubleVector} object.
 	 * @post The result's X coordinate will have the same value as this vector's X coordinate.

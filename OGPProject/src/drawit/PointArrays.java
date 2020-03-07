@@ -12,6 +12,8 @@ public class PointArrays {
 	/**
 	 * Returns null if the given array of points defines a proper polygon; otherwise, returns a string describing why it does not.
 	 * 
+	 * @inspects | points
+	 * 
 	 * @pre {@code points} is not {@code null}
 	 *    | points != null
 	 * 
@@ -89,6 +91,7 @@ public class PointArrays {
 	 * Returns a new array with the same contents as the given array.
 	 * 
 	 * @creates | result
+	 * @inspects | points
 	 * 
 	 * @pre {@code points} is not {@code null}.
 	 *    | points != null
@@ -107,6 +110,7 @@ public class PointArrays {
 	 * Returns a new array whose elements are the elements of the given array with the element at the given index replaced by the given point.
 	 * 
 	 * @creates | result
+	 * @inspects | points
 	 * 
 	 * @pre {@code points} is not {@code null}.
 	 *    | points != null
@@ -132,6 +136,7 @@ public class PointArrays {
 	 * Returns a new array whose elements are the elements of the given array with the given point inserted at the given index.
 	 * 
 	 * @creates | result
+	 * @inspects | points
 	 * 
 	 * @pre {@code points} is not {@code null}.
 	 *    | points != null
@@ -171,6 +176,7 @@ public class PointArrays {
 	 * Returns a new array whose elements are the elements of the given array with the element at the given index removed.
 	 * 
 	 * @creates | result
+	 * @inspects | points
 	 * 
 	 * @pre {@code points} is not {@code null}.
 	 *    | points != null

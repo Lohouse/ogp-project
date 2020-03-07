@@ -46,7 +46,7 @@ public class RoundedPolygon {
 	 * A point is contained by a polygon if it coincides with one of its vertices, or if it is on one of its edges,
 	 * or if it is in the polygon's interior.
 	 * 
-	 * @inspects | this, other
+	 * @inspects | this
 	 * 
 	 * @throws IllegalArgumentException if argument {@code point} is {@code null}.
      *    | point == null
@@ -86,7 +86,6 @@ public class RoundedPolygon {
 	 * Changes the point at the given index in this polygon's vertices to the given point.
 	 * 
 	 * @mutates | this
-	 * @inspects | point
 	 * 
 	 * @throws IllegalArgumentException if argument {@code point} is {@code null}.
      *    | point == null
@@ -117,7 +116,6 @@ public class RoundedPolygon {
 	 * Inserts a given point into the existing vertices at the specified index.
 	 * 
 	 * @mutates | this
-	 * @inspects | point
 	 * 
 	 * @throws IllegalArgumentException if argument {@code point} is {@code null}.
      *    | point == null
@@ -151,7 +149,6 @@ public class RoundedPolygon {
 	 * Removes the point from vertices at the given index.
 	 * 
 	 * @mutates | this
-	 * @inspects | point
 	 * 
 	 * @throws IllegalArgumentException if argument {@code index} is not between 0 (inclusive)
 	 *         and the current amount of vertices in this polygon (exclusive).

@@ -28,8 +28,6 @@ public class IntPoint {
 	/**
 	 * Returns true iff the open line segment ab intersects the open line segment cd.
 	 * 
-	 * @inspects | a, b, c, d
-	 * 
 	 * @pre Argument {@code a} is not {@code null}.
      *    | a != null
      * @pre Argument {@code b} is not {@code null}.
@@ -68,8 +66,6 @@ public class IntPoint {
 	/**
 	 * Returns true if this point is on open line segment bc. An open line segment does not include its endpoints.
 	 * 
-	 * @inspects | this, a, b, c, d
-	 * 
 	 * @pre Argument {@code b} is not {@code null}.
      *    | b != null
 	 * @pre Argument {@code c} is not {@code null}.
@@ -100,9 +96,6 @@ public class IntPoint {
 	/**
 	 * Returns true if this point has the same coordinates as the given point; returns false otherwise.
 	 * 
-	 * @creates | result
-	 * @inspects | this, other
-	 * 
 	 * @pre Argument {@code other} is not {@code null}.
      *    | other != null
 	 * 
@@ -119,9 +112,6 @@ public class IntPoint {
 	/**
 	 * Returns an IntPoint object representing the point obtained by displacing this point by the given vector.
 	 * 
-	 * @creates | result
-	 * @inspects | this, other
-	 * 
 	 * @pre Argument {@code vector} is not {@code null}.
      *    | vector != null
 	 * 
@@ -136,9 +126,6 @@ public class IntPoint {
 	
 	/**
 	 * Returns an IntVector object representing the displacement from other to this.
-	 * 
-	 * @creates | result
-	 * @inspects | this, other
 	 * 
 	 * @pre Argument {@code other} is not {@code null}.
      *    | other != null
@@ -155,16 +142,13 @@ public class IntPoint {
 	/**
 	 * Returns a DoublePoint object that represents the same 2D point represented by this IntPoint object.
 	 * 
-	 * @creates | result
-	 * @inspects | this
-	 * 
 	 * @post The x-coordinate of the result is the same as this x-coordinate
 	 *    | result.getX() == this.getX()
 	 * @post The y-coordinate of the result is the same as this y-coordinate
 	 *    | result.getY() == this.getY()
 	 */
 	public DoublePoint asDoublePoint() {
-		return new DoublePoint((double) x, (double) y);
+		return new DoublePoint(x, y);
 	}
 	
 	/**
