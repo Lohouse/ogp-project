@@ -160,14 +160,6 @@ class DrawItTest {
 		IntPoint intPointOnLine = new IntPoint(6, 4);
 		assert intPointOnLine.isOnLineSegment(intPoint3, intPoint5);
 		
-		// IntPoint: dotProduct tests
-		IntVector intVector4 = new IntVector(-3, 9);
-		IntVector intVector5 = new IntVector(5, 2);
-		long intPointDotProduct = (long) intVector4.getX() * intVector5.getX()
-				+ (long) intVector4.getY() * intVector5.getY();
-		assert intVector4.dotProduct(intVector5) == intPointDotProduct;
-		assert intVector5.dotProduct(intVector4) == intPointDotProduct;
-		
 		// DoublePoint: constructor, round, getX and getY tests
 		DoublePoint doublePoint2 = new DoublePoint(2.75, -3.40);
 		DoublePoint doublePoint3 = new DoublePoint(1, 10.01);
