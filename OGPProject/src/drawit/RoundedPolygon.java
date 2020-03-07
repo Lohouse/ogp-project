@@ -8,7 +8,10 @@ import java.util.stream.IntStream;
    by a set of 2D points with integer coordinates and a nonnegative corner radius.
  * 
  * @invar This RoundedPolygon's radius is not negative.
- *    | 0 <= getRadius()
+ *    | 0 <= this.getRadius()
+ * @invar This RoundedPolygon's vertices are not {@code null}
+ *    | this.getVertices() != null && 
+ *    | Arrays.stream(this.getVertices()).allMatch(e -> e != null)
  */
 public class RoundedPolygon {
 	
@@ -37,7 +40,6 @@ public class RoundedPolygon {
 		radius = 0;
 	}
 	
-	//TODO: 0, 1 or 2 points
 	/** 
 	 * Returns true if the given point is contained by the (non-rounded) polygon defined by this rounded polygon's vertices.
 	 * This method does not take into account this rounded polygon's corner radius; it assumes a corner radius of zero.
@@ -56,9 +58,6 @@ public class RoundedPolygon {
 	public boolean contains(IntPoint point) {
 		if (point == null) {
 			throw new IllegalArgumentException("point is null");
-		}
-		if (vertices.length == 0) {
-			return false;
 		}
 		
 		boolean contains = false;
@@ -114,7 +113,6 @@ public class RoundedPolygon {
 		vertices = PointArrays.update(vertices, index, point);
 	}
 	
-	//TODO: Add post-conditions from PointArrays.insert(...)
 	/**
 	 * Inserts a given point into the existing vertices at the specified index.
 	 * 
@@ -149,7 +147,6 @@ public class RoundedPolygon {
 		vertices = PointArrays.insert(vertices, index, point);
 	}
 
-	//TODO: Add post-conditions from PointArrays.remove(...)
 	/**
 	 * Removes the point from vertices at the given index.
 	 * 

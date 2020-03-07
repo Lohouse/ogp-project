@@ -26,8 +26,8 @@ public class PointArrays {
 	 *    |         (points[i].equals(points[x]) ||
 	 *    |         IntPoint.lineSegmentsIntersect(points[i], points[(i + 1) % points.length], points[x], points[(x + 1) % points.length]))) ||
 	 *    |         (i != (x + 1) % points.length &&
-	 *    |         ( (points[x].getY() == points[(x + 1) % points.length].getY() && (points[i].getY() == points[x].getY() && ((points[i].getX() > points[x].getX() && points[i].getX() < points[(x + 1) % points.length].getX()) || (points[i].getX() > points[(x + 1) % points.length].getX() && points[i].getX() < points[x].getX())))) || 
-	 *    |         ( ((points[i].getY() > points[x].getY() && points[i].getY() < points[(x + 1) % points.length].getY()) || (points[i].getY() > points[(x + 1) % points.length].getY() && points[i].getY() < points[x].getY())) && (points[i].getX() == points[x].getX() + (points[(x + 1) % points.length].getX() - points[x].getX()) * (points[i].getY() - points[x].getY()) / (points[(x + 1) % points.length].getY() - points[x].getY())) )  ))
+	 *    |         ((points[x].getY() == points[(x + 1) % points.length].getY() && (points[i].getY() == points[x].getY() && ((points[i].getX() > points[x].getX() && points[i].getX() < points[(x + 1) % points.length].getX()) || (points[i].getX() > points[(x + 1) % points.length].getX() && points[i].getX() < points[x].getX())))) || 
+	 *    |         (((points[i].getY() > points[x].getY() && points[i].getY() < points[(x + 1) % points.length].getY()) || (points[i].getY() > points[(x + 1) % points.length].getY() && points[i].getY() < points[x].getY())) && (points[i].getX() == points[x].getX() + (points[(x + 1) % points.length].getX() - points[x].getX()) * (points[i].getY() - points[x].getY()) / (points[(x + 1) % points.length].getY() - points[x].getY())))))
 	 *    |     )
 	 *    | ) ?
 	 *    | 	result instanceof String : 
@@ -85,9 +85,13 @@ public class PointArrays {
 		return null;
 	}
 	
-	//TODO: Precondition if points is null, creates result, change to clone() ?
 	/**
 	 * Returns a new array with the same contents as the given array.
+	 * 
+	 * @creates | result
+	 * 
+	 * @pre {@code points} is not {@code null}.
+	 *    | points != null
 	 * 
 	 * @post The result has the same size as points.
 	 *    | result.length == points.length
@@ -99,10 +103,13 @@ public class PointArrays {
 		return points.clone();
 	}
 	
-	//TODO: Precondition if points is null, what if points is empty? --> Pre-condition, only smaller than elements (not equal)
 	/**
 	 * Returns a new array whose elements are the elements of the given array with the element at the given index replaced by the given point.
 	 * 
+	 * @creates | result
+	 * 
+	 * @pre {@code points} is not {@code null}.
+	 *    | points != null
 	 * @pre {@code index} must be greater than or equal to zero, {@code index} must be smaller than the amount of elements in {@code points}.
 	 *    | index >= 0 &&
 	 *    | index < points.length
@@ -121,10 +128,13 @@ public class PointArrays {
 		return newArray;
 	}
 	
-	//TODO: Precondition if points is null, change post-conditions to account for index + 1 >= length, index -1 < 0, creates result
 	/**
 	 * Returns a new array whose elements are the elements of the given array with the given point inserted at the given index.
 	 * 
+	 * @creates | result
+	 * 
+	 * @pre {@code points} is not {@code null}.
+	 *    | points != null
 	 * @pre {@code index} must be greater than or equal to zero, {@code index} must be smaller than or equal to the amount of elements in {@code points}.
 	 *    | index >= 0 &&
 	 *    | index <= points.length
@@ -157,10 +167,13 @@ public class PointArrays {
 		return newArray;
 	}
 
-	//TODO: Precondition if points is null, change post-conditions to account for index + 1 >= length, index -1 < 0, creates result, only smaller than elements (not equal), points empty? --> Precondition
 	/**
 	 * Returns a new array whose elements are the elements of the given array with the element at the given index removed.
 	 * 
+	 * @creates | result
+	 * 
+	 * @pre {@code points} is not {@code null}.
+	 *    | points != null
 	 * @pre {@code index} must be greater than or equal to zero, {@code index} must be smaller than the amount of elements in {@code points}.
 	 *    | index >= 0 &&
 	 *    | index < points.length
