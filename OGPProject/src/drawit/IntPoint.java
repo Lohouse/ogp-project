@@ -16,9 +16,9 @@ public class IntPoint {
 	 * @mutates | this
 	 * 
 	 * @post This IntPoints's X coordinate is equal to the given x.
-	 *    | getX() == x
+	 *    | this.getX() == x
 	 * @post This IntPoints's Y coordinate is equal to the given y.
-	 *    | getY() == y
+	 *    | this.getY() == y
 	 */
 	public IntPoint(int x, int y) {
 		this.x = x;
