@@ -16,9 +16,9 @@ public class IntVector {
 	 * @mutates | this
 	 * 
 	 * @post This IntVector's X coordinate is equal to the given x.
-	 *    | getX() == x
+	 *    | this.getX() == x
 	 * @post This IntVector's Y coordinate is equal to the given y.
-	 *    | getY() == y
+	 *    | this.getY() == y
 	 */
 	public IntVector(int x, int y) {
 		this.x = x;
@@ -35,7 +35,7 @@ public class IntVector {
 	 *      The result is a long with a value equal to the product of the X coordinate of
 	 *      this vector and the Y coordinate of the other vector, subtracted by the
 	 *      product of the Y vector of this vector and the X coordinate of the other vector.
-	 *    | result == (long) getX() * other.getY() - (long) getY() * other.getX()
+	 *    | result == (long) this.getX() * other.getY() - (long) this.getY() * other.getX()
 	 */
 	public long crossProduct(IntVector other) {
 		return (long) x * other.getY() - (long) y * other.getX();
@@ -50,7 +50,7 @@ public class IntVector {
 	 * @post 
 	 *      The result is a long with a value equal to the sum of the product of the
 	 *      X coordinate of both vectors and the product of the Y coordinate of both vectors.
-	 *    | result == (long) getX() * other.getX() + (long) getY() * other.getY()
+	 *    | result == (long) this.getX() * other.getX() + (long) this.getY() * other.getY()
 	 */
 	public long dotProduct(IntVector other) {
 		return (long) x * other.x + (long) y * other.y;
@@ -63,7 +63,7 @@ public class IntVector {
      *    | other != null
 	 * 
 	 * @post The result is {@code true} iff the cross product of the vectors equals zero.
-	 *    | result == (crossProduct(other) == 0)
+	 *    | result == (this.crossProduct(other) == 0)
 	 */
 	public boolean isCollinearWith(IntVector other) {
 		return crossProduct(other) == 0;
