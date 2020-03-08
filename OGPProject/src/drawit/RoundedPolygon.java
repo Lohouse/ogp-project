@@ -121,7 +121,7 @@ public class RoundedPolygon {
      *    | point == null
 	 * @throws IllegalArgumentException if argument {@code index} is not between 0 (inclusive)
 	 *         and the current amount of vertices in this polygon (inclusive).
-	 *    | !(0 <= index || index <= getVertices().length)
+	 *    | !(0 <= index && index <= getVertices().length)
 	 * 
 	 * @post The amount of vertices of this polygon is increased by 1.
 	 *    | getVertices().length == old(getVertices()).length + 1
@@ -138,7 +138,7 @@ public class RoundedPolygon {
 		if (point == null) {
 			throw new IllegalArgumentException("point is null");
 		}
-		if (!(0 <= index || index <= getVertices().length)) {
+		if (!(0 <= index && index <= getVertices().length)) {
 			throw new IllegalArgumentException("invalid index");
 		}
 		
@@ -152,7 +152,7 @@ public class RoundedPolygon {
 	 * 
 	 * @throws IllegalArgumentException if argument {@code index} is not between 0 (inclusive)
 	 *         and the current amount of vertices in this polygon (exclusive).
-	 *    | !(0 <= index || index < getVertices().length)
+	 *    | !(0 <= index && index < getVertices().length)
 	 * 
 	 * @post The amount of vertices of this polygon is decreased by 1.
 	 *    | getVertices().length == old(getVertices()).length - 1
@@ -164,7 +164,7 @@ public class RoundedPolygon {
 	 *    |     getVertices()[i].equals(old(getVertices())[i + 1]))
 	 */
 	public void remove(int index) {
-		if (!(0 <= index || index < getVertices().length)) {
+		if (!(0 <= index && index < getVertices().length)) {
 			throw new IllegalArgumentException("invalid index");
 		}
 		

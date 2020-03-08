@@ -190,7 +190,7 @@ class DrawItTest {
 		assert polygon2.getRadius() == 0;
 		
 		// RoundedPolygon: getVertices, setVertices tests
-		// PointArrays: checkDefinesProperPolygon tests
+		// PointArrays: checkDefinesProperPolygon, insert, remove tests
 		IntPoint[] vertices0 = new IntPoint[] {
 				new IntPoint(0, 0),
 				new IntPoint(5, 5),
@@ -216,7 +216,14 @@ class DrawItTest {
 				new IntPoint(18, -3),
 				new IntPoint(-1, -2),
 		};
-		assert PointArrays.checkDefinesProperPolygon(vertices0) instanceof String;
+		assert PointArrays.checkDefinesProperPolygon(vertices0).equals(
+				"Edge from (0, 0) at index 0 to (5, 5) at index 1 intersects with edge from (0, 5) at index 2 to (5, 0) at index 3");
+		vertices0 = PointArrays.insert(vertices0, 0, new IntPoint(0, 0));
+		assert PointArrays.checkDefinesProperPolygon(vertices0).equals(
+				"Vertices at index 0 and 1 coincide: (0, 0)");
+		vertices0 = PointArrays.remove(vertices0, 0);
+		assert PointArrays.checkDefinesProperPolygon(vertices0).equals(
+				"Edge from (0, 0) at index 0 to (5, 5) at index 1 intersects with edge from (0, 5) at index 2 to (5, 0) at index 3");		
 		assert PointArrays.checkDefinesProperPolygon(vertices1) == null;
 		assert PointArrays.checkDefinesProperPolygon(vertices2) == null;
 		boolean thrownVertices = false;
@@ -264,6 +271,27 @@ class DrawItTest {
 		IntPoint extraPoint2 = new IntPoint(8, -75);
 
 		// RoundedPolygon: insert tests
+		boolean thrownInsert = false;
+		try {
+			polygon1.insert(0, null);
+		} catch (IllegalArgumentException e) {
+			thrownInsert = true;
+		}
+		assert thrownInsert;
+		thrownInsert = false;
+		try {
+			polygon1.insert(-1, wrongPoint1);
+		} catch (IllegalArgumentException e) {
+			thrownInsert = true;
+		}
+		assert thrownInsert;
+		thrownInsert = false;
+		try {
+			polygon1.insert(polygon1.getVertices().length + 1, wrongPoint1);
+		} catch (IllegalArgumentException e) {
+			thrownInsert = true;
+		}
+		assert thrownInsert;
 		IntPoint[] prevVertices1 = polygon1.getVertices();
 		int insertIndex = 1;
 		polygon1.insert(insertIndex, extraPoint1);
