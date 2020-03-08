@@ -1,10 +1,17 @@
-package drawit;
+package drawit.tests;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.Arrays;
 
 import org.junit.jupiter.api.Test;
+
+import drawit.DoublePoint;
+import drawit.DoubleVector;
+import drawit.IntPoint;
+import drawit.IntVector;
+import drawit.PointArrays;
+import drawit.RoundedPolygon;
 
 class DrawItTest {
 

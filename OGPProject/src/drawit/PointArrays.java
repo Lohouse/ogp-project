@@ -28,8 +28,10 @@ public class PointArrays {
 	 *    |         (points[i].equals(points[x]) ||
 	 *    |         IntPoint.lineSegmentsIntersect(points[i], points[(i + 1) % points.length], points[x], points[(x + 1) % points.length]))) ||
 	 *    |         (i != (x + 1) % points.length &&
-	 *    |         ((points[x].getY() == points[(x + 1) % points.length].getY() && (points[i].getY() == points[x].getY() && ((points[i].getX() > points[x].getX() && points[i].getX() < points[(x + 1) % points.length].getX()) || (points[i].getX() > points[(x + 1) % points.length].getX() && points[i].getX() < points[x].getX())))) || 
-	 *    |         (((points[i].getY() > points[x].getY() && points[i].getY() < points[(x + 1) % points.length].getY()) || (points[i].getY() > points[(x + 1) % points.length].getY() && points[i].getY() < points[x].getY())) && (points[i].getX() == points[x].getX() + (points[(x + 1) % points.length].getX() - points[x].getX()) * (points[i].getY() - points[x].getY()) / (points[(x + 1) % points.length].getY() - points[x].getY())))))
+	 *    |         ((points[x].getY() == points[(x + 1) % points.length].getY() && (points[i].getY() == points[x].getY() && ((points[i].getX() > points[x].getX() && 
+	 *    |			points[i].getX() < points[(x + 1) % points.length].getX()) || (points[i].getX() > points[(x + 1) % points.length].getX() && points[i].getX() < points[x].getX())))) || 
+	 *    |         (((points[i].getY() > points[x].getY() && points[i].getY() < points[(x + 1) % points.length].getY()) || (points[i].getY() > points[(x + 1) % points.length].getY() &&
+	 *    |			points[i].getY() < points[x].getY())) && (points[i].getX() == points[x].getX() + (points[(x + 1) % points.length].getX() - points[x].getX()) * (points[i].getY() - points[x].getY()) / (points[(x + 1) % points.length].getY() - points[x].getY())))))
 	 *    |     )
 	 *    | ) ?
 	 *    | 	result instanceof String : 
