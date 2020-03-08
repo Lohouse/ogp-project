@@ -48,7 +48,7 @@ class DrawItTest {
 		assert doubleVector.getX() == intVector1.getX();
 		assert doubleVector.getY() == intVector1.getY();
 		
-		// DoubleVector: Constructor tests
+		// DoubleVector: Constructor, getX, getY tests
 		double doubleVector1x = 3.2;
 		double doubleVector1y = 7;
 		double doubleVector2x = 4.2;
@@ -322,8 +322,41 @@ class DrawItTest {
 		};
 		RoundedPolygon polygon3 = new RoundedPolygon();
 		polygon3.setVertices(vertices3);
+		assert polygon3.getDrawingCommands().equals(
+				"line 100.0 100.0 200.0 100.0\n" + 
+				"line 200.0 100.0 200.0 200.0\n" + 
+				"line 200.0 200.0 100.0 200.0\n" + 
+				"line 100.0 200.0 100.0 100.0");
 		polygon3.setRadius(10);
-		//TODO: Implement tests for getDrawingCommands
+		assert polygon3.getDrawingCommands().equals(
+				"line 110.0 100.0 190.0 100.0\n" + 
+				"arc 190.0 110.0 10.0 -1.5707963267948966 1.5707963267948966\n" + 
+				"line 200.0 110.0 200.0 190.0\n" + 
+				"arc 190.0 190.0 10.0 0.0 1.5707963267948966\n" + 
+				"line 190.0 200.0 110.0 200.0\n" + 
+				"arc 110.0 190.0 10.0 1.5707963267948966 1.5707963267948966\n" + 
+				"line 100.0 190.0 100.0 110.0\n" + 
+				"arc 110.0 110.0 10.0 3.141592653589793 1.5707963267948966");
+		assert polygon1.getDrawingCommands().equals(
+				"line 2.3724203629159777 1.6945859735114128 3.644890947114124 2.6034935336529457\n" + 
+				"arc 4.527252921402365 1.3681867696494092 1.5180729412194702 2.1910458127777184 -2.4360244759045826\n" + 
+				"line 6.0 1.0 5.707106781186548 -0.1715728752538097\n" + 
+				"arc 3.6114106887179966 0.3523511478633279 2.160194087110508 -0.24497866312686406 -1.8662371639386166\n" + 
+				"line 2.5 -1.5 2.5 -1.5\n" + 
+				"arc 3.4834699396501465 0.13911656608357686 1.911521969375471 -2.111215827065481 -1.9809236673363877");
+		assert polygon2.getDrawingCommands().equals(
+				"line 0.0 5.0 3.0 10.0\n" + 
+				"line 3.0 10.0 6.0 5.0\n" + 
+				"line 6.0 5.0 9.0 10.0\n" + 
+				"line 9.0 10.0 12.0 5.0\n" + 
+				"line 12.0 5.0 15.0 10.0\n" + 
+				"line 15.0 10.0 18.0 5.0\n" + 
+				"line 18.0 5.0 20.0 3.0\n" + 
+				"line 20.0 3.0 18.0 1.0\n" + 
+				"line 18.0 1.0 20.0 -1.0\n" + 
+				"line 20.0 -1.0 18.0 -3.0\n" + 
+				"line 18.0 -3.0 -1.0 -2.0\n" + 
+				"line -1.0 -2.0 0.0 5.0");
 		
 		// PointArrays: copy test
 		IntPoint[] array1 = {intPoint1, intPoint2, intPoint3, intPoint4, intPoint5};

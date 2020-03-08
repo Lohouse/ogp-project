@@ -230,9 +230,12 @@ public class RoundedPolygon {
 				extentAngle += Math.PI * 2;
 			}
 			
-			commands += " " + baCutPoint.getX() + " " + baCutPoint.getY() + bc + "arc " + cornerCenterPoint.getX() + " "
-					+ cornerCenterPoint.getY() + " " + unitRadius * scaleFactor + " " + startAngle + " " + extentAngle
-					+ bc + "line " + bcCutPoint.getX() + " " + bcCutPoint.getY();
+			commands += " " + baCutPoint.getX() + " " + baCutPoint.getY();			
+			if (extentAngle != 0) {
+				commands += bc + "arc " + cornerCenterPoint.getX() + " " + cornerCenterPoint.getY() + " " + 
+						unitRadius * scaleFactor + " " + startAngle + " " + extentAngle;
+			}
+			commands += bc + "line " + bcCutPoint.getX() + " " + bcCutPoint.getY();
 
 		}
 		return commands.substring(commands.lastIndexOf(bc) + 1, commands.length()) + commands.substring(0, commands.lastIndexOf(bc));
