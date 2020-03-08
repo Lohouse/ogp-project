@@ -252,9 +252,9 @@ public class RoundedPolygon {
 	}
 	
 	/**
-	 * @mutates | this
-	 * 
 	 * Sets this rounded polygon's corner radius to the given value.
+	 * 
+	 * @mutates | this
 	 * 
 	 * @throws IllegalArgumentException
 	 *      The given radius is negative.
