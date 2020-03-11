@@ -390,6 +390,7 @@ class DrawItTest {
 		assert !polygon2.contains(testPoint12);
 		IntPoint soloPoint = new IntPoint(0, 0);
 		RoundedPolygon polygonSolo = new RoundedPolygon();
+		assert PointArrays.checkDefinesProperPolygon(new IntPoint[] {soloPoint}) == null;
 		polygonSolo.setVertices(new IntPoint[] {
 				soloPoint
 		});
