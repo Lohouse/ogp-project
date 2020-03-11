@@ -1,7 +1,5 @@
 package drawit.tests;
 
-import static org.junit.jupiter.api.Assertions.assertAll;
-
 import java.util.Arrays;
 
 import org.junit.jupiter.api.Test;
@@ -16,7 +14,7 @@ import drawit.RoundedPolygon;
 class DrawItTest {
 
 	@Test
-	void test() {
+	void testIntVector() {
 		// IntVector: Constructor, getX, getY tests
 		int intVector1x = -3;
 		int intVector1y = 9;
@@ -54,7 +52,10 @@ class DrawItTest {
 		DoubleVector doubleVector = intVector1.asDoubleVector();
 		assert doubleVector.getX() == intVector1.getX();
 		assert doubleVector.getY() == intVector1.getY();
-		
+	}
+	
+	@Test
+	void testDoubleVector() {
 		// DoubleVector: Constructor, getX, getY tests
 		double doubleVector1x = 3.2;
 		double doubleVector1y = 7;
@@ -122,7 +123,10 @@ class DrawItTest {
 		assert doubleVector5.getSize() == 0;
 		assert doubleVector1.getSize() == Math.sqrt(Math.pow(doubleVector1x, 2) + Math.pow(doubleVector1y, 2));
 		assert doubleVector2.getSize() == Math.sqrt(Math.pow(doubleVector2x, 2) + Math.pow(doubleVector2y, 2));
-		
+	}
+	
+	@Test
+	void testIntPoint() {
 		// IntPoint: constructor, asDoublePoint, getX and getY tests
 		IntPoint intPoint1 = new IntPoint(5, -9);
 		IntPoint intPoint2 = new IntPoint(2, 4);
@@ -166,7 +170,10 @@ class DrawItTest {
 		assert !intPoint1.isOnLineSegment(intPoint1, intPoint2);
 		IntPoint intPointOnLine = new IntPoint(6, 4);
 		assert intPointOnLine.isOnLineSegment(intPoint3, intPoint5);
-		
+	}
+	
+	@Test
+	void testDoublePoint() {
 		// DoublePoint: constructor, round, getX and getY tests
 		DoublePoint doublePoint2 = new DoublePoint(2.75, -3.40);
 		DoublePoint doublePoint3 = new DoublePoint(1, 10.01);
@@ -186,13 +193,47 @@ class DrawItTest {
 		DoubleVector doubleVectorMinus = doublePoint2.minus(doublePoint3);
 		assert doubleVectorMinus.getX() == 1.75;
 		assert doubleVectorMinus.getY() == -13.41;
-			
+	}
+	
+	@Test
+	void testPointArrays() {
+		IntPoint intPoint1 = new IntPoint(5, -9);
+		IntPoint intPoint2 = new IntPoint(2, 4);
+		IntPoint intPoint3 = new IntPoint(2, 4);
+		IntPoint intPoint4 = new IntPoint(-5, -5);
+		IntPoint intPoint5 = new IntPoint(10, 4);
+		IntPoint intPoint6 = new IntPoint(6, -8);
 		
+		// PointArrays: copy test
+		IntPoint[] array1 = {intPoint1, intPoint2, intPoint3, intPoint4, intPoint5};
+		IntPoint[] arrayCopy = PointArrays.copy(array1);
+		assert Arrays.equals(array1, arrayCopy);
+		
+		// PointArrays: update test
+		IntPoint[] array1Updated = {intPoint1, intPoint2, intPoint6, intPoint4, intPoint5};
+		IntPoint[] arrayUpdate = PointArrays.update(array1, 2, intPoint6);
+		assert Arrays.equals(array1Updated, arrayUpdate);
+		
+		// PointArrays: insert test
+		IntPoint[] array1Inserted = {intPoint1, intPoint2, intPoint6, intPoint3, intPoint4, intPoint5};
+		IntPoint[] arrayInsert = PointArrays.insert(array1, 2, intPoint6);
+		assert Arrays.equals(array1Inserted, arrayInsert);
+		
+		// PointArrays: remove test
+		IntPoint[] array1Removed = {intPoint1, intPoint2, intPoint4, intPoint5};
+		IntPoint[] arrayRemove = PointArrays.remove(array1, 2);
+		assert Arrays.equals(array1Removed, arrayRemove);
+	}
+	
+	@Test
+	void testRoundedPolygon() {
 		// RoundedPolygon: constructor tests
 		RoundedPolygon polygon1 = new RoundedPolygon();
 		RoundedPolygon polygon2 = new RoundedPolygon();
 		assert polygon1.getVertices().length == 0;
 		assert polygon2.getVertices().length == 0;
+		assert PointArrays.checkDefinesProperPolygon(polygon1.getVertices()) == null;
+		assert PointArrays.checkDefinesProperPolygon(polygon1.getVertices()) == null;
 		assert polygon1.getRadius() == 0;
 		assert polygon2.getRadius() == 0;
 		
@@ -230,7 +271,7 @@ class DrawItTest {
 				"Vertices at index 0 and 1 coincide: (0, 0)");
 		vertices0 = PointArrays.remove(vertices0, 0);
 		assert PointArrays.checkDefinesProperPolygon(vertices0).equals(
-				"Edge from (0, 0) at index 0 to (5, 5) at index 1 intersects with edge from (0, 5) at index 2 to (5, 0) at index 3");		
+				"Edge from (0, 0) at index 0 to (5, 5) at index 1 intersects with edge from (0, 5) at index 2 to (5, 0) at index 3");
 		assert PointArrays.checkDefinesProperPolygon(vertices1) == null;
 		assert PointArrays.checkDefinesProperPolygon(vertices2) == null;
 		boolean thrownVertices = false;
@@ -347,6 +388,12 @@ class DrawItTest {
 		assert polygon2.contains(testPoint10);
 		assert polygon2.contains(testPoint11);
 		assert !polygon2.contains(testPoint12);
+		IntPoint soloPoint = new IntPoint(0, 0);
+		RoundedPolygon polygonSolo = new RoundedPolygon();
+		polygonSolo.setVertices(new IntPoint[] {
+				soloPoint
+		});
+		assert polygonSolo.contains(soloPoint);
 		
 		// RoundedPolygon: getDrawingCommands tests
 		IntPoint[] vertices3 = new IntPoint[] {
@@ -391,26 +438,6 @@ class DrawItTest {
 				"line 18.0 1.0 20.0 -1.0\n" + 
 				"line 20.0 -1.0 18.0 -3.0\n" + 
 				"line 18.0 -3.0 -1.0 -2.0\n" + 
-				"line -1.0 -2.0 0.0 5.0");
-		
-		// PointArrays: copy test
-		IntPoint[] array1 = {intPoint1, intPoint2, intPoint3, intPoint4, intPoint5};
-		IntPoint[] arrayCopy = PointArrays.copy(array1);
-		assert Arrays.equals(array1, arrayCopy);
-		
-		// PointArrays: update test
-		IntPoint[] array1Updated = {intPoint1, intPoint2, intPoint6, intPoint4, intPoint5};
-		IntPoint[] arrayUpdate = PointArrays.update(array1, 2, intPoint6);
-		assert Arrays.equals(array1Updated, arrayUpdate);
-		
-		// PointArrays: insert test
-		IntPoint[] array1Inserted = {intPoint1, intPoint2, intPoint6, intPoint3, intPoint4, intPoint5};
-		IntPoint[] arrayInsert = PointArrays.insert(array1, 2, intPoint6);
-		assert Arrays.equals(array1Inserted, arrayInsert);
-		
-		// PointArrays: remove test
-		IntPoint[] array1Removed = {intPoint1, intPoint2, intPoint4, intPoint5};
-		IntPoint[] arrayRemove = PointArrays.remove(array1, 2);
-		assert Arrays.equals(array1Removed, arrayRemove);
+				"line -1.0 -2.0 0.0 5.0");		
 	}
 }

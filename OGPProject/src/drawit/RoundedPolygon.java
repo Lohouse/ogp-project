@@ -12,6 +12,8 @@ import java.util.stream.IntStream;
  * @invar This RoundedPolygon's vertices are not {@code null}
  *    | this.getVertices() != null && 
  *    | Arrays.stream(this.getVertices()).allMatch(e -> e != null)
+ * @invar This RoundedPolygon stores a proper polygon.
+ *    | PointArrays.checkDefinesProperPolygon(this.getVertices()) == null
  */
 public class RoundedPolygon {
 	
@@ -19,6 +21,7 @@ public class RoundedPolygon {
 	 * @invar | 0 <= radius
 	 * @invar | vertices != null
 	 * @invar | Arrays.stream(vertices).allMatch(e -> e != null)
+	 * @invar | PointArrays.checkDefinesProperPolygon(vertices) == null
 	 * 
 	 * @representationObject
 	 */
@@ -26,13 +29,13 @@ public class RoundedPolygon {
 	private int radius;
 	
 	/**
-	 * Initializes an unrounded (radius 0) and empty (no intial vertices) polygon.
+	 * Initializes an unrounded (radius 0) and empty (no initial vertices) polygon.
 	 * 
 	 * @mutates | this
 	 * 
-	 * @post This RoundedPolygon will initially not contain any vertices.
+	 * @post This RoundedPolygon initially contains no vertices.
 	 *    | this.getVertices().length == 0
-	 * @post This RoundedPolygon will initially have a radius of 0.
+	 * @post This RoundedPolygon initially has a radius of 0.
 	 *    | this.getRadius() == 0
 	 */
 	public RoundedPolygon() {
@@ -66,6 +69,10 @@ public class RoundedPolygon {
 			IntPoint p1 = vertices[i];
 			IntPoint p2 = vertices[j];
 			
+			if (point.equals(p1) || point.equals(p2)) {
+				return true;
+			}
+			
 			if ((point.getY() > p1.getY()) == point.getY() > p2.getY()) {
 				continue;
 			}
@@ -92,6 +99,9 @@ public class RoundedPolygon {
 	 * @throws IllegalArgumentException if argument {@code index} is not between 0 (inclusive)
 	 *         and the current amount of vertices in this polygon (exclusive).
 	 *    | !(0 <= index && index < this.getVertices().length)
+	 * @throws IllegalArgumentException if the new state of this polygon is not proper.
+	 *    | PointArrays.checkDefinesProperPolygon(
+	 *    |     PointArrays.update(this.getVertices(), index, point)) != null
 	 * 
 	 * @post The amount of vertices of this polygon remains unchanged.
 	 *    | this.getVertices().length == old(this.getVertices()).length
@@ -109,7 +119,14 @@ public class RoundedPolygon {
 			throw new IllegalArgumentException("invalid index");
 		}
 		
-		vertices = PointArrays.update(vertices, index, point);
+		IntPoint[] newVertices = PointArrays.update(vertices, index, point);
+		String properCheck = PointArrays.checkDefinesProperPolygon(newVertices);
+		
+		if (properCheck != null) {
+			throw new IllegalArgumentException("new vertices do not define a proper polygon: " + properCheck);
+		}
+		
+		vertices = newVertices;
 	}
 	
 	/**
@@ -122,6 +139,9 @@ public class RoundedPolygon {
 	 * @throws IllegalArgumentException if argument {@code index} is not between 0 (inclusive)
 	 *         and the current amount of vertices in this polygon (inclusive).
 	 *    | !(0 <= index && index <= this.getVertices().length)
+	 * @throws IllegalArgumentException if the new state of this polygon is not proper.
+	 *    | PointArrays.checkDefinesProperPolygon(
+	 *    |     PointArrays.insert(this.getVertices(), index, point)) != null
 	 * 
 	 * @post The amount of vertices of this polygon is increased by 1.
 	 *    | this.getVertices().length == old(this.getVertices()).length + 1
@@ -142,7 +162,14 @@ public class RoundedPolygon {
 			throw new IllegalArgumentException("invalid index");
 		}
 		
-		vertices = PointArrays.insert(vertices, index, point);
+		IntPoint[] newVertices = PointArrays.insert(vertices, index, point);
+		String properCheck = PointArrays.checkDefinesProperPolygon(newVertices);
+		
+		if (properCheck != null) {
+			throw new IllegalArgumentException("new vertices do not define a proper polygon: " + properCheck);
+		}
+		
+		vertices = newVertices;
 	}
 
 	/**
@@ -168,7 +195,14 @@ public class RoundedPolygon {
 			throw new IllegalArgumentException("invalid index");
 		}
 		
-		vertices = PointArrays.remove(vertices, index);
+		IntPoint[] newVertices = PointArrays.remove(vertices, index);
+		String properCheck = PointArrays.checkDefinesProperPolygon(newVertices);
+		
+		if (properCheck != null) {
+			throw new IllegalArgumentException("new vertices do not define a proper polygon: " + properCheck);
+		}
+		
+		vertices = newVertices;
 	}
 	
 	/**
@@ -256,8 +290,7 @@ public class RoundedPolygon {
 	 * 
 	 * @mutates | this
 	 * 
-	 * @throws IllegalArgumentException
-	 *      The given radius is negative.
+	 * @throws IllegalArgumentException if argument {@code newRadius} is negative.
 	 *    | newRadius < 0
 	 * 
 	 * @post This polygon's corner radius is equal to the given radius.
@@ -291,8 +324,10 @@ public class RoundedPolygon {
 	 * @mutates | this
 	 * @inspects | newVertices
 	 * 
-	 * @throws IllegalArgumentException
-	 *      The given vertices do not define a proper polygon.
+	 * @throws IllegalArgumentException if argument {@code newVertices} or one its elements is {@code null}.
+	 *    | newVertices == null || 
+	 *    | Arrays.stream(newVertices).anyMatch(e -> e == null)
+	 * @throws IllegalArgumentException if {@code newVertices} do not define a proper polygon.
 	 *    | PointArrays.checkDefinesProperPolygon(newVertices) != null
 	 * 
 	 * @post This polygon's vertices are equal to the elements of {@code newVertices}.
@@ -300,6 +335,9 @@ public class RoundedPolygon {
 	 *    |     this.getVertices()[i].equals(newVertices[i]))
 	 */
 	public void setVertices(IntPoint[] newVertices) {
+		if (newVertices == null || Arrays.stream(newVertices).anyMatch(e -> e == null)) {
+			throw new IllegalArgumentException("given vertices or one of its elements is null");
+		}
 		String polygonError = PointArrays.checkDefinesProperPolygon(newVertices);
 		if (polygonError != null) {
 			throw new IllegalArgumentException(polygonError);
