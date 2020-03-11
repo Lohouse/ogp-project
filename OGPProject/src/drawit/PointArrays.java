@@ -19,25 +19,26 @@ public class PointArrays {
 	 * 
 	 * @post 
 	 *      The result is {@code null} if the elements of {@code points} define a proper polygon. 
-	 *      The result is a {@code String} if {@code points} contains less than 3 vertices, or if 2 vertices coincide, 
+	 *      The result is a {@code String} if {@code points} contains exactly 2 vertices, or if 2 vertices coincide, 
 	 *      or if a vertex lies on an edge, or if 2 edges intersect.
-	 *    | points.length < 3 || 
+	 *    | points.length == 2 || 
 	 *    | IntStream.range(0, points.length).anyMatch(i -> 
-	 *    |     IntStream.range(0, points.length).anyMatch(x -> 
-	 *    |         (i != x &&
-	 *    |         (points[i].equals(points[x]) ||
-	 *    |         IntPoint.lineSegmentsIntersect(points[i], points[(i + 1) % points.length], points[x], points[(x + 1) % points.length]))) ||
-	 *    |         (i != (x + 1) % points.length &&
-	 *    |         ((points[x].getY() == points[(x + 1) % points.length].getY() && (points[i].getY() == points[x].getY() && ((points[i].getX() > points[x].getX() && points[i].getX() < points[(x + 1) % points.length].getX()) || (points[i].getX() > points[(x + 1) % points.length].getX() && points[i].getX() < points[x].getX())))) || 
-	 *    |         (((points[i].getY() > points[x].getY() && points[i].getY() < points[(x + 1) % points.length].getY()) || (points[i].getY() > points[(x + 1) % points.length].getY() && points[i].getY() < points[x].getY())) && (points[i].getX() == points[x].getX() + (points[(x + 1) % points.length].getX() - points[x].getX()) * (points[i].getY() - points[x].getY()) / (points[(x + 1) % points.length].getY() - points[x].getY())))))
+	 *    |		IntStream.range(0, points.length).anyMatch(x -> 
+	 *    | 		i != x && ((points[i].equals(points[(i + 1) % points.length]) || (i != x && points[i].equals(points[x])) ||
+	 *    | 		(i != (x + 1) % points.length && points[i].equals(points[(x + 1) % points.length])) || 
+	 *    |			points[x].equals(points[(x + 1) % points.length]) || ((i + 1) % points.length != x && points[(i + 1) % points.length].equals(points[x])) ||
+	 *    |			((i + 1) % points.length != (x + 1) % points.length && points[(i + 1) % points.length].equals(points[(x + 1) % points.length]))) ||
+	 *    |			(points[i].isOnLineSegment(points[x], points[(x + 1) % points.length]) || points[(i + 1) % points.length].isOnLineSegment(points[x], points[(x + 1) % points.length]) ||
+	 *    |			points[x].isOnLineSegment(points[i], points[(i + 1) % points.length]) || points[(x + 1) % points.length].isOnLineSegment(points[i], points[(i + 1) % points.length])) ||
+	 *    |			IntPoint.lineSegmentsIntersect(points[i], points[(i + 1) % points.length], points[x], points[(x + 1) % points.length]))
 	 *    |     )
 	 *    | ) ?
 	 *    | 	result instanceof String : 
 	 *    | 	result == null
 	 */
 	public static String checkDefinesProperPolygon(IntPoint[] points) {
-		if (points.length < 3) {
-			return "Less than 3 vertices";
+		if (points.length == 2) {
+			return "2 vertices do not define a proper polygon";
 		}
 		
 		for (int i = 0; i < points.length; i++) {
@@ -52,35 +53,48 @@ public class PointArrays {
 				
 				int y = (x + 1) % points.length;
 				IntPoint pA = points[x];
-				IntPoint pB = points[y];			
+				IntPoint pB = points[y];				
 				
-				if (p1.equals(pA)) {
-					return "Vertices at index " + i + " and " + x + " coincide: (" + points[i].getX() + ", " + points[i].getY() + ")";
+				if (p1.equals(p2)) {
+					return "Vertices at index " + i + " and " + j + " coincide: (" + p1.getX() + ", " + p1.getY() + ")";
+				}
+				if (i != x && p1.equals(pA)) {
+					return "Vertices at index " + i + " and " + x + " coincide: (" + p1.getX() + ", " + p1.getY() + ")";					
+				}
+				if (i != y && p1.equals(pB)) {
+					return "Vertices at index " + i + " and " + y + " coincide: (" + p1.getX() + ", " + p1.getY() + ")";					
+				}
+				if (pA.equals(pB)) {
+					return "Vertices at index " + x + " and " + y + " coincide: (" + pA.getX() + ", " + pA.getY() + ")";					
+				}
+				if (j != x && p2.equals(pA)) {
+					return "Vertices at index " + j + " and " + x + " coincide: (" + pA.getX() + ", " + pA.getY() + ")";						
+				}
+				if (j != y && p2.equals(pB)) {
+					return "Vertices at index " + j + " and " + y + " coincide: (" + pB.getX() + ", " + pB.getY() + ")";						
+				}
+				
+				if (p1.isOnLineSegment(pA, pB)) {
+					return "Vertex (" + p1.getX() + ", " + p1.getY() + ") at index " + i + " lies on edge from (" + pA.getX() + 
+							", " + pA.getY() + ") at index " + x + " to (" + pB.getX() + ", " + pB.getY() + ") at index " + y;
+				}
+				if (p2.isOnLineSegment(pA, pB)) {
+					return "Vertex (" + p2.getX() + ", " + p2.getY() + ") at index " + j + " lies on edge from (" + pA.getX() + 
+							", " + pA.getY() + ") at index " + x + " to (" + pB.getX() + ", " + pB.getY() + ") at index " + y;
+				}
+				if (pA.isOnLineSegment(p1, p2)) {
+					return "Vertex (" + pA.getX() + ", " + pA.getY() + ") at index " + x + " lies on edge from (" + p1.getX() + 
+							", " + p1.getY() + ") at index " + i + " to (" + p2.getX() + ", " + p2.getY() + ") at index " + j;
+				}
+				if (pB.isOnLineSegment(p1, p2)) {
+					return "Vertex (" + pB.getX() + ", " + pB.getY() + ") at index " + y + " lies on edge from (" + p1.getX() + 
+							", " + p1.getY() + ") at index " + i + " to (" + p2.getX() + ", " + p2.getY() + ") at index " + j;
 				}
 				
 				if (IntPoint.lineSegmentsIntersect(p1, p2, pA, pB)) {
 					return "Edge from (" + p1.getX() + ", " + p1.getY() + ") at index " + i + " to (" + p2.getX() + ", " + p2.getY() + ") at index " + j
 							+ " intersects with edge from (" + pA.getX() + ", " + pA.getY() + ") at index " + x + " to (" + pB.getX() + ", " + pB.getY() + ") at index " + y;
 				}
-				
-				if (i == y) {
-					continue;
-				}
-				
-				if (pA.getY() == pB.getY()) {
-					if (p1.getY() == pA.getY() && ((p1.getX() > pA.getX() && p1.getX() < pB.getX())
-							|| (p1.getX() > pB.getX() && p1.getX() < pA.getX()))) {
-						return "Vertex (" + p1.getX() + ", " + p1.getY() + ") at index " + i + " lies on edge from (" + pA.getX() 
-						+ ", " + pA.getY() + ") at index " + x + " to (" + pB.getX() + ", " + pB.getY() + ") at index " + y;
-					}
-				} else if ((p1.getY() > pA.getY() && p1.getY() < pB.getY())
-							|| (p1.getY() > pB.getY() && p1.getY() < pA.getY())){
-					int intersectX = pA.getX() + (pB.getX() - pA.getX()) * (p1.getY() - pA.getY()) / (pB.getY() - pA.getY());
-					if (p1.getX() == intersectX) {
-						return "Vertex (" + p1.getX() + ", " + p1.getY() + ") at index " + i + " lies on edge from (" + pA.getX() 
-								+ ", " + pA.getY() + ") at index " + x + " to (" + pB.getX() + ", " + pB.getY() + ") at index " + y;
-					}				
-				}			
 			}
 		}
 		
