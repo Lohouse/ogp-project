@@ -233,7 +233,7 @@ class DrawItTest {
 		assert polygon1.getVertices().length == 0;
 		assert polygon2.getVertices().length == 0;
 		assert PointArrays.checkDefinesProperPolygon(polygon1.getVertices()) == null;
-		assert PointArrays.checkDefinesProperPolygon(polygon1.getVertices()) == null;
+		assert PointArrays.checkDefinesProperPolygon(polygon2.getVertices()) == null;
 		assert polygon1.getRadius() == 0;
 		assert polygon2.getRadius() == 0;
 		
