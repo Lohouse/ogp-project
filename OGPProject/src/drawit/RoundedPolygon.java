@@ -1,5 +1,6 @@
 package drawit;
 
+import java.awt.Color;
 import java.util.Arrays;
 import java.util.stream.IntStream;
 
@@ -14,6 +15,8 @@ import java.util.stream.IntStream;
  *    | Arrays.stream(this.getVertices()).allMatch(e -> e != null)
  * @invar This RoundedPolygon stores a proper polygon.
  *    | PointArrays.checkDefinesProperPolygon(this.getVertices()) == null
+ * @invar This RoundedPolygon's color is not null.
+ *    | this.getColor() != null
  */
 public class RoundedPolygon {
 	
@@ -22,11 +25,13 @@ public class RoundedPolygon {
 	 * @invar | vertices != null
 	 * @invar | Arrays.stream(vertices).allMatch(e -> e != null)
 	 * @invar | PointArrays.checkDefinesProperPolygon(vertices) == null
+	 * @invar | color != null
 	 * 
 	 * @representationObject
 	 */
 	private IntPoint[] vertices;
 	private int radius;
+	private Color color;
 	
 	/**
 	 * Initializes an unrounded (radius 0) and empty (no initial vertices) polygon.
@@ -37,10 +42,13 @@ public class RoundedPolygon {
 	 *    | this.getVertices().length == 0
 	 * @post This RoundedPolygon initially has a radius of 0.
 	 *    | this.getRadius() == 0
+	 * @post This RoundedPolygon initially has a white color.
+	 *    | this.getColor() == Color.WHITE
 	 */
 	public RoundedPolygon() {
 		vertices = new IntPoint[]{};
 		radius = 0;
+		color = Color.WHITE;
 	}
 	
 	/** 
@@ -272,7 +280,10 @@ public class RoundedPolygon {
 			commands += bc + "line " + bcCutPoint.getX() + " " + bcCutPoint.getY();
 
 		}
-		return commands.substring(commands.lastIndexOf(bc) + 1, commands.length()) + commands.substring(0, commands.lastIndexOf(bc));
+		
+		commands = commands.substring(commands.lastIndexOf(bc) + 1, commands.length()) + commands.substring(0, commands.lastIndexOf(bc));
+		commands += bc + "fill " + color.getRed() + " " + color.getGreen() + " " + color.getBlue();
+		return commands;
 	}
 	
 	/**
@@ -344,5 +355,34 @@ public class RoundedPolygon {
 		}
 		
 		vertices = newVertices.clone();
+	}
+	
+	/**
+	 * Returns the color of this polygon.
+	 * 
+	 * @post The result is not {@code null}
+	 *    | result != null
+	 */
+	public Color getColor() {
+		return color;
+	}
+	
+	/**
+	 * Sets the color of this rounded polygon to the given color.
+	 * 
+	 * @mutates | this
+	 * 
+	 * @throws IllegalArgumentException if argument {@code color} is {@code null}.
+	 *    | color == null
+	 * 
+	 * @post This polygon's color is equal to {@code color}.
+	 *    | this.getColor() == color
+	 */
+	public void setColor(Color color) {
+		if (color == null) {
+			throw new IllegalArgumentException("given color is null");
+		}
+		
+		this.color = color;
 	}
 }
