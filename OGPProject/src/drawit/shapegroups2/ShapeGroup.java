@@ -236,7 +236,7 @@ public class ShapeGroup {
 		return subgroupsList;
 	}
 	
-	public ShapeGroup getParentShapegroup() {
+	public ShapeGroup getParentGroup() {
 		return parentShapegroup;
 	}
 	

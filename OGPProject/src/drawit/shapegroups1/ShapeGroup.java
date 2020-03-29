@@ -83,7 +83,8 @@ public class ShapeGroup {
 			
 			if (subgroup.getExtent().getTop() < top) {
 				top = subgroup.getExtent().getTop();
-			} else if (subgroup.getExtent().getBottom() > bottom) {
+			}
+			if (subgroup.getExtent().getBottom() > bottom) {
 				bottom = subgroup.getExtent().getBottom();
 			}
 		}
@@ -180,7 +181,7 @@ public class ShapeGroup {
 		return subgroups;
 	}
 	
-	public ShapeGroup getParentShapegroup() {
+	public ShapeGroup getParentGroup() {
 		return parentShapegroup;
 	}
 	
