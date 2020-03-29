@@ -2,6 +2,11 @@ package drawit.shapegroups2;
 
 import drawit.IntPoint;
 
+//TODO: Immutable object?
+/**
+ * Each instance of this class represents a nonempty rectangular area in a 2D coordinate system, 
+ * whose edges are parallel to the coordinate axes.
+ */
 public class Extent {
 	
 	private int left;
@@ -49,6 +54,10 @@ public class Extent {
 	}
 	
 	public boolean contains(IntPoint point) {
+		if (point == null) {
+			throw new IllegalArgumentException("argument point is null");
+		}
+		
 		int x = point.getX();
 		int y = point.getY();
 		
