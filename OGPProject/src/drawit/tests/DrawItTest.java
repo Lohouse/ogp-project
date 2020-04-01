@@ -1,5 +1,7 @@
 package drawit.tests;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
+
 import java.util.Arrays;
 
 import org.junit.jupiter.api.Test;
@@ -10,6 +12,8 @@ import drawit.IntPoint;
 import drawit.IntVector;
 import drawit.PointArrays;
 import drawit.RoundedPolygon;
+import drawit.shapegroups1.Extent;
+import drawit.shapegroups1.ShapeGroup;
 
 class DrawItTest {
 
@@ -409,7 +413,8 @@ class DrawItTest {
 				"line 100.0 100.0 200.0 100.0\n" + 
 				"line 200.0 100.0 200.0 200.0\n" + 
 				"line 200.0 200.0 100.0 200.0\n" + 
-				"line 100.0 200.0 100.0 100.0");
+				"line 100.0 200.0 100.0 100.0\n" +
+				"fill 255 255 255");
 		polygon3.setRadius(10);
 		assert polygon3.getDrawingCommands().equals(
 				"line 110.0 100.0 190.0 100.0\n" + 
@@ -419,14 +424,16 @@ class DrawItTest {
 				"line 190.0 200.0 110.0 200.0\n" + 
 				"arc 110.0 190.0 10.0 1.5707963267948966 1.5707963267948966\n" + 
 				"line 100.0 190.0 100.0 110.0\n" + 
-				"arc 110.0 110.0 10.0 3.141592653589793 1.5707963267948966");
+				"arc 110.0 110.0 10.0 3.141592653589793 1.5707963267948966\n" + 
+				"fill 255 255 255");
 		assert polygon1.getDrawingCommands().equals(
 				"line 2.3724203629159777 1.6945859735114128 3.644890947114124 2.6034935336529457\n" + 
 				"arc 4.527252921402365 1.3681867696494092 1.5180729412194702 2.1910458127777184 -2.4360244759045826\n" + 
 				"line 6.0 1.0 5.707106781186548 -0.1715728752538097\n" + 
 				"arc 3.6114106887179966 0.3523511478633279 2.160194087110508 -0.24497866312686406 -1.8662371639386166\n" + 
 				"line 2.5 -1.5 2.5 -1.5\n" + 
-				"arc 3.4834699396501465 0.13911656608357686 1.911521969375471 -2.111215827065481 -1.9809236673363877");
+				"arc 3.4834699396501465 0.13911656608357686 1.911521969375471 -2.111215827065481 -1.9809236673363877\n" + 
+				"fill 255 255 255");
 		assert polygon2.getDrawingCommands().equals(
 				"line 0.0 5.0 3.0 10.0\n" + 
 				"line 3.0 10.0 6.0 5.0\n" + 
@@ -439,6 +446,32 @@ class DrawItTest {
 				"line 18.0 1.0 20.0 -1.0\n" + 
 				"line 20.0 -1.0 18.0 -3.0\n" + 
 				"line 18.0 -3.0 -1.0 -2.0\n" + 
-				"line -1.0 -2.0 0.0 5.0");		
+				"line -1.0 -2.0 0.0 5.0\n" +
+				"fill 255 255 255");
+	}
+	
+	@Test
+	void testShapeGroup() {
+		RoundedPolygon triangle = new RoundedPolygon();
+		triangle.setVertices(new IntPoint[] {new IntPoint(10, 10), new IntPoint(30, 10), new IntPoint(20, 20)});
+
+		ShapeGroup leaf = new ShapeGroup(triangle);
+		assert leaf.getExtent().getTopLeft().equals(new IntPoint(10, 10)) && leaf.getExtent().getBottomRight().equals(new IntPoint(30, 20));
+		leaf.setExtent(Extent.ofLeftTopWidthHeight(0, 0, 20, 10));
+		assert leaf.getOriginalExtent().getTopLeft().equals(new IntPoint(10, 10)) && leaf.getOriginalExtent().getBottomRight().equals(new IntPoint(30, 20));
+		assert leaf.getExtent().getTopLeft().equals(new IntPoint(0, 0)) && leaf.getExtent().getBottomRight().equals(new IntPoint(20, 10));
+
+		// For simplicity, we here ignore the constraint that a non-leaf ShapeGroup shall have at least two subgroups.
+		ShapeGroup nonLeaf = new ShapeGroup(new ShapeGroup[] {leaf, leaf});
+		assert nonLeaf.getExtent().getTopLeft().equals(new IntPoint(0, 0)) && nonLeaf.getExtent().getBottomRight().equals(new IntPoint(20, 10));
+		nonLeaf.setExtent(Extent.ofLeftTopWidthHeight(0, 0, 10, 5));
+		
+		leaf.setExtent(Extent.ofLeftTopWidthHeight(1000, 2000, 20, 10));
+		assert leaf.getOriginalExtent().getTopLeft().equals(new IntPoint(10, 10)) && leaf.getOriginalExtent().getBottomRight().equals(new IntPoint(30, 20));
+		assert leaf.getExtent().getTopLeft().equals(new IntPoint(1000, 2000)) && leaf.getExtent().getBottomRight().equals(new IntPoint(1020, 2010));
+		assert nonLeaf.getOriginalExtent().getTopLeft().equals(new IntPoint(0, 0)) && nonLeaf.getOriginalExtent().getBottomRight().equals(new IntPoint(20, 10));
+		assert nonLeaf.getExtent().getTopLeft().equals(new IntPoint(0, 0)) && nonLeaf.getExtent().getBottomRight().equals(new IntPoint(10, 5));
+		assert leaf.toInnerCoordinates(new IntPoint(500, 1000)).equals(new IntPoint(10, 10));
+		assert leaf.toGlobalCoordinates(new IntPoint(10, 10)).equals(new IntPoint(500, 1000));
 	}
 }

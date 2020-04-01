@@ -24,8 +24,10 @@ public class ShapeGroup {
 	private ShapeGroup nextShapegroup;
 	private ShapeGroup previousShapegroup;
 	private Extent extent;
+	private Extent originalExtent;
 	
 	// What if this polygon already is in a subgroup ?
+	// Throw exception if subgroups contains the same instance twice?
 	public ShapeGroup(RoundedPolygon shape) {
 		if (shape == null) {
 			throw new IllegalArgumentException("argument shape is null");
@@ -50,7 +52,7 @@ public class ShapeGroup {
 			}
 		}
 		
-		this.extent = Extent.ofLeftTopRightBottom(left, top, right, bottom);
+		this.extent = this.originalExtent = Extent.ofLeftTopRightBottom(left, top, right, bottom);
 		this.shape = shape;
 		this.firstChildShapegroup = null;
 		this.nextShapegroup = null;
@@ -95,7 +97,7 @@ public class ShapeGroup {
 			}
 		}
 		
-		this.extent = Extent.ofLeftTopRightBottom(left, top, right, bottom);
+		this.extent = this.originalExtent = Extent.ofLeftTopRightBottom(left, top, right, bottom);
 		this.shape = null;
 		this.firstChildShapegroup = subgroups[0];
 		this.nextShapegroup = null;
@@ -105,7 +107,7 @@ public class ShapeGroup {
 	
 	public void bringToFront() {
 		if (parentShapegroup == null) {
-			throw new IllegalStateException("this shape group is not part of a parent shape group");
+			throw new IllegalStateException("this shape group is not part of a parent group");
 		}
 		
 		if (parentShapegroup.firstChildShapegroup == this) {
@@ -126,7 +128,7 @@ public class ShapeGroup {
 	
 	public void sendToBack() {
 		if (parentShapegroup == null) {
-			throw new IllegalStateException("this shape group is not part of a parent shape group");
+			throw new IllegalStateException("this shape group is not part of a parent group");
 		}
 		
 		if (parentShapegroup.firstChildShapegroup.previousShapegroup == this) {
@@ -241,7 +243,7 @@ public class ShapeGroup {
 	}
 	
 	public Extent getOriginalExtent() {
-		return Extent.ofLeftTopWidthHeight(0, 0, getExtent().getRight() - getExtent().getLeft(), getExtent().getBottom() - getExtent().getTop());
+		return originalExtent;
 	}
 	
 	public Extent getExtent() {
