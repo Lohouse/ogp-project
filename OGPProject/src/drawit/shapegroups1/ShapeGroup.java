@@ -3,11 +3,14 @@ package drawit.shapegroups1;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.IntStream;
 
 import drawit.IntPoint;
 import drawit.IntVector;
 import drawit.RoundedPolygon;
+import logicalcollections.LogicalMap;
+import logicalcollections.LogicalSet;
 
 /**
  * Each instance of this class represents a shape group. A shape group is either a leaf group,
@@ -155,7 +158,7 @@ public class ShapeGroup {
 		parentShapegroup.subgroups.remove(this);
 		parentShapegroup.subgroups.add(this);
 	}
-
+	
 	/**
 	 * Returns the coordinates in the global coordinate system of the point whose coordinates
 	 * in this shape group's inner coordinate system are the given coordinates.
@@ -255,6 +258,12 @@ public class ShapeGroup {
 	
 	/**
 	 * Returns the subgroup at the given (zero-based) index in this non-leaf shape group's list of subgroups.
+	 * 
+	 * @throws IllegalArgumentException if the given index is smaller than zero or greater than or equal to the amount of subgroups.
+	 *    | index < 0 || index >= this.getSubgroupCount()
+	 * 
+	 * @post The result is the subgroup at the given index.
+	 * 	  | result.equals(getSubgroups().get(index)) == true
 	 */
 	public ShapeGroup getSubgroup(int index) {
 		if (index < 0 || index >= getSubgroupCount()) {
@@ -268,6 +277,17 @@ public class ShapeGroup {
 	/**
 	 * Return the first subgroup in this non-leaf shape group's list of subgroups whose extent contains the given point,
 	 * expressed in this shape group's inner coordinate system.
+	 * 
+	 * @throws IllegalArgumentException if argument {@code innerCoordinates} is {@code null}.
+	 *    | innerCoordinates == null
+	 *    
+	 * @throws IllegalStateException if argument {@code innerCoordinates} is not contained within a subgroup.
+	 * 	  | Arrays.stream(this.getSubgroups().toArray(new ShapeGroup[getSubgroupCount()]))
+	 * 	  |		.filter(subgroup -> subgroup.getOriginalExtent().contains(innerCoordinates)).findFirst().orElse(null) == null
+	 *    
+	 * @post The result equals the first subgroup whose extent contains the given point.
+	 * 	  | result.equals(Arrays.stream(this.getSubgroups().toArray(new ShapeGroup[getSubgroupCount()]))
+	 * 	  |		.filter(subgroup -> subgroup.getOriginalExtent().contains(innerCoordinates)).findFirst().get())
 	 */
 	public ShapeGroup getSubgroupAt(IntPoint innerCoordinates) {
 		if (innerCoordinates == null) {
@@ -288,6 +308,9 @@ public class ShapeGroup {
 	 * 
 	 * @throws IllegalStateException if this ShapeGroup is a leaf shape group.
 	 *    | this.getSubgroups() == null
+	 *    
+	 * @post The result equals the amount of subgroups.
+	 * 	  | result == getSubgroups().size()
 	 */
 	public int getSubgroupCount() {
 		List<ShapeGroup> subGroups = getSubgroups();
