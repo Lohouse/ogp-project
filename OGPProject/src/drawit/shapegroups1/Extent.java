@@ -2,17 +2,28 @@ package drawit.shapegroups1;
 
 import drawit.IntPoint;
 
-//TODO: Immutable object?
 /**
  * Each instance of this class represents a nonempty rectangular area in a 2D coordinate system, 
  * whose edges are parallel to the coordinate axes.
+ * 
+ * @immutable
+ * @invar This objects left coordinate is smaller than the right coordinate
+ *    | getLeft() < getRight()
+ * @invar This objects top coordinate is smaller than the bottom coordinate
+ *    | getTop() < getBottom()
+ * @invar This objects width and height are greater than zero
+ *    | getWidth > 0 && getHeight() > 0
  */
 public class Extent {
-	
-	private int left;
-	private int top;
-	private int right;
-	private int bottom;
+
+	 /**
+     * @invar | left < right
+     * @invar | top < bottom
+     */
+	private final int left;
+	private final int top;
+	private final int right;
+	private final int bottom;
 	
 	private Extent(int left, int top, int right, int bottom) {
 		this.left = left;
