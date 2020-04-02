@@ -451,6 +451,165 @@ class DrawItTest {
 	}
 	
 	@Test
+	void testExtent() {
+		// Extent: Static factory methods and getters tests
+		drawit.shapegroups1.Extent extent1 = drawit.shapegroups1.Extent.ofLeftTopRightBottom(5, 2, 10, 10);
+		drawit.shapegroups2.Extent extent2 = drawit.shapegroups2.Extent.ofLeftTopRightBottom(5, 2, 10, 10);
+		drawit.shapegroups1.Extent extent3 = drawit.shapegroups1.Extent.ofLeftTopWidthHeight(1, 8, 3, 11);
+		drawit.shapegroups2.Extent extent4 = drawit.shapegroups2.Extent.ofLeftTopWidthHeight(1, 8, 3, 11);
+		
+		assert extent1.getLeft() == 5;
+		assert extent1.getTop() == 2;
+		assert extent1.getRight() == 10;
+		assert extent1.getBottom() == 10;
+		assert extent1.getWidth() == 10-5;
+		assert extent1.getHeight() == 10-2;
+		
+		assert extent2.getLeft() == 5;
+		assert extent2.getTop() == 2;
+		assert extent2.getRight() == 10;
+		assert extent2.getBottom() == 10;
+		assert extent2.getWidth() == 10-5;
+		assert extent2.getHeight() == 10-2;
+		
+		assert extent3.getLeft() == 1;
+		assert extent3.getTop() == 8;
+		assert extent3.getRight() == 1+3;
+		assert extent3.getBottom() == 8+11;
+		assert extent3.getWidth() == 3;
+		assert extent3.getHeight() == 11;
+		
+		assert extent4.getLeft() == 1;
+		assert extent4.getTop() == 8;
+		assert extent4.getRight() == 1+3;
+		assert extent4.getBottom() == 8+11;
+		assert extent4.getWidth() == 3;
+		assert extent4.getHeight() == 11;
+		
+		drawit.shapegroups1.Extent extent5 = extent1.withLeft(4);
+		drawit.shapegroups1.Extent extent6 = extent1.withTop(9);
+		drawit.shapegroups1.Extent extent7 = extent1.withRight(6);
+		drawit.shapegroups1.Extent extent8 = extent1.withBottom(21);
+		drawit.shapegroups1.Extent extent9 = extent1.withWidth(7);
+		drawit.shapegroups1.Extent extent10 = extent1.withHeight(1);
+		drawit.shapegroups2.Extent extent11 = extent2.withLeft(4);
+		drawit.shapegroups2.Extent extent12 = extent2.withTop(9);
+		drawit.shapegroups2.Extent extent13 = extent2.withRight(6);
+		drawit.shapegroups2.Extent extent14 = extent2.withBottom(21);
+		drawit.shapegroups2.Extent extent15 = extent2.withWidth(7);
+		drawit.shapegroups2.Extent extent16 = extent2.withHeight(1);
+		
+		assert extent5.getLeft() == 4;
+		assert extent5.getTop() == 2;
+		assert extent5.getRight() == 10;
+		assert extent5.getBottom() == 10;
+		assert extent5.getWidth() == 10-4;
+		assert extent5.getHeight() == 10-2;
+		assert extent11.getLeft() == 4;
+		assert extent11.getTop() == 2;
+		assert extent11.getRight() == 10;
+		assert extent11.getBottom() == 10;
+		assert extent11.getWidth() == 10-4;
+		assert extent11.getHeight() == 10-2;
+		
+		assert extent6.getLeft() == 5;
+		assert extent6.getTop() == 9;
+		assert extent6.getRight() == 10;
+		assert extent6.getBottom() == 10;
+		assert extent6.getWidth() == 10-5;
+		assert extent6.getHeight() == 10-9;
+		assert extent12.getLeft() == 5;
+		assert extent12.getTop() == 9;
+		assert extent12.getRight() == 10;
+		assert extent12.getBottom() == 10;
+		assert extent12.getWidth() == 10-5;
+		assert extent12.getHeight() == 10-9;
+		
+		assert extent7.getLeft() == 5;
+		assert extent7.getTop() == 2;
+		assert extent7.getRight() == 6;
+		assert extent7.getBottom() == 10;
+		assert extent7.getWidth() == 6-5;
+		assert extent7.getHeight() == 10-2;
+		assert extent13.getLeft() == 5;
+		assert extent13.getTop() == 2;
+		assert extent13.getRight() == 6;
+		assert extent13.getBottom() == 10;
+		assert extent13.getWidth() == 6-5;
+		assert extent13.getHeight() == 10-2;
+		
+		assert extent8.getLeft() == 5;
+		assert extent8.getTop() == 2;
+		assert extent8.getRight() == 10;
+		assert extent8.getBottom() == 21;
+		assert extent8.getWidth() == 10-5;
+		assert extent8.getHeight() == 21-2;
+		assert extent14.getLeft() == 5;
+		assert extent14.getTop() == 2;
+		assert extent14.getRight() == 10;
+		assert extent14.getBottom() == 21;
+		assert extent14.getWidth() == 10-5;
+		assert extent14.getHeight() == 21-2;
+		
+		assert extent9.getLeft() == 5;
+		assert extent9.getTop() == 2;
+		assert extent9.getRight() == 12;
+		assert extent9.getBottom() == 10;
+		assert extent9.getWidth() == 12-5;
+		assert extent9.getHeight() == 10-2;
+		assert extent15.getLeft() == 5;
+		assert extent15.getTop() == 2;
+		assert extent15.getRight() == 12;
+		assert extent15.getBottom() == 10;
+		assert extent15.getWidth() == 12-5;
+		assert extent15.getHeight() == 10-2;
+		
+		assert extent10.getLeft() == 5;
+		assert extent10.getTop() == 2;
+		assert extent10.getRight() == 10;
+		assert extent10.getBottom() == 3;
+		assert extent10.getWidth() == 10-5;
+		assert extent10.getHeight() == 3-2;
+		assert extent16.getLeft() == 5;
+		assert extent16.getTop() == 2;
+		assert extent16.getRight() == 10;
+		assert extent16.getBottom() == 3;
+		assert extent16.getWidth() == 10-5;
+		assert extent16.getHeight() == 3-2;
+		
+		// Extent: getTopLeft, getBottomRight, contains tests
+		IntPoint extentIntPoint1 = extent1.getTopLeft();
+		IntPoint extentIntPoint2 = extent1.getBottomRight();
+		IntPoint extentIntPoint3 = extent2.getTopLeft();
+		IntPoint extentIntPoint4 = extent2.getBottomRight();
+		
+		assert extentIntPoint1.getX() == extent1.getLeft();
+		assert extentIntPoint1.getY() == extent1.getTop();
+		assert extentIntPoint2.getX() == extent1.getRight();
+		assert extentIntPoint2.getY() == extent1.getBottom();
+		
+		assert extentIntPoint3.getX() == extent2.getLeft();
+		assert extentIntPoint3.getY() == extent2.getTop();
+		assert extentIntPoint4.getX() == extent2.getRight();
+		assert extentIntPoint4.getY() == extent2.getBottom();
+		
+		IntPoint extentIntPoint5 = new IntPoint(5, 2);
+		IntPoint extentIntPoint6 = new IntPoint(10, 6);
+		IntPoint extentIntPoint7 = new IntPoint(6, 7);
+		IntPoint extentIntPoint8 = new IntPoint(11, 1);
+		
+		assert extent1.contains(extentIntPoint5);
+		assert extent1.contains(extentIntPoint6);
+		assert extent1.contains(extentIntPoint7);
+		assert !extent1.contains(extentIntPoint8);
+		
+		assert extent2.contains(extentIntPoint5);
+		assert extent2.contains(extentIntPoint6);
+		assert extent2.contains(extentIntPoint7);
+		assert !extent2.contains(extentIntPoint8);
+	}
+	
+	@Test
 	void testShapeGroup() {
 		RoundedPolygon triangle = new RoundedPolygon();
 		triangle.setVertices(new IntPoint[] {new IntPoint(10, 10), new IntPoint(30, 10), new IntPoint(20, 20)});

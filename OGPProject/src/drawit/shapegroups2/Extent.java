@@ -184,7 +184,7 @@ public class Extent {
      * 	  | result.getBottom() == this.getBottom()
 	 */
 	public Extent withLeft(int newLeft) {
-		return new Extent(newLeft, top, width, height);
+		return new Extent(newLeft, top, width + (left - newLeft), height);
 	}
 	
 	/**
@@ -203,7 +203,7 @@ public class Extent {
      * 	  | result.getBottom() == this.getBottom()
 	 */
 	public Extent withTop(int newTop) {
-		return new Extent(left, newTop, width, height);
+		return new Extent(left, newTop, width, height + (top - newTop));
 	}
 	
 	/**
