@@ -12,7 +12,7 @@ import drawit.IntPoint;
  * @invar This objects top coordinate is smaller than the bottom coordinate
  *    | getTop() < getBottom()
  * @invar This objects width and height are greater than zero
- *    | getWidth > 0 && getHeight() > 0
+ *    | getWidth() > 0 && getHeight() > 0
  */
 public class Extent {
 
