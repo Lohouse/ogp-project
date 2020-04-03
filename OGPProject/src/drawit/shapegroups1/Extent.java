@@ -130,8 +130,8 @@ public class Extent {
 	/**
 	 * Returns an Extent object with the given left, top, width and height parameters.
 	 * 
-	 * @throws IllegalArgumentException if argument {@code width} or {@code height} is negative.
-     *    | width < 0 || height < 0
+	 * @throws IllegalArgumentException if argument {@code width} or {@code height} is negative or equal to zero.
+     *    | width <= 0 || height <= 0
      *    
      * @post The result is an Extent with given argument {@code left}
      * 	  | result.getLeft() == left
@@ -143,8 +143,8 @@ public class Extent {
      * 	  | result.getHeight() == height
 	 */
 	public static Extent ofLeftTopWidthHeight(int left, int top, int width, int height) {
-		if(width < 0 || height < 0) {
-			throw new IllegalArgumentException("argument width or/and height is negative");
+		if(width <= 0 || height <= 0) {
+			throw new IllegalArgumentException("argument width or/and height is negative or zero");
 		}
 		
 		return new Extent(left, top, left + width, top + height);
@@ -153,10 +153,10 @@ public class Extent {
 	/**
 	 * Returns an Extent object with the given left, top, right and bottom parameters.
 	 * 
-	 * @throws IllegalArgumentException if argument {@code left} is greater than {@code right}.
-     *    | left > right
-	 * @throws IllegalArgumentException if argument {@code top} is greater than {@code bottom}.
-     *    | top > bottom
+	 * @throws IllegalArgumentException if argument {@code left} is greater than or equal to {@code right}.
+     *    | left >= right
+	 * @throws IllegalArgumentException if argument {@code top} is greater than or equal to {@code bottom}.
+     *    | top >= bottom
      *    
      * @post The result is an Extent with given argument {@code left}
      * 	  | result.getLeft() == left
@@ -168,11 +168,11 @@ public class Extent {
      * 	  | result.getBottom() == bottom
 	 */
 	public static Extent ofLeftTopRightBottom(int left, int top, int right, int bottom) {
-		if(left > right) {
-			throw new IllegalArgumentException("argument left is greater than argument right");
+		if(left >= right) {
+			throw new IllegalArgumentException("argument left is greater than or equal to argument right");
 		}
-		if(top > bottom) {
-			throw new IllegalArgumentException("argument top is greater than argument bottom");
+		if(top >= bottom) {
+			throw new IllegalArgumentException("argument top is greater than or equal to argument bottom");
 		}
 		
 		return new Extent(left, top, right, bottom);
@@ -181,8 +181,8 @@ public class Extent {
 	/**
 	 * Returns an object that has the given left coordinate and the same right, top, and bottom coordinate as this object.
 	 * 
-	 * @throws IllegalArgumentException if argument {@code newLeft} is greater than {@code this.getRight()}.
-     *    | newLeft > this.getRight()
+	 * @throws IllegalArgumentException if argument {@code newLeft} is greater than or equal to {@code this.getRight()}.
+     *    | newLeft >= this.getRight()
      *    
      * @post The result is an Extent with given argument {@code newLeft}
      * 	  | result.getLeft() == newLeft
@@ -194,8 +194,8 @@ public class Extent {
      * 	  | result.getBottom() == this.getBottom()
 	 */
 	public Extent withLeft(int newLeft) {
-		if(newLeft > right) {
-			throw new IllegalArgumentException("argument newLeft is greater than this.getRight()");
+		if(newLeft >= right) {
+			throw new IllegalArgumentException("argument newLeft is greater than or equal to this.getRight()");
 		}		
 		
 		return new Extent(newLeft, top, right, bottom);
@@ -204,8 +204,8 @@ public class Extent {
 	/**
 	 * Returns an object that has the given top coordinate and the same left, right, and bottom coordinate as this object.
 	 * 
-	 * @throws IllegalArgumentException if argument {@code newTop} is greater than {@code this.getBottom()}.
-     *    | newTop > this.getBottom()
+	 * @throws IllegalArgumentException if argument {@code newTop} is greater than or equal to {@code this.getBottom()}.
+     *    | newTop >= this.getBottom()
      *    
      * @post The result is an Extent with the same {@code left} as this object
      * 	  | result.getLeft() == this.getLeft()
@@ -217,8 +217,8 @@ public class Extent {
      * 	  | result.getBottom() == this.getBottom()
 	 */
 	public Extent withTop(int newTop) {
-		if(newTop > bottom) {
-			throw new IllegalArgumentException("argument newTop is greater than this.getBottom()");
+		if(newTop >= bottom) {
+			throw new IllegalArgumentException("argument newTop is greater than or equal to this.getBottom()");
 		}		
 		
 		return new Extent(left, newTop, right, bottom);
@@ -227,8 +227,8 @@ public class Extent {
 	/**
 	 * Returns an object that has the given right coordinate and the same left, top, and bottom coordinate as this object.
 	 * 
-	 * @throws IllegalArgumentException if argument {@code newRight} is smaller than {@code this.getLeft()}.
-     *    | newRight < this.getLeft()
+	 * @throws IllegalArgumentException if argument {@code newRight} is smaller than or equal to {@code this.getLeft()}.
+     *    | newRight <= this.getLeft()
      *    
      * @post The result is an Extent with the same {@code left} as this object
      * 	  | result.getLeft() == this.getLeft()
@@ -240,8 +240,8 @@ public class Extent {
      * 	  | result.getBottom() == this.getBottom()
 	 */
 	public Extent withRight(int newRight) {
-		if(newRight < left) {
-			throw new IllegalArgumentException("argument newRight is smaller than this.getLeft()");
+		if(newRight <= left) {
+			throw new IllegalArgumentException("argument newRight is smaller than or equal to this.getLeft()");
 		}		
 		
 		return new Extent(left, top, newRight, bottom);
@@ -250,8 +250,8 @@ public class Extent {
 	/**
 	 * Returns an object that has the given bottom coordinate and the same left, top, and right coordinate as this object.
 	 * 
-	 * @throws IllegalArgumentException if argument {@code newBottom} is smaller than {@code this.getTop()}.
-     *    | newBottom < this.getTop()
+	 * @throws IllegalArgumentException if argument {@code newBottom} is smaller than or equal to {@code this.getTop()}.
+     *    | newBottom <= this.getTop()
      *    
      * @post The result is an Extent with the same {@code left} as this object
      * 	  | result.getLeft() == this.getLeft()
@@ -263,8 +263,8 @@ public class Extent {
      * 	  | result.getBottom() == newBottom
 	 */
 	public Extent withBottom(int newBottom) {
-		if(newBottom < top) {
-			throw new IllegalArgumentException("argument newBottom is smaller than this.getTop()");
+		if(newBottom <= top) {
+			throw new IllegalArgumentException("argument newBottom is smaller than or equal to this.getTop()");
 		}		
 		
 		return new Extent(left, top, right, newBottom);
@@ -273,8 +273,8 @@ public class Extent {
 	/**
 	 * Returns an object that has the given left coordinate and the same right, top, and bottom coordinate as this object.
 	 * 
-	 * @throws IllegalArgumentException if argument {@code newWidth} is smaller than 0.
-     *    | newWidth < 0
+	 * @throws IllegalArgumentException if argument {@code newWidth} is smaller than or equal to 0.
+     *    | newWidth <= 0
      *    
      * @post The result is an Extent with the same {@code left} as this object
      * 	  | result.getLeft() == this.getLeft()
@@ -286,8 +286,8 @@ public class Extent {
      * 	  | result.getBottom() == this.getBottom()
 	 */
 	public Extent withWidth(int newWidth) {
-		if(newWidth < 0) {
-			throw new IllegalArgumentException("argument newWidth is smaller than 0");
+		if(newWidth <= 0) {
+			throw new IllegalArgumentException("argument newWidth is smaller than or equal to 0");
 		}		
 		
 		return new Extent(left, top, left + newWidth, bottom);
@@ -296,8 +296,8 @@ public class Extent {
 	/**
 	 * Returns an object that has the given left coordinate and the same right, top, and bottom coordinate as this object.
 	 * 
-	 * @throws IllegalArgumentException if argument {@code newHeight} is smaller than 0.
-     *    | newHeight < 0
+	 * @throws IllegalArgumentException if argument {@code newHeight} is smaller than or equal to 0.
+     *    | newHeight <= 0
      *    
      * @post The result is an Extent with the same {@code left} as this object
      * 	  | result.getLeft() == this.getLeft()
@@ -309,8 +309,8 @@ public class Extent {
      * 	  | result.getHeight() == newHeight
 	 */
 	public Extent withHeight(int newHeight) {
-		if(newHeight < 0) {
-			throw new IllegalArgumentException("argument newHeight is smaller than 0");
+		if(newHeight <= 0) {
+			throw new IllegalArgumentException("argument newHeight is smaller than or equal to 0");
 		}		
 		
 		return new Extent(left, top, right, top + newHeight);
