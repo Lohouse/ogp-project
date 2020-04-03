@@ -153,18 +153,14 @@ public class ShapeGroup {
 		int x = innerCoordinates.getX();
 		int y = innerCoordinates.getY();
 		
-		List<ShapeGroup> operatingShapegroups = new ArrayList<ShapeGroup>();
-		ShapeGroup testOperatingShapegroup = this;
-		while (testOperatingShapegroup != null) {
-			operatingShapegroups.add(0, testOperatingShapegroup);
-			testOperatingShapegroup = testOperatingShapegroup.getParentGroup();
-		}
-		
-		for (ShapeGroup operatingShapegroup : operatingShapegroups) {
+		ShapeGroup operatingShapegroup = this;
+		while (operatingShapegroup != null) {
 			x = operatingShapegroup.getExtent().getLeft() + (x - operatingShapegroup.getOriginalExtent().getLeft()) /
 					operatingShapegroup.getOriginalExtent().getWidth() * operatingShapegroup.getExtent().getWidth();
 			y = operatingShapegroup.getExtent().getTop() + (y - operatingShapegroup.getOriginalExtent().getTop()) /
 					operatingShapegroup.getOriginalExtent().getHeight() * operatingShapegroup.getExtent().getHeight();
+			
+			operatingShapegroup = operatingShapegroup.getParentGroup();
 		}
 		
 		return new IntPoint(x, y);

@@ -148,9 +148,10 @@ public class ShapeGroup {
 			throw new IllegalArgumentException("argument shape is null");
 		}
 		
-		if(Arrays.stream(getPeerGroupState().values().toArray((Map<String, Object>[]) new Map[getPeerGroupState().values().size()])).filter(map -> map.values().contains(shape)).findAny() != null) {
-			throw new IllegalArgumentException("shape was already present in peer group");
-		}
+		// TODO: Problem because this.subgroups is not set to any value yet (which causes NPE)
+		//if(Arrays.stream(getPeerGroupState().values().toArray((Map<String, Object>[]) new Map[getPeerGroupState().values().size()])).filter(map -> map.values().contains(shape)).findAny() != null) {
+		//	throw new IllegalArgumentException("shape was already present in peer group");
+		//}
 
 		int top = Integer.MAX_VALUE;
 		int bottom = Integer.MIN_VALUE;
