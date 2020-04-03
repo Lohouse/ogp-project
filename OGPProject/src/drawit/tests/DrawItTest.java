@@ -13,7 +13,7 @@ import drawit.IntVector;
 import drawit.PointArrays;
 import drawit.RoundedPolygon;
 import drawit.shapegroups1.Extent;
-import drawit.shapegroups1.ShapeGroup;
+import drawit.shapegroups2.ShapeGroup;
 
 class DrawItTest {
 
@@ -613,24 +613,32 @@ class DrawItTest {
 	void testShapeGroup() {
 		RoundedPolygon triangle = new RoundedPolygon();
 		triangle.setVertices(new IntPoint[] {new IntPoint(10, 10), new IntPoint(30, 10), new IntPoint(20, 20)});
-
-		ShapeGroup leaf = new ShapeGroup(triangle);
-		assert leaf.getExtent().getTopLeft().equals(new IntPoint(10, 10)) && leaf.getExtent().getBottomRight().equals(new IntPoint(30, 20));
-		leaf.setExtent(Extent.ofLeftTopWidthHeight(0, 0, 20, 10));
-		assert leaf.getOriginalExtent().getTopLeft().equals(new IntPoint(10, 10)) && leaf.getOriginalExtent().getBottomRight().equals(new IntPoint(30, 20));
-		assert leaf.getExtent().getTopLeft().equals(new IntPoint(0, 0)) && leaf.getExtent().getBottomRight().equals(new IntPoint(20, 10));
-
-		// For simplicity, we here ignore the constraint that a non-leaf ShapeGroup shall have at least two subgroups.
-		ShapeGroup nonLeaf = new ShapeGroup(new ShapeGroup[] {leaf, leaf});
-		assert nonLeaf.getExtent().getTopLeft().equals(new IntPoint(0, 0)) && nonLeaf.getExtent().getBottomRight().equals(new IntPoint(20, 10));
-		nonLeaf.setExtent(Extent.ofLeftTopWidthHeight(0, 0, 10, 5));
 		
-		leaf.setExtent(Extent.ofLeftTopWidthHeight(1000, 2000, 20, 10));
-		assert leaf.getOriginalExtent().getTopLeft().equals(new IntPoint(10, 10)) && leaf.getOriginalExtent().getBottomRight().equals(new IntPoint(30, 20));
-		assert leaf.getExtent().getTopLeft().equals(new IntPoint(1000, 2000)) && leaf.getExtent().getBottomRight().equals(new IntPoint(1020, 2010));
+		// ShapeGroup: constructor, getExtent, getOriginalExtent, setExtent tests
+
+		ShapeGroup leaf1 = new ShapeGroup(triangle);
+		assert leaf1.getExtent().getTopLeft().equals(new IntPoint(10, 10)) && leaf1.getExtent().getBottomRight().equals(new IntPoint(30, 20));
+		leaf1.setExtent(drawit.shapegroups2.Extent.ofLeftTopWidthHeight(0, 0, 20, 10));
+		assert leaf1.getOriginalExtent().getTopLeft().equals(new IntPoint(10, 10)) && leaf1.getOriginalExtent().getBottomRight().equals(new IntPoint(30, 20));
+		assert leaf1.getExtent().getTopLeft().equals(new IntPoint(0, 0)) && leaf1.getExtent().getBottomRight().equals(new IntPoint(20, 10));
+		ShapeGroup leaf2 = new ShapeGroup(triangle);
+		leaf2.setExtent(drawit.shapegroups2.Extent.ofLeftTopWidthHeight(0, 0, 20, 10));
+
+		ShapeGroup nonLeaf = new ShapeGroup(new ShapeGroup[] {leaf1, leaf2});
+		assert nonLeaf.getExtent().getTopLeft().equals(new IntPoint(0, 0)) && nonLeaf.getExtent().getBottomRight().equals(new IntPoint(20, 10));
+		nonLeaf.setExtent(drawit.shapegroups2.Extent.ofLeftTopWidthHeight(0, 0, 10, 5));
+
+		leaf1.setExtent(drawit.shapegroups2.Extent.ofLeftTopWidthHeight(1000, 2000, 20, 10));
+		leaf2.setExtent(drawit.shapegroups2.Extent.ofLeftTopWidthHeight(1000, 2000, 20, 10));
+		assert leaf1.getOriginalExtent().getTopLeft().equals(new IntPoint(10, 10)) && leaf1.getOriginalExtent().getBottomRight().equals(new IntPoint(30, 20));
+		assert leaf1.getExtent().getTopLeft().equals(new IntPoint(1000, 2000)) && leaf1.getExtent().getBottomRight().equals(new IntPoint(1020, 2010));
 		assert nonLeaf.getOriginalExtent().getTopLeft().equals(new IntPoint(0, 0)) && nonLeaf.getOriginalExtent().getBottomRight().equals(new IntPoint(20, 10));
 		assert nonLeaf.getExtent().getTopLeft().equals(new IntPoint(0, 0)) && nonLeaf.getExtent().getBottomRight().equals(new IntPoint(10, 5));
-		assert leaf.toInnerCoordinates(new IntPoint(500, 1000)).equals(new IntPoint(10, 10));
-		assert leaf.toGlobalCoordinates(new IntPoint(10, 10)).equals(new IntPoint(500, 1000));
+		
+		// ShapeGroup: toInnerCoordinates, toGlobalCoordinates
+		assert leaf1.toInnerCoordinates(new IntPoint(500, 1000)).equals(new IntPoint(10, 10));
+		assert leaf1.toGlobalCoordinates(new IntPoint(10, 10)).equals(new IntPoint(500, 1000));
+
+		// ShapeGroup: getDrawingCommands tests
 	}
 }
