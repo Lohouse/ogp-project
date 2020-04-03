@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.IntStream;
 
 import drawit.IntPoint;
@@ -11,6 +12,7 @@ import drawit.IntVector;
 import drawit.RoundedPolygon;
 import logicalcollections.LogicalMap;
 import logicalcollections.LogicalSet;
+import logicalcollections.LogicalList;
 
 /**
  * Each instance of this class represents a shape group. A shape group is either a leaf group,
@@ -19,18 +21,128 @@ import logicalcollections.LogicalSet;
  * Besides directly or indirectly grouping one or more shapes, a shape group defines a
  * transformation (i.e. a displacement and/or a horizontal and/or vertical scaling) of the
  * shapes it contains.
+ * 
+ * @invar | getPeerGroupState() != null
  */
 public class ShapeGroup {
 	
 	//TODO: @mutates, @creates, @inspects
 	
+	
+	/**
+	 * @invar | getPeerGroupStatePrivate() != null
+	 */
 	private RoundedPolygon shape;
+	
+	/**
+	 * @representationObject
+	 * @peerObjects
+	 */
 	private List<ShapeGroup> subgroups;
+	
+	/**
+	 * @peerObject
+	 */
 	private ShapeGroup parentShapegroup;
+	
 	private Extent extent;
 	private Extent originalExtent;
+	
+	
+	/**
+	 * Returns the state of this subgroup as a map that maps property names to property values.
+	 * 
+	 * @post | result != null
+	 * @post | result.equals(Map.of(
+	 *		 |			"shape", Optional.ofNullable(getShape()),
+	 *		 |			"subgroups", getSubgroups(),
+	 *		 |			"parentShapegroup", Optional.ofNullable(getParentGroup()),
+	 *		 |			"extent", Optional.ofNullable(getExtent()),
+	 *		 |			"originalExtent", Optional.ofNullable(getOriginalExtent())))
+	 */
+	public Map<String, Object> getState() {
+		return getStatePrivate();
+	}
+	
+	/**
+	 * @throws IllegalArgumentException if subgroups is null.
+	 *    | subgroups == null
+	 */
+	private Map<String, Object> getStatePrivate() {
+		if(subgroups == null) {
+			throw new IllegalArgumentException("subgroups is null");
+		}
+		return Map.of(
+						"shape", Optional.ofNullable(shape),
+						"subgroups", List.copyOf(subgroups),
+						"parentShapegroup", Optional.ofNullable(parentShapegroup),
+						"extent", Optional.ofNullable(extent),
+						"originalExtent", Optional.ofNullable(originalExtent));
+	}
+	
+	/**
+	 * Returns a map that maps each shape group related directly or indirectly to this shape group
+	 * to its state, represented as a map from property names to property values.
+	 * 
+	 * @post | result != null
+	 * @post
+	 *    | result.equals(LogicalMap.<ShapeGroup, Map<String, Object>>matching(map -> 
+	 *    |			map.containsKey(this) &&
+	 *    |			map.keySet().allMatch(shapegroup ->
+	 *    |					(shapegroup.getShape() == null) != (shapegroup.getSubgroups().size() == 0) &&
+	 *    |	 				shapegroup.getSubgroups() != null &&
+	 *    |					shapegroup.getSubgroups().stream().allMatch(subgroup -> subgroup != null && map.containsKey(subgroup)) &&
+	 *    |					LogicalList.distinct(shapegroup.getSubgroups()) &&
+	 *    |					(shapegroup.getParentGroup() == null || map.containsKey(shapegroup.getParentGroup())) &&
+	 *    |					map.containsEntry(shapegroup, shapegroup.getState()) &&
+	 *    |					shapegroup.getExtent() != null &&
+	 *    |					shapegroup.getOriginalExtent() != null
+	 *    |			) && 
+	 *    |			map.keySet().allMatch(shapegroup ->
+	 *    |					shapegroup.getSubgroups().stream().allMatch(subgroup -> subgroup.getParentGroup() == shapegroup) &&
+	 *    |					(shapegroup.getParentGroup() == null || shapegroup.getParentGroup().getSubgroups().contains(shapegroup)) &&
+	 *    |					!LogicalSet.<ShapeGroup>matching(ancestors ->                                              
+	 *    |					    (shapegroup.getParentGroup() == null || ancestors.contains(shapegroup.getParentGroup())) &&            
+	 *    |					    ancestors.allMatch(ancestor -> ancestor.getParentGroup() == null || ancestors.contains(ancestor.getParentGroup()))    
+	 *    |					).contains(shapegroup)  	
+	 *    |			)	
+	 *    |		))
+	 */
+	public Map<ShapeGroup, Map<String, Object>> getPeerGroupState() {
+		return getPeerGroupStatePrivate();
+	}
+	
+	public Map<ShapeGroup, Map<String, Object>> getPeerGroupStatePrivate() {
+		return LogicalMap.matching(map -> 
+				map.containsKey(this) &&
+				map.keySet().allMatch(shapegroup ->
+						(shapegroup.shape == null) != (shapegroup.subgroups.size() == 0) &&
+						shapegroup.subgroups != null &&
+						shapegroup.subgroups.stream().allMatch(subgroup -> subgroup != null && map.containsKey(subgroup)) &&
+						LogicalList.distinct(shapegroup.subgroups) &&
+						(shapegroup.parentShapegroup == null || map.containsKey(shapegroup.parentShapegroup)) &&
+						map.containsEntry(shapegroup, shapegroup.getStatePrivate()) &&
+						shapegroup.extent != null &&
+						shapegroup.originalExtent != null
+				) && 
+				map.keySet().allMatch(shapegroup ->
+						shapegroup.subgroups.stream().allMatch(subgroup -> subgroup.parentShapegroup == shapegroup) &&
+						(shapegroup.parentShapegroup == null || shapegroup.parentShapegroup.subgroups.contains(shapegroup)) &&
+						!LogicalSet.<ShapeGroup>matching(ancestors ->                                              
+					    	(shapegroup.parentShapegroup == null || ancestors.contains(shapegroup.parentShapegroup)) &&            
+					    	ancestors.allMatch(ancestor -> ancestor.parentShapegroup == null || ancestors.contains(ancestor.parentShapegroup))    
+					    ).contains(shapegroup)  	
+				)	
+		);
+	}
 
-	// What if this polygon already is in a subgroup ?
+	// What if this polygon already is in a subgroup ?	dont allow
+	/**
+	 * Initializes this object to represent a leaf shape group that directly contains the given shape.
+	 * 
+	 * @throws IllegalArgumentException if argument {@code shape} is null.
+	 *    | shape == null
+	 */
 	public ShapeGroup(RoundedPolygon shape) {
 		if (shape == null) {
 			throw new IllegalArgumentException("argument shape is null");
@@ -57,12 +169,12 @@ public class ShapeGroup {
 		
 		this.extent = this.originalExtent = Extent.ofLeftTopRightBottom(left, top, right, bottom);
 		this.shape = shape;
-		this.subgroups = null;
+		this.subgroups = new ArrayList<ShapeGroup>();
 		this.parentShapegroup = null;
 	}
 	
-	// What if they already are in a subgroup ?
-	// Throw exception if subgroups contains the same instance twice?
+	// What if they already are in a subgroup ? dont allow
+	// Throw exception if subgroups contains the same instance twice? dont allow
 	public ShapeGroup(ShapeGroup[] subgroups) {
 		if (subgroups == null) {
 			throw new IllegalArgumentException("argument subgroups is null");
@@ -83,10 +195,10 @@ public class ShapeGroup {
 			
 			if (subgroup.getExtent().getRight() > right) {
 				right = subgroup.getExtent().getRight();
-			} else if (subgroup.getExtent().getLeft() < left) {
+			}
+			if (subgroup.getExtent().getLeft() < left) {
 				left = subgroup.getExtent().getLeft();
 			}
-			
 			if (subgroup.getExtent().getTop() < top) {
 				top = subgroup.getExtent().getTop();
 			}
@@ -273,21 +385,16 @@ public class ShapeGroup {
 		return getSubgroups().get(index);
 	}
 	
-	//TODO: Does 'outer' mean absolute coordinate system (same reference point for all ShapeGroups in the program) or coordinate system of the parent ShapeGroup ?
 	/**
 	 * Return the first subgroup in this non-leaf shape group's list of subgroups whose extent contains the given point,
 	 * expressed in this shape group's inner coordinate system.
 	 * 
 	 * @throws IllegalArgumentException if argument {@code innerCoordinates} is {@code null}.
 	 *    | innerCoordinates == null
-	 *    
-	 * @throws IllegalStateException if argument {@code innerCoordinates} is not contained within a subgroup.
-	 * 	  | Arrays.stream(this.getSubgroups().toArray(new ShapeGroup[getSubgroupCount()]))
-	 * 	  |		.filter(subgroup -> subgroup.getOriginalExtent().contains(innerCoordinates)).findFirst().orElse(null) == null
-	 *    
+	 *     
 	 * @post The result equals the first subgroup whose extent contains the given point.
 	 * 	  | result.equals(Arrays.stream(this.getSubgroups().toArray(new ShapeGroup[getSubgroupCount()]))
-	 * 	  |		.filter(subgroup -> subgroup.getOriginalExtent().contains(innerCoordinates)).findFirst().get())
+	 * 	  |		.filter(subgroup -> subgroup.getExtent().contains(innerCoordinates)).findFirst().orElse(null))
 	 */
 	public ShapeGroup getSubgroupAt(IntPoint innerCoordinates) {
 		if (innerCoordinates == null) {
@@ -295,41 +402,34 @@ public class ShapeGroup {
 		}
 		
 		for (ShapeGroup subgroup : getSubgroups()) {
-			if (subgroup.getOriginalExtent().contains(innerCoordinates)) {
+			if (subgroup.getExtent().contains(innerCoordinates)) {
 				return subgroup;
 			}
 		}
 		
-		throw new IllegalStateException("this shape group does not contain a subgroup of which the extent contains the given coordinates"); //TODO: Or return null?
+		return null;
 	}
 	
 	/**
 	 * Returns the number of subgroups of this non-leaf shape group.
-	 * 
-	 * @throws IllegalStateException if this ShapeGroup is a leaf shape group.
-	 *    | this.getSubgroups() == null
 	 *    
 	 * @post The result equals the amount of subgroups.
-	 * 	  | result == getSubgroups().size()
+	 * 	  | result == this.getSubgroups().size()
 	 */
 	public int getSubgroupCount() {
-		List<ShapeGroup> subGroups = getSubgroups();
-		if (subGroups == null) {
-			throw new IllegalStateException("this shape group is a leaf shape group"); //TODO: Or return 0 ?
-		}
-		
-		return subGroups.size();
+		return getSubgroups().size();
 	}
 	
 	/**
 	 * Returns the list of subgroups of this shape group, or null if this is a leaf shape group.
 	 * 
-	 * @post If this ShapeGroup is not a leaf shape group, the result and its elements are not null.
-	 *    | result == null ||
+	 * @post The result is not null.
+	 * 	  | result != null
+	 * @post The elements of the resulting List are not null.
 	 *    | Arrays.stream(result.toArray(new ShapeGroup[] {})).allMatch(e -> e != null)
 	 */
 	public List<ShapeGroup> getSubgroups() {
-		return subgroups == null ? null : new ArrayList<ShapeGroup>(subgroups); 
+		return new ArrayList<ShapeGroup>(subgroups); 
 	}
 	
 	/**
