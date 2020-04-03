@@ -32,8 +32,6 @@ public class ShapeGroup {
 	/**
 	 * @invar | getPeerGroupStatePrivate() != null
 	 */
-	private RoundedPolygon shape;
-	
 	/**
 	 * @representationObject
 	 * @peerObjects
@@ -45,6 +43,7 @@ public class ShapeGroup {
 	 */
 	private ShapeGroup parentShapegroup;
 	
+	private RoundedPolygon shape;
 	private Extent extent;
 	private Extent originalExtent;
 	
@@ -136,16 +135,21 @@ public class ShapeGroup {
 		);
 	}
 
-	// What if this polygon already is in a subgroup ?	dont allow
+	// What if this polygon already is in a subgroup that is not part of this peer group?
 	/**
 	 * Initializes this object to represent a leaf shape group that directly contains the given shape.
 	 * 
 	 * @throws IllegalArgumentException if argument {@code shape} is null.
 	 *    | shape == null
 	 */
+	@SuppressWarnings("unchecked")
 	public ShapeGroup(RoundedPolygon shape) {
 		if (shape == null) {
 			throw new IllegalArgumentException("argument shape is null");
+		}
+		
+		if(Arrays.stream(getPeerGroupState().values().toArray((Map<String, Object>[]) new Map[getPeerGroupState().values().size()])).filter(map -> map.values().contains(shape)).findAny() != null) {
+			throw new IllegalArgumentException("shape was already present in peer group");
 		}
 
 		int top = Integer.MAX_VALUE;
