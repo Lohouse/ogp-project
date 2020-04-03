@@ -357,8 +357,51 @@ public class ShapeGroup {
 		return new IntVector(x, y);
 	}
 	
-	public void getDrawingCommands() {
-		throw new RuntimeException("not yet implemented");		
+	public String getDrawingCommands() {
+		String bc = "\n";
+		
+		int operations = 0;
+		String commands = "";
+		
+		int translateX = getExtent().getLeft() - getOriginalExtent().getLeft();
+		int translateY = getExtent().getTop() - getOriginalExtent().getTop();
+		double scaleX = (double) getExtent().getWidth() / (double) getOriginalExtent().getWidth();
+		double scaleY = (double) getExtent().getHeight() / (double) getOriginalExtent().getHeight();
+		
+		if (scaleX != 1 || scaleY != 1) {
+			commands += "pushTranslate " + (translateX + getOriginalExtent().getLeft()) + " " + (translateY + getOriginalExtent().getTop()) + bc;
+			operations++;
+			
+			commands += "pushScale " + scaleX + " " + scaleY + bc;
+			operations++;
+			
+			if (getOriginalExtent().getLeft() != 0 || getOriginalExtent().getTop() != 0) {
+				commands += "pushTranslate " + -getOriginalExtent().getLeft() + " " + -getOriginalExtent().getTop() + bc;
+				operations++;
+			}
+		} else {
+			if (translateX != 0 || translateY != 0) {
+				commands += "pushTranslate " + (translateX) + " " + (translateY) + bc;
+				operations++;
+			}
+		}
+		
+		if (shape != null) {
+			commands += shape.getDrawingCommands() + bc;
+		} else {
+			for (ShapeGroup childShapegroup : getSubgroups()) {
+				commands += childShapegroup.getDrawingCommands() + bc;				
+			}
+		}
+		
+		for (int i = 0; i < operations; i++) {
+			commands += "popTransform";
+			if (i < operations - 1) {
+				commands += bc;
+			}
+		}
+		
+		return commands;
 	}
 	
 	/**
