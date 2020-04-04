@@ -314,7 +314,7 @@ public class ShapeGroup {
 		List<ShapeGroup> subgroupsList = new ArrayList<ShapeGroup>();
 		
 		if (firstChildShapegroup == null) {
-			return subgroupsList;
+			return null;
 		}
 		
 		ShapeGroup currentShapegroup = firstChildShapegroup;

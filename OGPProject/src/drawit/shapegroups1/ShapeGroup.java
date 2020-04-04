@@ -142,7 +142,7 @@ public class ShapeGroup {
 	 * @throws IllegalArgumentException if argument {@code shape} is null.
 	 *    | shape == null
 	 */
-	@SuppressWarnings("unchecked")
+	//@SuppressWarnings("unchecked")
 	public ShapeGroup(RoundedPolygon shape) {
 		if (shape == null) {
 			throw new IllegalArgumentException("argument shape is null");
@@ -174,7 +174,7 @@ public class ShapeGroup {
 		
 		this.extent = this.originalExtent = Extent.ofLeftTopRightBottom(left, top, right, bottom);
 		this.shape = shape;
-		this.subgroups = new ArrayList<ShapeGroup>();
+		this.subgroups = null;
 		this.parentShapegroup = null;
 	}
 	
@@ -419,6 +419,8 @@ public class ShapeGroup {
 	/**
 	 * Returns the subgroup at the given (zero-based) index in this non-leaf shape group's list of subgroups.
 	 * 
+     * @throws IllegalStateException if this is a leaf shape group.
+	 *    | innerCoordinates == null
 	 * @throws IllegalArgumentException if the given index is smaller than zero or greater than or equal to the amount of subgroups.
 	 *    | index < 0 || index >= this.getSubgroupCount()
 	 * 
@@ -426,6 +428,10 @@ public class ShapeGroup {
 	 * 	  | result.equals(getSubgroups().get(index)) == true
 	 */
 	public ShapeGroup getSubgroup(int index) {
+		if(subgroups == null) {
+			throw new IllegalStateException("this is a leaf shape group");
+		}
+		
 		if (index < 0 || index >= getSubgroupCount()) {
 			throw new IllegalArgumentException("argument index is out of bounds");
 		}
@@ -439,6 +445,8 @@ public class ShapeGroup {
 	 * 
 	 * @throws IllegalArgumentException if argument {@code innerCoordinates} is {@code null}.
 	 *    | innerCoordinates == null
+	 * @throws IllegalStateException if this is a leaf shape group.
+	 *    | innerCoordinates == null
 	 *     
 	 * @post The result equals the first subgroup whose extent contains the given point.
 	 * 	  | result.equals(Arrays.stream(this.getSubgroups().toArray(new ShapeGroup[getSubgroupCount()]))
@@ -447,6 +455,10 @@ public class ShapeGroup {
 	public ShapeGroup getSubgroupAt(IntPoint innerCoordinates) {
 		if (innerCoordinates == null) {
 			throw new IllegalArgumentException("argument innerCoordinates is null");
+		}
+		
+		if(subgroups == null) {
+			throw new IllegalStateException("this is a leaf shape group");
 		}
 		
 		for (ShapeGroup subgroup : getSubgroups()) {
@@ -460,21 +472,26 @@ public class ShapeGroup {
 	
 	/**
 	 * Returns the number of subgroups of this non-leaf shape group.
+	 * 
+	 * @throws IllegalStateException if this is a leaf shape group.
+	 *    | innerCoordinates == null
 	 *    
 	 * @post The result equals the amount of subgroups.
 	 * 	  | result == this.getSubgroups().size()
 	 */
 	public int getSubgroupCount() {
+		if(subgroups == null) {
+			throw new IllegalStateException("this is a leaf shape group");
+		}
+		
 		return getSubgroups().size();
 	}
 	
 	/**
 	 * Returns the list of subgroups of this shape group, or null if this is a leaf shape group.
 	 * 
-	 * @post The result is not null.
-	 * 	  | result != null
-	 * @post The elements of the resulting List are not null.
-	 *    | Arrays.stream(result.toArray(new ShapeGroup[] {})).allMatch(e -> e != null)
+	 * @post The result is null or the elements of the resulting List are not null.
+	 *    | result == null || Arrays.stream(result.toArray(new ShapeGroup[] {})).allMatch(e -> e != null)
 	 */
 	public List<ShapeGroup> getSubgroups() {
 		return new ArrayList<ShapeGroup>(subgroups); 
