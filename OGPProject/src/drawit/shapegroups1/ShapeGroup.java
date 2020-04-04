@@ -229,13 +229,13 @@ public class ShapeGroup {
 	 * @post
 	 *      The elements in this ShapeGroup's parent's subgroup list from index 1 to the index where
 	 *      this ShapeGroup was (inclusive), are shifted up by 1 compared to the previous state.
-	 *    | IntStream.range(1, old(this.getParentGroup().getSubgroups()).indexOf(this) + 1).allMatch(i ->
-	 *    | 	this.getParentGroup().getSubgroups().get(i) == old(this.getParentGroup().getSubgroups()).get(i - 1))
+	 *    | IntStream.range(1, old(this.getParentGroup()).getSubgroups().indexOf(this) + 1).allMatch(i ->
+	 *    | 	this.getParentGroup().getSubgroups().get(i) == old(this.getParentGroup()).getSubgroups().get(i - 1))
 	 * @post
 	 *      The elements in this ShapeGroup's parent's subgroup list from the index after the
 	 *      index where this ShapeGroup was to the end of the list, remain at the same index.
-	 *    | IntStream.range(old(this.getParentGroup().getSubgroups()).indexOf(this) + 1, this.getParentGroup().getSubgroupCount()).allMatch(i ->
-	 *    | 	this.getParentGroup().getSubgroups().get(i) == old(this.getParentGroup().getSubgroups()).get(i))
+	 *    | IntStream.range(old(this.getParentGroup()).getSubgroups().indexOf(this) + 1, this.getParentGroup().getSubgroupCount()).allMatch(i ->
+	 *    | 	this.getParentGroup().getSubgroups().get(i) == old(this.getParentGroup()).getSubgroups().get(i))
 	 */
 	public void bringToFront() {
 		ShapeGroup parentShapegroup = getParentGroup();
@@ -254,17 +254,17 @@ public class ShapeGroup {
 	 *    | this.getParentGroup() == null
 	 * 
 	 * @post This ShapeGroup is the last element in its parent's subgroup list.
-	 *    | this.getParentGroup().getSubgroups().get(this.getSubgroupCount() - 1) == this
+	 *    | this.getParentGroup().getSubgroups().get(this.getParentGroup().getSubgroupCount() - 1) == this
 	 * @post
 	 *      The elements in this ShapeGroup's parent's subgroup list from index 0 to the
 	 *      index before the index where this ShapeGroup was, remain at the same index.
-	 *    | IntStream.range(0, old(this.getParentGroup().getSubgroups()).indexOf(this)).allMatch(i ->
-	 *    | 	this.getParentGroup().getSubgroups().get(i) == old(this.getParentGroup().getSubgroups()).get(i))
+	 *    | IntStream.range(0, old(this.getParentGroup()).getSubgroups().indexOf(this)).allMatch(i ->
+	 *    | 	this.getParentGroup().getSubgroups().get(i) == old(this.getParentGroup()).getSubgroups().get(i))
 	 * @post
 	 *      The elements in this ShapeGroup's parent's subgroup list from the index where this ShapeGroup was
 	 *      to the index before end of the list, are shifted down by 1 compared to the previous state.
-	 *    | IntStream.range(old(this.getParentGroup().getSubgroups()).indexOf(this), this.getParentGroup().getSubgroupCount() - 1).allMatch(i ->
-	 *    | 	this.getParentGroup().getSubgroups().get(i) == old(this.getParentGroup().getSubgroups()).get(i + 1))
+	 *    | IntStream.range(old(this.getParentGroup()).getSubgroups().indexOf(this), this.getParentGroup().getSubgroupCount() - 1).allMatch(i ->
+	 *    | 	this.getParentGroup().getSubgroups().get(i) == old(this.getParentGroup()).getSubgroups().get(i + 1))
 	 */
 	public void sendToBack() {
 		ShapeGroup parentShapegroup = getParentGroup();

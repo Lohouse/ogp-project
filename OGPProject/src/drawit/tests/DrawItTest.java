@@ -3,6 +3,7 @@ package drawit.tests;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.Arrays;
+import java.util.stream.IntStream;
 
 import org.junit.jupiter.api.Test;
 
@@ -12,6 +13,7 @@ import drawit.IntPoint;
 import drawit.IntVector;
 import drawit.PointArrays;
 import drawit.RoundedPolygon;
+import drawit.shapegroups1.ShapeGroup;
 
 class DrawItTest {
 
@@ -652,11 +654,197 @@ class DrawItTest {
 		assert di1nonLeaf.getExtent().getTopLeft().equals(new IntPoint(0, 0)) && di1nonLeaf.getExtent().getBottomRight().equals(new IntPoint(10, 5));
 		assert di2nonLeaf.getExtent().getTopLeft().equals(new IntPoint(0, 0)) && di2nonLeaf.getExtent().getBottomRight().equals(new IntPoint(10, 5));
 		
-		// ShapeGroup: toInnerCoordinates, toGlobalCoordinates
+		// ShapeGroup: toInnerCoordinates, toGlobalCoordinates tests
 		assert di1leaf1.toInnerCoordinates(new IntPoint(500, 1000)).equals(new IntPoint(10, 10));
 		assert di2leaf1.toInnerCoordinates(new IntPoint(500, 1000)).equals(new IntPoint(10, 10));
 		assert di1leaf1.toGlobalCoordinates(new IntPoint(10, 10)).equals(new IntPoint(500, 1000));
 		assert di2leaf1.toGlobalCoordinates(new IntPoint(10, 10)).equals(new IntPoint(500, 1000));
+
+		// ShapeGroup: constructor exceptions tests
+		boolean thrown = false;
+		try {
+			RoundedPolygon nullPolygon = null;
+			drawit.shapegroups1.ShapeGroup excGroup = new drawit.shapegroups1.ShapeGroup(nullPolygon);
+		} catch (IllegalArgumentException e) {
+			thrown = true;
+		}
+		assert thrown;
+		thrown = false;
+		try {
+			RoundedPolygon nullPolygon = null;
+			drawit.shapegroups2.ShapeGroup excGroup = new drawit.shapegroups2.ShapeGroup(nullPolygon);
+		} catch (IllegalArgumentException e) {
+			thrown = true;
+		}
+		assert thrown;
+		thrown = false;
+		try {
+			drawit.shapegroups1.ShapeGroup[] smallPolygonGroup = new drawit.shapegroups1.ShapeGroup[] {new drawit.shapegroups1.ShapeGroup(new RoundedPolygon())};
+			drawit.shapegroups1.ShapeGroup excGroup = new drawit.shapegroups1.ShapeGroup(smallPolygonGroup);
+		} catch (IllegalArgumentException e) {
+			thrown = true;
+		}
+		assert thrown;
+		thrown = false;
+		try {
+			drawit.shapegroups2.ShapeGroup[] smallPolygonGroup = new drawit.shapegroups2.ShapeGroup[] {new drawit.shapegroups2.ShapeGroup(new RoundedPolygon())};
+			drawit.shapegroups2.ShapeGroup excGroup = new drawit.shapegroups2.ShapeGroup(smallPolygonGroup);
+		} catch (IllegalArgumentException e) {
+			thrown = true;
+		}
+		assert thrown;
+		thrown = false;
+		try {
+			drawit.shapegroups1.ShapeGroup[] nullPolygonGroup = new drawit.shapegroups1.ShapeGroup[] {new drawit.shapegroups1.ShapeGroup(new RoundedPolygon()), null};
+			drawit.shapegroups1.ShapeGroup excGroup = new drawit.shapegroups1.ShapeGroup(nullPolygonGroup);
+		} catch (IllegalArgumentException e) {
+			thrown = true;
+		}
+		assert thrown;
+		thrown = false;
+		try {
+			drawit.shapegroups2.ShapeGroup[] nullPolygonGroup = new drawit.shapegroups2.ShapeGroup[] {new drawit.shapegroups2.ShapeGroup(new RoundedPolygon()), null};
+			drawit.shapegroups2.ShapeGroup excGroup = new drawit.shapegroups2.ShapeGroup(nullPolygonGroup);
+		} catch (IllegalArgumentException e) {
+			thrown = true;
+		}
+		assert thrown;
+		
+		// ShapeGroup: constructor, getShape, getParentGroup tests
+		RoundedPolygon rp1 = new RoundedPolygon();
+		rp1.setVertices(new IntPoint[]{new IntPoint(0, 0), new IntPoint(20, 0), new IntPoint(10, 10)});
+		RoundedPolygon rp2 = new RoundedPolygon();
+		rp2.setVertices(new IntPoint[]{new IntPoint(-20, 0), new IntPoint(-5, 0), new IntPoint(-10, 10)});
+		RoundedPolygon rp3 = new RoundedPolygon();
+		rp3.setVertices(new IntPoint[]{new IntPoint(0, 20), new IntPoint(20, 20), new IntPoint(10, 40)});
+		RoundedPolygon rp4 = new RoundedPolygon();
+		rp4.setVertices(new IntPoint[]{new IntPoint(-20, 20), new IntPoint(-5, 20), new IntPoint(-15, 40)});
+		drawit.shapegroups1.ShapeGroup di1lsg1 = new drawit.shapegroups1.ShapeGroup(rp1);
+		drawit.shapegroups1.ShapeGroup di1lsg2 = new drawit.shapegroups1.ShapeGroup(rp2);
+		drawit.shapegroups1.ShapeGroup di1lsg3 = new drawit.shapegroups1.ShapeGroup(rp3);
+		drawit.shapegroups1.ShapeGroup di1lsg4 = new drawit.shapegroups1.ShapeGroup(rp4);
+		assert di1lsg1.getShape() == rp1;
+		assert di1lsg2.getShape() == rp2;
+		assert di1lsg3.getShape() == rp3;
+		assert di1lsg4.getShape() == rp4;
+		drawit.shapegroups1.ShapeGroup[] di1lsgGroup = new drawit.shapegroups1.ShapeGroup[] {di1lsg1, di1lsg2, di1lsg3, di1lsg4};
+		drawit.shapegroups1.ShapeGroup di1psg = new drawit.shapegroups1.ShapeGroup(di1lsgGroup);
+		drawit.shapegroups2.ShapeGroup di2lsg1 = new drawit.shapegroups2.ShapeGroup(rp1);
+		drawit.shapegroups2.ShapeGroup di2lsg2 = new drawit.shapegroups2.ShapeGroup(rp2);
+		drawit.shapegroups2.ShapeGroup di2lsg3 = new drawit.shapegroups2.ShapeGroup(rp3);
+		drawit.shapegroups2.ShapeGroup di2lsg4 = new drawit.shapegroups2.ShapeGroup(rp4);
+		assert di2lsg1.getShape() == rp1;
+		assert di2lsg2.getShape() == rp2;
+		assert di2lsg3.getShape() == rp3;
+		assert di2lsg4.getShape() == rp4;
+		drawit.shapegroups2.ShapeGroup[] di2lsgGroup = new drawit.shapegroups2.ShapeGroup[] {di2lsg1, di2lsg2, di2lsg3, di2lsg4};
+		drawit.shapegroups2.ShapeGroup di2psg = new drawit.shapegroups2.ShapeGroup(di2lsgGroup);
+
+		// ShapeGroup: getSubroups, getSubgroup, getSubgroupCount, getParen(), order and hierarchy tests
+		assert di1psg.getSubgroupCount() == di1lsgGroup.length;
+		for (int i = 0; i < di1psg.getSubgroupCount(); i++) {
+			assert di1psg.getSubgroups().get(i) == di1lsgGroup[i];
+			assert di1psg.getSubgroup(i) == di1lsgGroup[i];
+			assert di1psg.getSubgroup(i).getParentGroup() == di1psg;
+		}
+		assert di2psg.getSubgroupCount() == di2lsgGroup.length;
+		for (int i = 0; i < di2psg.getSubgroupCount(); i++) {
+			assert di2psg.getSubgroups().get(i) == di2lsgGroup[i];
+			assert di2psg.getSubgroup(i) == di2lsgGroup[i];
+			assert di2psg.getSubgroup(i).getParentGroup() == di2psg;
+		}
+		
+		// ShapeGroup: bringToFront, sendToBack exceptions tests
+		thrown = false;
+		try {
+			di1psg.bringToFront();
+		} catch (IllegalStateException e) {
+			thrown = true;
+		}
+		assert thrown;
+		thrown = false;
+		try {
+			di1psg.sendToBack();
+		} catch (IllegalStateException e) {
+			thrown = true;
+		}
+		assert thrown;
+		thrown = false;
+		try {
+			di2psg.bringToFront();
+		} catch (IllegalStateException e) {
+			thrown = true;
+		}
+		assert thrown;
+		thrown = false;
+		try {
+			di2psg.sendToBack();
+		} catch (IllegalStateException e) {
+			thrown = true;
+		}
+		assert thrown;
+		assert di1psg.getSubgroupCount() == di1lsgGroup.length;
+		for (int i = 0; i < di1psg.getSubgroupCount(); i++) {
+			assert di1psg.getSubgroups().get(i) == di1lsgGroup[i];
+			assert di1psg.getSubgroup(i) == di1lsgGroup[i];
+			assert di1psg.getSubgroup(i).getParentGroup() == di1psg;
+		}
+		assert di2psg.getSubgroupCount() == di2lsgGroup.length;
+		for (int i = 0; i < di2psg.getSubgroupCount(); i++) {
+			assert di2psg.getSubgroups().get(i) == di2lsgGroup[i];
+			assert di2psg.getSubgroup(i) == di2lsgGroup[i];
+			assert di2psg.getSubgroup(i).getParentGroup() == di2psg;
+		}
+
+		// ShapeGroup: bringToFront, sendToBack, order and hierarchy  tests
+		di1lsg1.bringToFront();
+		di2lsg1.bringToFront();
+		assert di1psg.getSubgroupCount() == di1lsgGroup.length;
+		for (int i = 0; i < di1psg.getSubgroupCount(); i++) {
+			assert di1psg.getSubgroups().get(i) == di1lsgGroup[i];
+			assert di1psg.getSubgroup(i) == di1lsgGroup[i];
+			assert di1psg.getSubgroup(i).getParentGroup() == di1psg;
+		}
+		assert di2psg.getSubgroupCount() == di2lsgGroup.length;
+		for (int i = 0; i < di2psg.getSubgroupCount(); i++) {
+			assert di2psg.getSubgroups().get(i) == di2lsgGroup[i];
+			assert di2psg.getSubgroup(i) == di2lsgGroup[i];
+			assert di2psg.getSubgroup(i).getParentGroup() == di2psg;
+		}
+		di1lsg4.sendToBack();
+		di2lsg4.sendToBack();
+		assert di1psg.getSubgroupCount() == di1lsgGroup.length;
+		for (int i = 0; i < di1psg.getSubgroupCount(); i++) {
+			assert di1psg.getSubgroups().get(i) == di1lsgGroup[i];
+			assert di1psg.getSubgroup(i) == di1lsgGroup[i];
+			assert di1psg.getSubgroup(i).getParentGroup() == di1psg;
+		}
+		assert di2psg.getSubgroupCount() == di2lsgGroup.length;
+		for (int i = 0; i < di2psg.getSubgroupCount(); i++) {
+			assert di2psg.getSubgroups().get(i) == di2lsgGroup[i];
+			assert di2psg.getSubgroup(i) == di2lsgGroup[i];
+			assert di2psg.getSubgroup(i).getParentGroup() == di2psg;
+		}
+		di1lsg3.bringToFront();
+		assert di1psg.getSubgroup(0) == di1lsg3;
+		assert di1psg.getSubgroup(1) == di1lsg1;
+		assert di1psg.getSubgroup(2) == di1lsg2;
+		assert di1psg.getSubgroup(3) == di1lsg4;
+		di2lsg3.bringToFront();
+		assert di2psg.getSubgroup(0) == di2lsg3;
+		assert di2psg.getSubgroup(1) == di2lsg1;
+		assert di2psg.getSubgroup(2) == di2lsg2;
+		assert di2psg.getSubgroup(3) == di2lsg4;
+		di1lsg1.sendToBack();
+		assert di1psg.getSubgroup(0) == di1lsg3;
+		assert di1psg.getSubgroup(1) == di1lsg2;
+		assert di1psg.getSubgroup(2) == di1lsg4;
+		assert di1psg.getSubgroup(3) == di1lsg1;
+		di2lsg1.sendToBack();
+		assert di2psg.getSubgroup(0) == di2lsg3;
+		assert di2psg.getSubgroup(1) == di2lsg2;
+		assert di2psg.getSubgroup(2) == di2lsg4;
+		assert di2psg.getSubgroup(3) == di2lsg1;
 
 		// ShapeGroup: getDrawingCommands tests
 	}
