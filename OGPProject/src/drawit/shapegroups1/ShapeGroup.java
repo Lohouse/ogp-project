@@ -457,12 +457,14 @@ public class ShapeGroup {
 		if (innerCoordinates == null) {
 			throw new IllegalArgumentException("argument innerCoordinates is null");
 		}
+
+		List<ShapeGroup> subgroups = getSubgroups();
 		
 		if(subgroups == null) {
 			throw new IllegalStateException("this is a leaf shape group");
 		}
 		
-		for (ShapeGroup subgroup : getSubgroups()) {
+		for (ShapeGroup subgroup : subgroups) {
 			if (subgroup.getExtent().contains(innerCoordinates)) {
 				return subgroup;
 			}

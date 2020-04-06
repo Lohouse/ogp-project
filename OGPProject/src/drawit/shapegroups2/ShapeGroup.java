@@ -289,13 +289,13 @@ public class ShapeGroup {
 			throw new IllegalArgumentException("argument innerCoordinates is null");
 		}
 
-		List<ShapeGroup> subGroups = getSubgroups();
+		List<ShapeGroup> subgroups = getSubgroups();
 		
-		if (subGroups == null) {
+		if (subgroups == null) {
 			throw new IllegalStateException("this shape group is not a non-leaf shape group"); //TODO: Or return null ?
 		}
 
-		for (ShapeGroup subgroup : getSubgroups()) {
+		for (ShapeGroup subgroup : subgroups) {
 			if (subgroup.getExtent().contains(innerCoordinates)) {
 				return subgroup;
 			}
