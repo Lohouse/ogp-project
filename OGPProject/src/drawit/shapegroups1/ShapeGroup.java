@@ -54,7 +54,7 @@ public class ShapeGroup {
 	 * @post | result != null
 	 * @post | result.equals(Map.of(
 	 *		 |			"shape", Optional.ofNullable(getShape()),
-	 *		 |			"subgroups", getSubgroups(),
+	 *		 |			"subgroups", (getShape() == null ? getSubgroups() : Optional.ofNullable(null)),
 	 *		 |			"parentShapegroup", Optional.ofNullable(getParentGroup()),
 	 *		 |			"extent", Optional.ofNullable(getExtent()),
 	 *		 |			"originalExtent", Optional.ofNullable(getOriginalExtent())))
@@ -73,7 +73,7 @@ public class ShapeGroup {
 		}
 		return Map.of(
 						"shape", Optional.ofNullable(shape),
-						"subgroups", List.copyOf(subgroups),
+						"subgroups", (shape == null ? List.copyOf(subgroups) : Optional.ofNullable(null)),
 						"parentShapegroup", Optional.ofNullable(parentShapegroup),
 						"extent", Optional.ofNullable(extent),
 						"originalExtent", Optional.ofNullable(originalExtent));
@@ -88,17 +88,19 @@ public class ShapeGroup {
 	 *    | result.equals(LogicalMap.<ShapeGroup, Map<String, Object>>matching(map -> 
 	 *    |			map.containsKey(this) &&
 	 *    |			map.keySet().allMatch(shapegroup ->
-	 *    |					(shapegroup.getShape() == null) != (shapegroup.getSubgroups().size() == 0) &&
-	 *    |	 				shapegroup.getSubgroups() != null &&
-	 *    |					shapegroup.getSubgroups().stream().allMatch(subgroup -> subgroup != null && map.containsKey(subgroup)) &&
-	 *    |					LogicalList.distinct(shapegroup.getSubgroups()) &&
+	 *    |					(shapegroup.getShape() == null) != (shapegroup.getSubgroups() == null) &&
+	 *    |	 				((shapegroup.getSubgroups() != null &&
+	 *    |						shapegroup.getSubgroups().stream().allMatch(subgroup -> subgroup != null && map.containsKey(subgroup)) &&
+	 *    |						LogicalList.distinct(shapegroup.getSubgroups())) || 
+	 *    |						shapegroup.getShape() != null) &&
 	 *    |					(shapegroup.getParentGroup() == null || map.containsKey(shapegroup.getParentGroup())) &&
-	 *    |					map.containsEntry(shapegroup, shapegroup.getState()) &&
 	 *    |					shapegroup.getExtent() != null &&
-	 *    |					shapegroup.getOriginalExtent() != null
+	 *    |					shapegroup.getOriginalExtent() != null &&
+	 *    |					map.containsEntry(shapegroup, shapegroup.getState())
+
 	 *    |			) && 
 	 *    |			map.keySet().allMatch(shapegroup ->
-	 *    |					shapegroup.getSubgroups().stream().allMatch(subgroup -> subgroup.getParentGroup() == shapegroup) &&
+	 *    |					((shapegroup.getSubgroups() != null && shapegroup.getSubgroups().stream().allMatch(subgroup -> subgroup.getParentGroup() == shapegroup)) || shapegroup.getShape() != null) &&
 	 *    |					(shapegroup.getParentGroup() == null || shapegroup.getParentGroup().getSubgroups().contains(shapegroup)) &&
 	 *    |					!LogicalSet.<ShapeGroup>matching(ancestors ->                                              
 	 *    |					    (shapegroup.getParentGroup() == null || ancestors.contains(shapegroup.getParentGroup())) &&            
@@ -115,17 +117,18 @@ public class ShapeGroup {
 		return LogicalMap.matching(map -> 
 				map.containsKey(this) &&
 				map.keySet().allMatch(shapegroup ->
-						(shapegroup.shape == null) != (shapegroup.subgroups.size() == 0) &&
-						shapegroup.subgroups != null &&
-						shapegroup.subgroups.stream().allMatch(subgroup -> subgroup != null && map.containsKey(subgroup)) &&
-						LogicalList.distinct(shapegroup.subgroups) &&
+						(shapegroup.shape == null) != (shapegroup.subgroups == null) &&
+						((shapegroup.subgroups != null &&
+							shapegroup.subgroups.stream().allMatch(subgroup -> subgroup != null && map.containsKey(subgroup)) &&
+							LogicalList.distinct(shapegroup.subgroups)) ||
+							shapegroup.shape != null) &&
 						(shapegroup.parentShapegroup == null || map.containsKey(shapegroup.parentShapegroup)) &&
-						map.containsEntry(shapegroup, shapegroup.getStatePrivate()) &&
 						shapegroup.extent != null &&
-						shapegroup.originalExtent != null
+						shapegroup.originalExtent != null &&
+						map.containsEntry(shapegroup, shapegroup.getStatePrivate())
 				) && 
 				map.keySet().allMatch(shapegroup ->
-						shapegroup.subgroups.stream().allMatch(subgroup -> subgroup.parentShapegroup == shapegroup) &&
+						((shapegroup.subgroups != null && shapegroup.subgroups.stream().allMatch(subgroup -> subgroup.parentShapegroup == shapegroup)) || shapegroup.shape != null) &&
 						(shapegroup.parentShapegroup == null || shapegroup.parentShapegroup.subgroups.contains(shapegroup)) &&
 						!LogicalSet.<ShapeGroup>matching(ancestors ->                                              
 					    	(shapegroup.parentShapegroup == null || ancestors.contains(shapegroup.parentShapegroup)) &&            
