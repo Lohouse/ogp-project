@@ -291,20 +291,20 @@ public class ShapeGroup {
 			throw new IllegalArgumentException("argument innerCoordinates is null");
 		}
 
-		int x = innerCoordinates.getX();
-		int y = innerCoordinates.getY();
+		double x = innerCoordinates.getX();
+		double y = innerCoordinates.getY();
 		
 		ShapeGroup operatingShapegroup = this;
 		while (operatingShapegroup != null) {
-			x = operatingShapegroup.getExtent().getLeft() + (x - operatingShapegroup.getOriginalExtent().getLeft()) /
-					operatingShapegroup.getOriginalExtent().getWidth() * operatingShapegroup.getExtent().getWidth();
-			y = operatingShapegroup.getExtent().getTop() + (y - operatingShapegroup.getOriginalExtent().getTop()) /
-					operatingShapegroup.getOriginalExtent().getHeight() * operatingShapegroup.getExtent().getHeight();
+			x = (double) operatingShapegroup.getExtent().getLeft() + ((double) x - (double) operatingShapegroup.getOriginalExtent().getLeft()) /
+					(double) operatingShapegroup.getOriginalExtent().getWidth() * (double) operatingShapegroup.getExtent().getWidth();
+			y = (double) operatingShapegroup.getExtent().getTop() + ((double) y - (double) operatingShapegroup.getOriginalExtent().getTop()) /
+					(double) operatingShapegroup.getOriginalExtent().getHeight() * (double) operatingShapegroup.getExtent().getHeight();
 			
 			operatingShapegroup = operatingShapegroup.getParentGroup();
 		}
 		
-		return new IntPoint(x, y);
+		return new IntPoint((int) x, (int) y);
 	}
 	
 	/**
@@ -316,8 +316,8 @@ public class ShapeGroup {
 			throw new IllegalArgumentException("argument globalCoordinates is null");
 		}
 		
-		int x = globalCoordinates.getX();
-		int y = globalCoordinates.getY();
+		double x = globalCoordinates.getX();
+		double y = globalCoordinates.getY();
 		
 		List<ShapeGroup> operatingShapegroups = new ArrayList<ShapeGroup>();
 		ShapeGroup testOperatingShapegroup = this;
@@ -327,13 +327,13 @@ public class ShapeGroup {
 		}
 		
 		for (ShapeGroup operatingShapegroup : operatingShapegroups) {
-			x = operatingShapegroup.getOriginalExtent().getLeft() + (x - operatingShapegroup.getExtent().getLeft()) /
-					operatingShapegroup.getExtent().getWidth() * operatingShapegroup.getOriginalExtent().getWidth();
-			y = operatingShapegroup.getOriginalExtent().getTop() + (y - operatingShapegroup.getExtent().getTop()) /
-					operatingShapegroup.getExtent().getHeight() * operatingShapegroup.getOriginalExtent().getHeight();
+			x = (double) operatingShapegroup.getOriginalExtent().getLeft() + (x - (double) operatingShapegroup.getExtent().getLeft()) /
+					(double) operatingShapegroup.getExtent().getWidth() * (double) operatingShapegroup.getOriginalExtent().getWidth();
+			y = (double) operatingShapegroup.getOriginalExtent().getTop() + (y - (double) operatingShapegroup.getExtent().getTop()) /
+					(double) operatingShapegroup.getExtent().getHeight() * (double) operatingShapegroup.getOriginalExtent().getHeight();
 		}
 		
-		return new IntPoint(x, y);
+		return new IntPoint((int) x, (int) y);
 	}
 	
 	/**
@@ -345,8 +345,8 @@ public class ShapeGroup {
 			throw new IllegalArgumentException("argument relativeGlobalCoordinates is null");
 		}
 		
-		int x = relativeGlobalCoordinates.getX();
-		int y = relativeGlobalCoordinates.getY();
+		double x = relativeGlobalCoordinates.getX();
+		double y = relativeGlobalCoordinates.getY();
 		
 		List<ShapeGroup> operatingShapegroups = new ArrayList<ShapeGroup>();
 		ShapeGroup testOperatingShapegroup = this;
@@ -356,13 +356,11 @@ public class ShapeGroup {
 		}
 		
 		for (ShapeGroup operatingShapegroup : operatingShapegroups) {
-			x = operatingShapegroup.getOriginalExtent().getLeft() + (x - operatingShapegroup.getExtent().getLeft()) /
-					operatingShapegroup.getExtent().getWidth() * operatingShapegroup.getOriginalExtent().getWidth();
-			y = operatingShapegroup.getOriginalExtent().getTop() + (y - operatingShapegroup.getExtent().getTop()) /
-					operatingShapegroup.getExtent().getHeight() * operatingShapegroup.getOriginalExtent().getHeight();
-		}
+			x *= ((double) operatingShapegroup.getOriginalExtent().getWidth()) / ((double) operatingShapegroup.getExtent().getWidth());
+			y *= ((double) operatingShapegroup.getOriginalExtent().getHeight()) / ((double) operatingShapegroup.getExtent().getHeight());
+		}		
 		
-		return new IntVector(x, y);
+		return new IntVector((int) x, (int) y);
 	}
 	
 	public String getDrawingCommands() {
@@ -423,7 +421,7 @@ public class ShapeGroup {
 	 * Returns the subgroup at the given (zero-based) index in this non-leaf shape group's list of subgroups.
 	 * 
      * @throws IllegalStateException if this is a leaf shape group.
-	 *    | innerCoordinates == null
+	 *    | this.getSubgroups() == null
 	 * @throws IllegalArgumentException if the given index is smaller than zero or greater than or equal to the amount of subgroups.
 	 *    | index < 0 || index >= this.getSubgroupCount()
 	 * 
@@ -477,7 +475,7 @@ public class ShapeGroup {
 	 * Returns the number of subgroups of this non-leaf shape group.
 	 * 
 	 * @throws IllegalStateException if this is a leaf shape group.
-	 *    | innerCoordinates == null
+	 *    | this.getSubgroups() == null
 	 *    
 	 * @post The result equals the amount of subgroups.
 	 * 	  | result == this.getSubgroups().size()

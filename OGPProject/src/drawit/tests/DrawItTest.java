@@ -858,7 +858,7 @@ class DrawItTest {
 		System.out.println("X: " + di1sg100.toInnerCoordinates(new IntVector(150, 150)).getX() + ", Y: " + di1sg100.toInnerCoordinates(new IntVector(150, 150)).getY());
 		// If you moved from the point at (150, 150) from (150, 150) to (250, 250) which is a displacement of (100, 100) in Global, what is the displacement in Inner
 		// The displacement in Inner is (50, 50) because you want to move the point from (100, 100) to (150, 150)
-		assert di1sg100.toInnerCoordinates(new IntVector(150, 150)).getX() == 100 && di1sg100.toInnerCoordinates(new IntVector(150, 150)).getY() == 100;
+		assert di1sg100.toInnerCoordinates(new IntVector(100, 100)).getX() == 50 && di1sg100.toInnerCoordinates(new IntVector(100, 100)).getY() == 50;
 		
 		// ShapeGroup: getDrawingCommands tests
 	}
