@@ -146,27 +146,37 @@ public class ShapeGroup {
 	}
 	
 	public IntPoint toGlobalCoordinates(IntPoint innerCoordinates) {
+		System.out.println("innerCoords");
 		if (innerCoordinates == null) {
 			throw new IllegalArgumentException("argument innerCoordinates is null");
 		}
 
-		int x = innerCoordinates.getX();
-		int y = innerCoordinates.getY();
+		double x = innerCoordinates.getX();
+		double y = innerCoordinates.getY();
 		
 		ShapeGroup operatingShapegroup = this;
 		while (operatingShapegroup != null) {
-			x = operatingShapegroup.getExtent().getLeft() + (x - operatingShapegroup.getOriginalExtent().getLeft()) /
-					operatingShapegroup.getOriginalExtent().getWidth() * operatingShapegroup.getExtent().getWidth();
-			y = operatingShapegroup.getExtent().getTop() + (y - operatingShapegroup.getOriginalExtent().getTop()) /
-					operatingShapegroup.getOriginalExtent().getHeight() * operatingShapegroup.getExtent().getHeight();
+			x = (double) operatingShapegroup.getExtent().getLeft() + ((double) x - (double) operatingShapegroup.getOriginalExtent().getLeft()) /
+					(double) operatingShapegroup.getOriginalExtent().getWidth() * (double) operatingShapegroup.getExtent().getWidth();
+			y = (double) operatingShapegroup.getExtent().getTop() + ((double) y - (double) operatingShapegroup.getOriginalExtent().getTop()) /
+					(double) operatingShapegroup.getOriginalExtent().getHeight() * (double) operatingShapegroup.getExtent().getHeight();
+			
+			//1. 35 - 30 --> x -= getOriginalExtent()
+			//2.
+			
+//			x -= getOriginalExtent().getLeft();
+//			y -= getOriginalExtent().getTop();
+//			x = getExtent().getLeft() + (double) (getOriginalExtent().getRight() - getOriginalExtent().getLeft()) / (double) (getExtent().getRight() - getExtent().getLeft()) * x;
+//			y = getExtent().getTop() + (double) (getOriginalExtent().getBottom() - getOriginalExtent().getTop()) / (double) (getExtent().getBottom() - getExtent().getTop()) * y;
 			
 			operatingShapegroup = operatingShapegroup.getParentGroup();
 		}
 		
-		return new IntPoint(x, y);
+		return new IntPoint((int) x, (int) y);
 	}
 	
 	public IntPoint toInnerCoordinates(IntPoint globalCoordinates) {
+		System.out.println("globalCoords");
 		if (globalCoordinates == null) {
 			throw new IllegalArgumentException("argument globalCoordinates is null");
 		}
@@ -186,18 +196,24 @@ public class ShapeGroup {
 					(double) operatingShapegroup.getExtent().getWidth() * (double) operatingShapegroup.getOriginalExtent().getWidth();
 			y = (double) operatingShapegroup.getOriginalExtent().getTop() + (y - (double) operatingShapegroup.getExtent().getTop()) /
 					(double) operatingShapegroup.getExtent().getHeight() * (double) operatingShapegroup.getOriginalExtent().getHeight();
+			
+//			x -= getExtent().getLeft();
+//			y -= getExtent().getTop();
+//			x = getOriginalExtent().getLeft() + (double) (getExtent().getRight() - getExtent().getLeft()) / (double) (getOriginalExtent().getRight() - getOriginalExtent().getLeft()) * x;
+//			y = getOriginalExtent().getTop() + (double) (getExtent().getBottom() - getExtent().getTop()) / (double) (getOriginalExtent().getBottom() - getOriginalExtent().getTop()) * y;
 		}
 		
 		return new IntPoint((int) x, (int) y);
 	}
 	
 	public IntVector toInnerCoordinates(IntVector relativeGlobalCoordinates) {
+		System.out.println("relativeCoords");
 		if (relativeGlobalCoordinates == null) {
 			throw new IllegalArgumentException("argument relativeGlobalCoordinates is null");
 		}
 		
-		int x = relativeGlobalCoordinates.getX();
-		int y = relativeGlobalCoordinates.getY();
+		double x = relativeGlobalCoordinates.getX();
+		double y = relativeGlobalCoordinates.getY();
 		
 		List<ShapeGroup> operatingShapegroups = new ArrayList<ShapeGroup>();
 		ShapeGroup testOperatingShapegroup = this;
@@ -206,14 +222,37 @@ public class ShapeGroup {
 			testOperatingShapegroup = testOperatingShapegroup.getParentGroup();
 		}
 		
+//		for (ShapeGroup operatingShapegroup : operatingShapegroups) {
+//			x = (double) operatingShapegroup.getExtent().getLeft() + (x - (double) operatingShapegroup.getExtent().getLeft()) *
+//					((double) operatingShapegroup.getExtent().getWidth() / (double) operatingShapegroup.getOriginalExtent().getWidth());
+//			y = (double) operatingShapegroup.getExtent().getTop() + (y - (double) operatingShapegroup.getExtent().getTop()) *
+//					((double) operatingShapegroup.getExtent().getHeight() / (double) operatingShapegroup.getOriginalExtent().getHeight());
+//		}
+		
 		for (ShapeGroup operatingShapegroup : operatingShapegroups) {
-			x = operatingShapegroup.getOriginalExtent().getLeft() + (x - operatingShapegroup.getExtent().getLeft()) /
-					operatingShapegroup.getExtent().getWidth() * operatingShapegroup.getOriginalExtent().getWidth();
-			y = operatingShapegroup.getOriginalExtent().getTop() + (y - operatingShapegroup.getExtent().getTop()) /
-					operatingShapegroup.getExtent().getHeight() * operatingShapegroup.getOriginalExtent().getHeight();
+			x *= ((double) operatingShapegroup.getOriginalExtent().getWidth()) / ((double) operatingShapegroup.getExtent().getWidth());
+			y *= ((double) operatingShapegroup.getOriginalExtent().getHeight()) / ((double) operatingShapegroup.getExtent().getHeight());
 		}
 		
-		return new IntVector(x, y);
+		// If you moved from (50, 50) to (100, 100) in Global, how much did you move in Inner
+		
+		// 30 + (100 - 90) / 60 * 30 = 30 + 10/60 * 30 = 30 + 0.166 * 30 = 30 + 5 = 35
+		
+		// GlobalCoords: 100, 100
+		// OriginalExtent: 30, 30, 60, 60
+		// Extent: 90, 90, 150, 150
+		// 1. (100 - 90, 100 - 90) = (10, 10) --> (x - getExtent().getLeft(), y - getExtent().getTop())
+		// 2. 30 + (60 - 30) / (150 - 90) * 10 = 30 + 30/60 * 10 = 30 + 0.5*10 = 30+5 = 35 --> getOriginalExtent().getLeft() + (getOriginalExtent().getRight() - getOriginalExtent().getLeft()) / (getExtent().getRight() - getExtent().getLeft()) * x
+		
+//		for (ShapeGroup operatingShapegroup : operatingShapegroups) {
+//			x -= getExtent().getLeft();
+//			y -= getExtent().getTop();
+//			x = getOriginalExtent().getLeft() + (double) (getExtent().getRight() - getExtent().getLeft()) / (double) (getOriginalExtent().getRight() - getOriginalExtent().getLeft()) * x;
+//			y = getOriginalExtent().getTop() + (double) (getExtent().getBottom() - getExtent().getTop()) / (double) (getOriginalExtent().getBottom() - getOriginalExtent().getTop()) * y;
+//		}
+		
+		
+		return new IntVector((int) x, (int) y);
 	}
 	
 	public String getDrawingCommands() {
@@ -344,5 +383,51 @@ public class ShapeGroup {
 		}
 		
 		this.extent = newExtent;
+		
+		//TODO: REMOVE
+		if (parentShapegroup == null) {
+			System.out.println("");
+			System.out.println(getDebugInfo(0));
+		}
+	}
+
+	//TODO: REMOVE
+	public String getDebugInfo(int level) {
+		String info = "";
+		for (int i = 0; i < level*4; i++) {
+			info += " ";
+		}
+		if (shape == null) {
+			info += "|PrntGroup";
+		} else {
+			info += "|LeafGroup";
+		}
+		info += "[Extent:         (" + getExtent().getLeft() + ", " + getExtent().getTop() + ") -> (" + getExtent().getRight() + ", " + getExtent().getBottom() + ")]";
+		info += "\n";
+		for (int i = 0; i < level*4; i++) {
+			info += " ";
+		}
+		info += "|         [OriginalExtent: (" + getOriginalExtent().getLeft() + ", " + getOriginalExtent().getTop() + ") -> (" + getOriginalExtent().getRight() + ", " + getOriginalExtent().getBottom() + ")]";
+		List<ShapeGroup> subgroups = getSubgroups();
+		if (subgroups != null) {
+			for (ShapeGroup subgroup : subgroups) {
+				info += "\n";
+				info += subgroup.getDebugInfo(level + 1);
+			}
+		} else {
+			level++;
+			info += "\n";
+			for (int i = 0; i < level*4; i++) {
+				info += " ";
+			}
+			info += "|Polygon[Vertices: ";
+			for (IntPoint vertex : shape.getVertices()) {
+				info += "(" + vertex.getX() + ", " + vertex.getY() + ") -> ";
+			}
+			info = info.substring(0, info.length() - 4);
+			info += "]";
+		}
+		
+		return info;
 	}
 }
