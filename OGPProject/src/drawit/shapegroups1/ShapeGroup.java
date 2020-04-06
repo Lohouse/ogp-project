@@ -450,8 +450,8 @@ public class ShapeGroup {
 	 *    | this.getSubgroups() == null
 	 *     
 	 * @post The result equals the first subgroup whose extent contains the given point.
-	 * 	  | result.equals(Arrays.stream(this.getSubgroups().toArray(new ShapeGroup[getSubgroupCount()]))
-	 * 	  |		.filter(subgroup -> subgroup.getExtent().contains(innerCoordinates)).findFirst().orElse(null))
+	 * 	  | result == Arrays.stream(this.getSubgroups().toArray(new ShapeGroup[getSubgroupCount()]))
+	 * 	  |		.filter(subgroup -> subgroup.getExtent().contains(innerCoordinates)).findFirst().orElse(null)
 	 */
 	public ShapeGroup getSubgroupAt(IntPoint innerCoordinates) {
 		if (innerCoordinates == null) {
