@@ -134,6 +134,11 @@ public class ShapeGroup {
 		if (parentShapegroup.firstChildShapegroup.previousShapegroup == this) {
 			return;
 		}
+		
+		if (parentShapegroup.firstChildShapegroup == this) {
+			parentShapegroup.firstChildShapegroup = parentShapegroup.firstChildShapegroup.nextShapegroup;
+			return;
+		}
 
 		previousShapegroup.nextShapegroup = nextShapegroup;
 		nextShapegroup.previousShapegroup = previousShapegroup;

@@ -3,6 +3,7 @@ package drawit.tests;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.stream.IntStream;
 
 import org.junit.jupiter.api.Test;
@@ -13,7 +14,6 @@ import drawit.IntPoint;
 import drawit.IntVector;
 import drawit.PointArrays;
 import drawit.RoundedPolygon;
-import drawit.shapegroups1.Extent;
 import drawit.shapegroups1.ShapeGroup;
 
 class DrawItTest {
@@ -754,6 +754,10 @@ class DrawItTest {
 			assert di2psg.getSubgroup(i) == di2lsgGroup[i];
 			assert di2psg.getSubgroup(i).getParentGroup() == di2psg;
 		}
+		di1psg.getSubgroups().clear();
+		di2psg.getSubgroups().clear();
+		assert di1psg.getSubgroupCount() == di1lsgGroup.length;
+		assert di2psg.getSubgroupCount() == di2lsgGroup.length;
 		
 		// ShapeGroup: bringToFront, sendToBack exceptions tests
 		thrown = false;
@@ -851,14 +855,17 @@ class DrawItTest {
 		RoundedPolygon rp100 = new RoundedPolygon();
 		rp100.setVertices(new IntPoint[] {new IntPoint(50, 50), new IntPoint(100, 50), new IntPoint(100, 100), new IntPoint(50, 100)});
 		drawit.shapegroups1.ShapeGroup di1sg100 = new drawit.shapegroups1.ShapeGroup(rp100);
+		drawit.shapegroups2.ShapeGroup di2sg100 = new drawit.shapegroups2.ShapeGroup(rp100);
 		assert di1sg100.getExtent().getTopLeft().equals(new IntPoint(50, 50)) && di1sg100.getExtent().getBottomRight().equals(new IntPoint(100, 100));
+		assert di2sg100.getExtent().getTopLeft().equals(new IntPoint(50, 50)) && di2sg100.getExtent().getBottomRight().equals(new IntPoint(100, 100));
 		assert di1sg100.toInnerCoordinates(new IntVector(100, 100)).getX() == 100 && di1sg100.toInnerCoordinates(new IntVector(100, 100)).getY() == 100;
-		di1sg100.setExtent(Extent.ofLeftTopWidthHeight(di1sg100.getExtent().getLeft(), di1sg100.getExtent().getTop(), di1sg100.getExtent().getWidth() * 2, di1sg100.getExtent().getHeight() * 2));
+		assert di2sg100.toInnerCoordinates(new IntVector(100, 100)).getX() == 100 && di2sg100.toInnerCoordinates(new IntVector(100, 100)).getY() == 100;
+		di1sg100.setExtent(drawit.shapegroups1.Extent.ofLeftTopWidthHeight(di1sg100.getExtent().getLeft(), di1sg100.getExtent().getTop(), di1sg100.getExtent().getWidth() * 2, di1sg100.getExtent().getHeight() * 2));
+		di2sg100.setExtent(drawit.shapegroups2.Extent.ofLeftTopWidthHeight(di2sg100.getExtent().getLeft(), di2sg100.getExtent().getTop(), di2sg100.getExtent().getWidth() * 2, di2sg100.getExtent().getHeight() * 2));
 		assert di1sg100.getExtent().getTopLeft().equals(new IntPoint(50, 50)) && di1sg100.getExtent().getBottomRight().equals(new IntPoint(150, 150));
-		System.out.println("X: " + di1sg100.toInnerCoordinates(new IntVector(150, 150)).getX() + ", Y: " + di1sg100.toInnerCoordinates(new IntVector(150, 150)).getY());
-		// If you moved from the point at (150, 150) from (150, 150) to (250, 250) which is a displacement of (100, 100) in Global, what is the displacement in Inner
-		// The displacement in Inner is (50, 50) because you want to move the point from (100, 100) to (150, 150)
+		assert di2sg100.getExtent().getTopLeft().equals(new IntPoint(50, 50)) && di2sg100.getExtent().getBottomRight().equals(new IntPoint(150, 150));
 		assert di1sg100.toInnerCoordinates(new IntVector(100, 100)).getX() == 50 && di1sg100.toInnerCoordinates(new IntVector(100, 100)).getY() == 50;
+		assert di2sg100.toInnerCoordinates(new IntVector(100, 100)).getX() == 50 && di2sg100.toInnerCoordinates(new IntVector(100, 100)).getY() == 50;
 		
 		// ShapeGroup: getDrawingCommands tests
 	}

@@ -447,7 +447,7 @@ public class ShapeGroup {
 	 * @throws IllegalArgumentException if argument {@code innerCoordinates} is {@code null}.
 	 *    | innerCoordinates == null
 	 * @throws IllegalStateException if this is a leaf shape group.
-	 *    | subgroups == null
+	 *    | this.getSubgroups() == null
 	 *     
 	 * @post The result equals the first subgroup whose extent contains the given point.
 	 * 	  | result.equals(Arrays.stream(this.getSubgroups().toArray(new ShapeGroup[getSubgroupCount()]))
