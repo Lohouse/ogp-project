@@ -28,7 +28,6 @@ public class ShapeGroup {
 	
 	//TODO: @mutates, @creates, @inspects
 	
-	
 	/**
 	 * @invar | getPeerGroupStatePrivate() != null
 	 */
@@ -138,23 +137,17 @@ public class ShapeGroup {
 		);
 	}
 
-	// What if this polygon already is in a subgroup that is not part of this peer group?
+	// What if this polygon already is in a subgroup ?
 	/**
 	 * Initializes this object to represent a leaf shape group that directly contains the given shape.
 	 * 
 	 * @throws IllegalArgumentException if argument {@code shape} is null.
 	 *    | shape == null
 	 */
-	//@SuppressWarnings("unchecked")
 	public ShapeGroup(RoundedPolygon shape) {
 		if (shape == null) {
 			throw new IllegalArgumentException("argument shape is null");
 		}
-		
-		// TODO: Problem because this.subgroups is not set to any value yet (which causes NPE)
-		//if(Arrays.stream(getPeerGroupState().values().toArray((Map<String, Object>[]) new Map[getPeerGroupState().values().size()])).filter(map -> map.values().contains(shape)).findAny() != null) {
-		//	throw new IllegalArgumentException("shape was already present in peer group");
-		//}
 
 		int top = Integer.MAX_VALUE;
 		int bottom = Integer.MIN_VALUE;
@@ -180,18 +173,14 @@ public class ShapeGroup {
 		this.subgroups = null;
 		this.parentShapegroup = null;
 	}
-	
-	// What if they already are in a subgroup ? dont allow
-	// Throw exception if subgroups contains the same instance twice? dont allow
+
 	public ShapeGroup(ShapeGroup[] subgroups) {
+		System.out.println("");
 		if (subgroups == null) {
 			throw new IllegalArgumentException("argument subgroups is null");
 		}
 		if (subgroups.length < 2) {
 			throw new IllegalArgumentException("less than 2 elements in argument subgroups");	
-		}
-		if (Arrays.stream(subgroups).anyMatch(e -> e == null)) {
-			throw new IllegalArgumentException("element of argument subgroups is null");			
 		}
 		
 		int top = Integer.MAX_VALUE;
@@ -199,6 +188,13 @@ public class ShapeGroup {
 		int left = Integer.MAX_VALUE;
 		int right = Integer.MIN_VALUE;
 		for (ShapeGroup subgroup : subgroups) {
+			if (subgroup == null) {
+				throw new IllegalArgumentException("element of argument subgroups is null");
+			}
+			if (subgroup.getParentGroup() != null)
+			{
+				throw new IllegalArgumentException("element of argument subgroups is already in a ShapeGroup or has multiple occurences in the given array");
+			}
 			subgroup.parentShapegroup = this;
 			
 			if (subgroup.getExtent().getRight() > right) {
@@ -395,8 +391,9 @@ public class ShapeGroup {
 		if (shape != null) {
 			commands += shape.getDrawingCommands() + bc;
 		} else {
-			for (ShapeGroup childShapegroup : getSubgroups()) {
-				commands += childShapegroup.getDrawingCommands() + bc;				
+			List<ShapeGroup> subgroups = getSubgroups();
+			for (int i = subgroups.size() - 1; i >= 0; i--) {
+				commands += subgroups.get(i).getDrawingCommands() + bc;				
 			}
 		}
 		

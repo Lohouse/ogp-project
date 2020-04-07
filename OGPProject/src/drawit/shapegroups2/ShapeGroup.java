@@ -26,8 +26,7 @@ public class ShapeGroup {
 	private Extent extent;
 	private Extent originalExtent;
 	
-	// What if this polygon already is in a subgroup ?
-	// Throw exception if subgroups contains the same instance twice?
+	// TODO: What if this polygon already is in a subgroup ?
 	public ShapeGroup(RoundedPolygon shape) {
 		if (shape == null) {
 			throw new IllegalArgumentException("argument shape is null");
@@ -59,17 +58,13 @@ public class ShapeGroup {
 		this.previousShapegroup = null;
 		this.parentShapegroup = null;
 	}
-	
-	// What if they already are in a subgroup?
+
 	public ShapeGroup(ShapeGroup[] subgroups) {
 		if (subgroups == null) {
 			throw new IllegalArgumentException("argument subgroups is null");
 		}
 		if (subgroups.length < 2) {
 			throw new IllegalArgumentException("less than 2 elements in argument subgroups");	
-		}
-		if (Arrays.stream(subgroups).anyMatch(e -> e == null)) {
-			throw new IllegalArgumentException("element of argument subgroups is null");			
 		}
 				
 		int top = Integer.MAX_VALUE;
@@ -78,6 +73,14 @@ public class ShapeGroup {
 		int right = Integer.MIN_VALUE;
 		for (int i = 0; i < subgroups.length; i++) {
 			ShapeGroup subgroup = subgroups[i];
+			
+			if (subgroup == null) {
+				throw new IllegalArgumentException("element of argument subgroups is null");
+			}
+			if (subgroup.getParentGroup() != null)
+			{
+				throw new IllegalArgumentException("element of argument subgroups is already in a ShapeGroup or has multiple occurences in the given array");
+			}
 			
 			subgroup.parentShapegroup = this;
 			subgroup.nextShapegroup = subgroups[(i + 1) % subgroups.length];
@@ -251,8 +254,9 @@ public class ShapeGroup {
 		if (shape != null) {
 			commands += shape.getDrawingCommands() + bc;
 		} else {
-			for (ShapeGroup childShapegroup : getSubgroups()) {
-				commands += childShapegroup.getDrawingCommands() + bc;				
+			List<ShapeGroup> subgroups = getSubgroups();
+			for (int i = subgroups.size() - 1; i >= 0; i--) {
+				commands += subgroups.get(i).getDrawingCommands() + bc;				
 			}
 		}
 		
@@ -278,7 +282,7 @@ public class ShapeGroup {
 		List<ShapeGroup> subGroups = getSubgroups();
 		
 		if (subGroups == null) {
-			throw new IllegalStateException("this shape group is not a non-leaf shape group"); //TODO: Or return null ?
+			throw new IllegalStateException("this shape group is not a non-leaf shape group");
 		}
 		
 		return subGroups.get(index);
@@ -292,7 +296,7 @@ public class ShapeGroup {
 		List<ShapeGroup> subgroups = getSubgroups();
 		
 		if (subgroups == null) {
-			throw new IllegalStateException("this shape group is not a non-leaf shape group"); //TODO: Or return null ?
+			throw new IllegalStateException("this shape group is not a non-leaf shape group");
 		}
 
 		for (ShapeGroup subgroup : subgroups) {
@@ -307,7 +311,7 @@ public class ShapeGroup {
 	public int getSubgroupCount() {
 		List<ShapeGroup> subGroups = getSubgroups();
 		if (subGroups == null) {
-			throw new IllegalStateException("this shape group is not a non-leaf shape group"); //TODO: Or return 0 ?
+			throw new IllegalStateException("this shape group is not a non-leaf shape group");
 		}
 		
 		return subGroups.size();

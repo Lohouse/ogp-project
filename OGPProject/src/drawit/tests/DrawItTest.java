@@ -680,7 +680,9 @@ class DrawItTest {
 		assert thrown;
 		thrown = false;
 		try {
-			drawit.shapegroups1.ShapeGroup[] smallPolygonGroup = new drawit.shapegroups1.ShapeGroup[] {new drawit.shapegroups1.ShapeGroup(new RoundedPolygon())};
+			RoundedPolygon exampleRoundedPolygon = new RoundedPolygon();
+			exampleRoundedPolygon.setVertices(new IntPoint[]{new IntPoint(0, 0), new IntPoint(20, 0), new IntPoint(10, 10)});
+			drawit.shapegroups1.ShapeGroup[] smallPolygonGroup = new drawit.shapegroups1.ShapeGroup[] {new drawit.shapegroups1.ShapeGroup(exampleRoundedPolygon)};
 			drawit.shapegroups1.ShapeGroup excGroup = new drawit.shapegroups1.ShapeGroup(smallPolygonGroup);
 		} catch (IllegalArgumentException e) {
 			thrown = true;
@@ -688,7 +690,9 @@ class DrawItTest {
 		assert thrown;
 		thrown = false;
 		try {
-			drawit.shapegroups2.ShapeGroup[] smallPolygonGroup = new drawit.shapegroups2.ShapeGroup[] {new drawit.shapegroups2.ShapeGroup(new RoundedPolygon())};
+			RoundedPolygon exampleRoundedPolygon = new RoundedPolygon();
+			exampleRoundedPolygon.setVertices(new IntPoint[]{new IntPoint(0, 0), new IntPoint(20, 0), new IntPoint(10, 10)});
+			drawit.shapegroups2.ShapeGroup[] smallPolygonGroup = new drawit.shapegroups2.ShapeGroup[] {new drawit.shapegroups2.ShapeGroup(exampleRoundedPolygon)};
 			drawit.shapegroups2.ShapeGroup excGroup = new drawit.shapegroups2.ShapeGroup(smallPolygonGroup);
 		} catch (IllegalArgumentException e) {
 			thrown = true;
@@ -696,7 +700,9 @@ class DrawItTest {
 		assert thrown;
 		thrown = false;
 		try {
-			drawit.shapegroups1.ShapeGroup[] nullPolygonGroup = new drawit.shapegroups1.ShapeGroup[] {new drawit.shapegroups1.ShapeGroup(new RoundedPolygon()), null};
+			RoundedPolygon exampleRoundedPolygon = new RoundedPolygon();
+			exampleRoundedPolygon.setVertices(new IntPoint[]{new IntPoint(0, 0), new IntPoint(20, 0), new IntPoint(10, 10)});
+			drawit.shapegroups1.ShapeGroup[] nullPolygonGroup = new drawit.shapegroups1.ShapeGroup[] {new drawit.shapegroups1.ShapeGroup(exampleRoundedPolygon), null};
 			drawit.shapegroups1.ShapeGroup excGroup = new drawit.shapegroups1.ShapeGroup(nullPolygonGroup);
 		} catch (IllegalArgumentException e) {
 			thrown = true;
@@ -704,8 +710,32 @@ class DrawItTest {
 		assert thrown;
 		thrown = false;
 		try {
-			drawit.shapegroups2.ShapeGroup[] nullPolygonGroup = new drawit.shapegroups2.ShapeGroup[] {new drawit.shapegroups2.ShapeGroup(new RoundedPolygon()), null};
+			RoundedPolygon exampleRoundedPolygon = new RoundedPolygon();
+			exampleRoundedPolygon.setVertices(new IntPoint[]{new IntPoint(0, 0), new IntPoint(20, 0), new IntPoint(10, 10)});
+			drawit.shapegroups2.ShapeGroup[] nullPolygonGroup = new drawit.shapegroups2.ShapeGroup[] {new drawit.shapegroups2.ShapeGroup(exampleRoundedPolygon), null};
 			drawit.shapegroups2.ShapeGroup excGroup = new drawit.shapegroups2.ShapeGroup(nullPolygonGroup);
+		} catch (IllegalArgumentException e) {
+			thrown = true;
+		}
+		assert thrown;
+		thrown = false;
+		try {
+			RoundedPolygon exampleRoundedPolygon = new RoundedPolygon();
+			exampleRoundedPolygon.setVertices(new IntPoint[]{new IntPoint(0, 0), new IntPoint(20, 0), new IntPoint(10, 10)});
+			drawit.shapegroups1.ShapeGroup exampleGroup = new drawit.shapegroups1.ShapeGroup(exampleRoundedPolygon);
+			drawit.shapegroups1.ShapeGroup[] multipleSameInstance = new drawit.shapegroups1.ShapeGroup[] {exampleGroup, exampleGroup};
+			drawit.shapegroups1.ShapeGroup excGroup = new drawit.shapegroups1.ShapeGroup(multipleSameInstance);
+		} catch (IllegalArgumentException e) {
+			thrown = true;
+		}
+		assert thrown;
+		thrown = false;
+		try {
+			RoundedPolygon exampleRoundedPolygon = new RoundedPolygon();
+			exampleRoundedPolygon.setVertices(new IntPoint[]{new IntPoint(0, 0), new IntPoint(20, 0), new IntPoint(10, 10)});
+			drawit.shapegroups2.ShapeGroup exampleGroup = new drawit.shapegroups2.ShapeGroup(exampleRoundedPolygon);
+			drawit.shapegroups2.ShapeGroup[] multipleSameInstance = new drawit.shapegroups2.ShapeGroup[] {exampleGroup, exampleGroup};
+			drawit.shapegroups2.ShapeGroup excGroup = new drawit.shapegroups2.ShapeGroup(multipleSameInstance);
 		} catch (IllegalArgumentException e) {
 			thrown = true;
 		}
