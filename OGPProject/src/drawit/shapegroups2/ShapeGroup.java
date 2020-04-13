@@ -3,10 +3,13 @@ package drawit.shapegroups2;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.IntStream;
 
 import drawit.IntPoint;
 import drawit.IntVector;
 import drawit.RoundedPolygon;
+import logicalcollections.LogicalSet;
 
 /**
  * Each instance of this class represents a shape group. A shape group is either a leaf group,
@@ -15,18 +18,114 @@ import drawit.RoundedPolygon;
  * Besides directly or indirectly grouping one or more shapes, a shape group defines a
  * transformation (i.e. a displacement and/or a horizontal and/or vertical scaling) of the
  * shapes it contains.
+ * 
+ * @invar This shape group either has a shape or subgroups.
+ *    | (getShape() == null) != (getSubgroups() == null)
+ * @invar If there are subgroups, none may be equal to {@code null}
+ * 		  They must all be distinct and they must all have this shape group as parent group.
+ * 		  If there aren't any subgroups, the shape isn't equal to {@code null}.
+ *    | (getSubgroups() != null &&
+ *    |		getSubgroups().stream().allMatch(subgroup -> subgroup != null && subgroup.getParentGroup == this) &&
+ *    |		LogicalList.distinct(getSubgroups())) || 
+ *    |		getShape() != null
+ * @invar The extent is not equal to {@code null}.
+ * 	  | getExtent() != null
+ * @invar The original extent is not equal to {@code null}.
+ * 	  | getOriginalExtent() != null
+ * @invar The shape group is a root group, or it is among its parent's subgroups.
+ * 	  | getParentGroup() == null || getParentGroup().getSubgroups().contains(this)
+ * @invar The shape group does not have itself as an ancestor
+ * 	  | !getAncestors().contains(this)
  */
 public class ShapeGroup {
-
-	private RoundedPolygon shape;
+	
+	/**
+	 * @invar | (shape == null) != (firstChildShapeGroup) == null)
+	 * @invar | nextShapegroup == null || nextShapegroup.previousShapegroup == this
+	 * @invar | previousShapegroup == null || previousShapegroup.nextShapegroup == this
+	 * @invar | parentShapegroup == null || LogicalList.distinct(parentShapeGroup.getChildren())
+	 * @invar | parentShapegroup == null || parentShapeGroup.getChildren().contains(this)
+	 * @invar | (parentShapegroup == null || nextShapegroup == null) || parentShapeGroup.getChildren().contains(nextShapegroup)
+	 * @invar | (parentShapegroup == null || previousShapegroup == null)|| parentShapeGroup.getChildren().contains(previousShapegroup)
+	 * @invar | firstChildShapegroup == null || firstChildShapegroup.parentShapegroup == this
+	 * @invar | extent != null
+	 * @invar | originalExtent != null
+	 * 
+	 * @peerObject
+	 */
 	private ShapeGroup parentShapegroup;
+	
+	/**
+	 * @peerObject
+	 */
 	private ShapeGroup firstChildShapegroup;
+	
+	/**
+	 * @peerObject
+	 */
 	private ShapeGroup nextShapegroup;
+	
+	/**
+	 * @peerObject
+	 */
 	private ShapeGroup previousShapegroup;
+	
+	private RoundedPolygon shape;
 	private Extent extent;
 	private Extent originalExtent;
 	
-	// TODO: What if this polygon already is in a subgroup ?
+	private Set<ShapeGroup> getAncestorsPrivate() {
+		return LogicalSet.<ShapeGroup>matching(ancestors ->
+		    (parentShapegroup == null || ancestors.contains(parentShapegroup)) &&
+		    ancestors.allMatch(ancestor ->
+		        ancestor.parentShapegroup == null || ancestors.contains(ancestor.parentShapegroup))
+		);
+	}
+	
+	/**
+	 * Returns the set of ancestors for this shape group.
+	 * 
+	 * @mutates | nothing
+	 * @creates | result
+	 * @inspects | this
+	 * 
+	 * @post | result != null
+	 * @post
+	 *    | result.equals(LogicalSet.<ShapeGroup>matching(ancestors ->
+	 *    |     (getParentGroup() == null || ancestors.contains(getParentGroup())) &&
+	 *    |     ancestors.allMatch(ancestor ->
+	 *    |         ancestor.getParentGroup() == null || ancestors.contains(ancestor.getParentGroup()))))
+	 */
+	public Set<ShapeGroup> getAncestors() {
+		return getAncestorsPrivate();
+	}	
+	
+	/**
+	 * Initializes this object to represent a leaf shape group that directly contains the given shape.
+	 * 
+	 * @mutates_properties | this
+	 * @inspects | shape
+	 * 
+	 * @throws IllegalArgumentException if argument {@code shape} is null.
+	 *    | shape == null
+	 *    
+	 * @post This extent has the smallest left and top of all vertices of the given {@code shape} and the largest right and bottom.
+	 *    | getExtent() == Extent.ofLeftTopRightBottom(Arrays.stream(shape.getVertices()).mapToInt(vertex -> vertex.getX()).min().getAsInt(), 
+	 *    |												Arrays.stream(shape.getVertices()).mapToInt(vertex -> vertex.getY()).min().getAsInt(), 
+	 *    |												Arrays.stream(shape.getVertices()).mapToInt(vertex -> vertex.getX()).max().getAsInt(), 
+	 *    |												Arrays.stream(shape.getVertices()).mapToInt(vertex -> vertex.getY()).max().getAsInt())
+	 * @post This original extent has the smallest left and top of all vertices of the given {@code shape} and the largest right and bottom.
+	 *    | getOriginalExtent() == Extent.ofLeftTopRightBottom(Arrays.stream(shape.getVertices()).mapToInt(vertex -> vertex.getX()).min().getAsInt(), 
+	 *    |												Arrays.stream(shape.getVertices()).mapToInt(vertex -> vertex.getY()).min().getAsInt(), 
+	 *    |												Arrays.stream(shape.getVertices()).mapToInt(vertex -> vertex.getX()).max().getAsInt(), 
+	 *    |												Arrays.stream(shape.getVertices()).mapToInt(vertex -> vertex.getY()).max().getAsInt())
+	 * @post This shape equals the given {@code shape}
+	 *    | getShape() == shape
+	 * @post This subgroups equals {@code null}
+	 *    | getSubgroups() == null
+	 * @post This parent shape group equals {@code null}
+	 *    | getParentGroup() == null
+	 */
 	public ShapeGroup(RoundedPolygon shape) {
 		if (shape == null) {
 			throw new IllegalArgumentException("argument shape is null");
@@ -59,6 +158,38 @@ public class ShapeGroup {
 		this.parentShapegroup = null;
 	}
 
+	/**
+	 * Initializes this object to represent a non-leaf shape group that directly contains the given subgroups, in the given order.
+	 * 
+	 * @mutates_properties | this, ...Arrays.stream(subgroups).peek(subgroup -> subgroup.getParentGroup()).toArray()
+	 * @inspects | subgroups
+	 * 
+	 * @throws IllegalArgumentException if argument {@code subgroups} is null.
+	 *    | subgroups == null
+	 * @throws IllegalArgumentException if less than two shapegroups are present in {@code subgroups}.
+	 *    | subgroups.length < 2
+	 * @throws IllegalArgumentException if any subgroup in {@code subgroups} is null.
+	 *    | Arrays.stream(subgroups).filter(subgroup -> subgroup == null).findAny() != null 
+	 * @throws IllegalArgumentException if any subgroup in {@code subgroups} is already in a group or has multiple occurences in the given array.
+	 *    | Arrays.stream(subgroups).filter(subgroup -> subgroup.getParentGroup() != null).findAny() != null 
+	 *    
+	 * @post This extent has the smallest left and top of all vertices of the given {@code shape} and the largest right and bottom.
+	 *    | getExtent() == Extent.ofLeftTopRightBottom(Arrays.stream(subgroups).mapToInt(subgroup -> subgroup.getExtent().getLeft()).min().getAsInt(), 
+	 *    |												Arrays.stream(subgroups).mapToInt(subgroup -> subgroup.getExtent().getTop()).min().getAsInt(), 
+	 *    |												Arrays.stream(subgroups).mapToInt(subgroup -> subgroup.getExtent().getRight()).max().getAsInt(), 
+	 *    |												Arrays.stream(subgroups).mapToInt(subgroup -> subgroup.getExtent().getBottom()).max().getAsInt())
+	 * @post This original extent has the smallest left and top of all vertices of the given {@code shape} and the largest right and bottom.
+	 *    | getOriginalExtent() == Extent.ofLeftTopRightBottom(Arrays.stream(subgroups).mapToInt(subgroup -> subgroup.getExtent().getLeft()).min().getAsInt(), 
+	 *    |												Arrays.stream(subgroups).mapToInt(subgroup -> subgroup.getExtent().getTop()).min().getAsInt(), 
+	 *    |												Arrays.stream(subgroups).mapToInt(subgroup -> subgroup.getExtent().getRight()).max().getAsInt(), 
+	 *    |												Arrays.stream(subgroups).mapToInt(subgroup -> subgroup.getExtent().getBottom()).max().getAsInt())
+	 * @post This shape equals {@code null}
+	 *    | getShape() == null
+	 * @post This subgroups contains the given subgroups
+	 *    | getSubgroups() == new ArrayList<ShapeGroup>(Arrays.asList(subgroups))
+	 * @post This parent shape group equals {@code null}
+	 *    | getParentGroup() == null
+	 */
 	public ShapeGroup(ShapeGroup[] subgroups) {
 		if (subgroups == null) {
 			throw new IllegalArgumentException("argument subgroups is null");
@@ -108,6 +239,28 @@ public class ShapeGroup {
 		this.parentShapegroup = null;
 	}
 	
+	/**
+	 * Moves this shape group to the front of its parent's list of subgroups.
+	 * 
+	 * @mutates_properties | getParentGroup().getSubgroups()
+	 * @inspects | this
+	 * 
+	 * @throws IllegalStateException if this ShapeGroup is not part of a parent group.
+	 *    | this.getParentGroup() == null
+	 * 
+	 * @post This ShapeGroup is the first element in its parent's subgroup list.
+	 *    | this.getParentGroup().getSubgroups().get(0) == this
+	 * @post
+	 *      The elements in this ShapeGroup's parent's subgroup list from index 1 to the index where
+	 *      this ShapeGroup was (inclusive), are shifted up by 1 compared to the previous state.
+	 *    | IntStream.range(1, old(this.getParentGroup()).getSubgroups().indexOf(this) + 1).allMatch(i ->
+	 *    | 	this.getParentGroup().getSubgroups().get(i) == old(this.getParentGroup()).getSubgroups().get(i - 1))
+	 * @post
+	 *      The elements in this ShapeGroup's parent's subgroup list from the index after the
+	 *      index where this ShapeGroup was to the end of the list, remain at the same index.
+	 *    | IntStream.range(old(this.getParentGroup()).getSubgroups().indexOf(this) + 1, this.getParentGroup().getSubgroupCount()).allMatch(i ->
+	 *    | 	this.getParentGroup().getSubgroups().get(i) == old(this.getParentGroup()).getSubgroups().get(i))
+	 */
 	public void bringToFront() {
 		if (parentShapegroup == null) {
 			throw new IllegalStateException("this shape group is not part of a parent group");
@@ -129,6 +282,28 @@ public class ShapeGroup {
 		parentShapegroup.firstChildShapegroup = this;
 	}
 	
+	/**
+	 * Moves this shape group to the front of its parent's list of subgroups.
+	 * 
+	 * @mutates_properties | getParentGroup().getSubgroups()
+	 * @inspects | this
+	 * 
+	 * @throws IllegalStateException if this ShapeGroup is not part of a parent group.
+	 *    | this.getParentGroup() == null
+	 * 
+	 * @post This ShapeGroup is the last element in its parent's subgroup list.
+	 *    | this.getParentGroup().getSubgroups().get(this.getParentGroup().getSubgroupCount() - 1) == this
+	 * @post
+	 *      The elements in this ShapeGroup's parent's subgroup list from index 0 to the
+	 *      index before the index where this ShapeGroup was, remain at the same index.
+	 *    | IntStream.range(0, old(this.getParentGroup()).getSubgroups().indexOf(this)).allMatch(i ->
+	 *    | 	this.getParentGroup().getSubgroups().get(i) == old(this.getParentGroup()).getSubgroups().get(i))
+	 * @post
+	 *      The elements in this ShapeGroup's parent's subgroup list from the index where this ShapeGroup was
+	 *      to the index before end of the list, are shifted down by 1 compared to the previous state.
+	 *    | IntStream.range(old(this.getParentGroup()).getSubgroups().indexOf(this), this.getParentGroup().getSubgroupCount() - 1).allMatch(i ->
+	 *    | 	this.getParentGroup().getSubgroups().get(i) == old(this.getParentGroup()).getSubgroups().get(i + 1))
+	 */
 	public void sendToBack() {
 		if (parentShapegroup == null) {
 			throw new IllegalStateException("this shape group is not part of a parent group");
@@ -153,6 +328,16 @@ public class ShapeGroup {
 		parentShapegroup.firstChildShapegroup.previousShapegroup = this;
 	}
 	
+	/**
+	 * Returns the coordinates in the global coordinate system of the point whose coordinates
+	 * in this shape group's inner coordinate system are the given coordinates.
+	 * 
+	 * @mutates | nothing
+	 * @inspects | this
+	 * 
+	 * @throws IllegalArgumentException if argument {@code innerCoordinates} is {@code null}.
+	 *    | innerCoordinates == null
+	 */
 	public IntPoint toGlobalCoordinates(IntPoint innerCoordinates) {
 		if (innerCoordinates == null) {
 			throw new IllegalArgumentException("argument innerCoordinates is null");
@@ -174,6 +359,16 @@ public class ShapeGroup {
 		return new IntPoint((int) x, (int) y);
 	}
 	
+	/**
+	 * Returns the coordinates in this shape group's inner coordinate system of the point whose coordinates
+	 * in the global coordinate system are the given coordinates.
+	 * 
+	 * @mutates | nothing
+	 * @inspects | this
+	 * 
+	 * @throws IllegalArgumentException if argument {@code globalCoordinates} is {@code null}.
+	 *    | globalCoordinates == null
+	 */
 	public IntPoint toInnerCoordinates(IntPoint globalCoordinates) {
 		if (globalCoordinates == null) {
 			throw new IllegalArgumentException("argument globalCoordinates is null");
@@ -199,6 +394,16 @@ public class ShapeGroup {
 		return new IntPoint((int) x, (int) y);
 	}
 	
+	/**
+	 * Returns the coordinates in this shape group's inner coordinate system of the vector whose coordinates
+	 * in the global coordinate system are the given coordinates.
+	 * 
+	 * @mutates | nothing
+	 * @inspects | this
+	 * 
+	 * @throws IllegalArgumentException if argument {@code relativeGlobalCoordinates} is {@code null}.
+	 *    | relativeGlobalCoordinates == null
+	 */
 	public IntVector toInnerCoordinates(IntVector relativeGlobalCoordinates) {
 		if (relativeGlobalCoordinates == null) {
 			throw new IllegalArgumentException("argument relativeGlobalCoordinates is null");
@@ -222,6 +427,13 @@ public class ShapeGroup {
 		return new IntVector((int) x, (int) y);
 	}
 	
+	/**
+	 * Returns a textual representation of a sequence of drawing commands for drawing the shapes contained directly or indirectly by this shape group,
+	 * expressed in this shape group's outer coordinate system.
+	 * 
+	 * @mutates | nothing
+	 * @inspects | this
+	 */
 	public String getDrawingCommands() {
 		String bc = "\n";
 		
@@ -270,10 +482,26 @@ public class ShapeGroup {
 		return commands;
 	}
 	
+	/**
+	 * Returns the shape directly contained by this shape group, or null if this is a non-leaf shape group.
+	 * 
+	 * @basic
+	 */
 	public RoundedPolygon getShape() {
 		return shape;
 	}
 	
+	/**
+	 * Returns the subgroup at the given (zero-based) index in this non-leaf shape group's list of subgroups.
+	 * 
+     * @throws IllegalStateException if this is a leaf shape group.
+	 *    | this.getSubgroups() == null
+	 * @throws IllegalArgumentException if the given index is smaller than zero or greater than or equal to the amount of subgroups.
+	 *    | index < 0 || index >= this.getSubgroupCount()
+	 * 
+	 * @post The result is the subgroup at the given index.
+	 * 	  | result.equals(getSubgroups().get(index)) == true
+	 */
 	public ShapeGroup getSubgroup(int index) {
 		if (index < 0 || index >= getSubgroupCount()) {
 			throw new IllegalArgumentException("argument index is out of bounds");
@@ -288,6 +516,19 @@ public class ShapeGroup {
 		return subGroups.get(index);
 	}
 	
+	/**
+	 * Return the first subgroup in this non-leaf shape group's list of subgroups whose extent contains the given point,
+	 * expressed in this shape group's inner coordinate system.
+	 * 
+	 * @throws IllegalArgumentException if argument {@code innerCoordinates} is {@code null}.
+	 *    | innerCoordinates == null
+	 * @throws IllegalStateException if this is a leaf shape group.
+	 *    | this.getSubgroups() == null
+	 *     
+	 * @post The result equals the first subgroup whose extent contains the given point.
+	 * 	  | result == Arrays.stream(this.getSubgroups().toArray(new ShapeGroup[getSubgroupCount()]))
+	 * 	  |		.filter(subgroup -> subgroup.getExtent().contains(innerCoordinates)).findFirst().orElse(null)
+	 */
 	public ShapeGroup getSubgroupAt(IntPoint innerCoordinates) {
 		if (innerCoordinates == null) {
 			throw new IllegalArgumentException("argument innerCoordinates is null");
@@ -308,6 +549,15 @@ public class ShapeGroup {
 		return null;
 	}
 	
+	/**
+	 * Returns the number of subgroups of this non-leaf shape group.
+	 * 
+	 * @throws IllegalStateException if this is a leaf shape group.
+	 *    | this.getSubgroups() == null
+	 *    
+	 * @post The result equals the amount of subgroups.
+	 * 	  | result == this.getSubgroups().size()
+	 */
 	public int getSubgroupCount() {
 		List<ShapeGroup> subGroups = getSubgroups();
 		if (subGroups == null) {
@@ -317,6 +567,15 @@ public class ShapeGroup {
 		return subGroups.size();
 	}
 	
+	/**
+	 * Returns the list of subgroups of this shape group, or null if this is a leaf shape group.
+	 * 
+	 * @post The result is null if this.getShape is not null, else the elements of the resulting List are not null.
+	 *    | (this.getShape() != null) ? result == null : Arrays.stream(result.toArray(new ShapeGroup[] {})).allMatch(e -> e != null)
+	 *    
+	 * @peerObjects
+	 * @basic
+	 */
 	public List<ShapeGroup> getSubgroups() {
 		List<ShapeGroup> subgroupsList = new ArrayList<ShapeGroup>();
 		
@@ -333,18 +592,53 @@ public class ShapeGroup {
 		return subgroupsList;
 	}
 	
+	/**
+	 * Returns the shape group that directly contains this shape group, or null if no shape group directly contains this shape group.
+	 * 
+	 * @peerObject
+	 * @basic
+	 */
 	public ShapeGroup getParentGroup() {
 		return parentShapegroup;
 	}
 	
+	/**
+	 * Returns the extent of this shape group, expressed in its inner coordinate system.
+	 * 
+	 * @post The result is not {@code null}
+	 *    | result != null
+	 *    
+	 * @basic
+	 */
 	public Extent getOriginalExtent() {
 		return originalExtent;
 	}
 	
+	/**
+	 * Returns the extent of this shape group, expressed in its outer coordinate system.
+	 * 
+	 * @post The result is not {@code null}
+	 *    | result != null
+	 *    
+	 * @basic
+	 */
 	public Extent getExtent() {
 		return extent;
 	}
 	
+	/**
+	 * Registers the given extent as this shape group's extent, expressed in this shape group's outer coordinate system.
+	 * 
+	 * @mutates_properties | this.getExtent()
+	 * 
+	 * @throws IllegalArgumentException if argument {@code newExtent} is {@code null}.
+	 *    | newExtent == null
+	 * 
+	 * @post This ShapeGroup's extent is equal to {@code newExtent}.
+	 *    | this.getExtent() == newExtent
+	 * @post This ShapeGroup's original extent remains unchanged.
+	 *    | this.getOriginalExtent() == old(this.getOriginalExtent())
+	 */
 	public void setExtent(Extent newExtent) {
 		if (newExtent == null) {
 			throw new IllegalArgumentException("argument newExtent is null");

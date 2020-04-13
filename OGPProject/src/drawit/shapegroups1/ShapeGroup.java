@@ -26,12 +26,9 @@ import logicalcollections.LogicalList;
  */
 public class ShapeGroup {
 	
-	//TODO: @mutates | nothing??
-	
 	/**
 	 * @invar | getPeerGroupStatePrivate() != null
-	 */
-	/**
+	 *
 	 * @representationObject
 	 * @peerObjects
 	 */
