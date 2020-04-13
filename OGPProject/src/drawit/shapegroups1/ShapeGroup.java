@@ -26,7 +26,7 @@ import logicalcollections.LogicalList;
  */
 public class ShapeGroup {
 	
-	//TODO: @mutates, @creates, @inspects
+	//TODO: @mutates | nothing??
 	
 	/**
 	 * @invar | getPeerGroupStatePrivate() != null
@@ -49,6 +49,10 @@ public class ShapeGroup {
 	
 	/**
 	 * Returns the state of this subgroup as a map that maps property names to property values.
+	 * 
+	 * @mutates | nothing
+	 * @creates | result
+	 * @inspects | this
 	 * 
 	 * @post | result != null
 	 * @post | result.equals(Map.of(
@@ -81,6 +85,10 @@ public class ShapeGroup {
 	/**
 	 * Returns a map that maps each shape group related directly or indirectly to this shape group
 	 * to its state, represented as a map from property names to property values.
+	 * 
+	 * @mutates | nothing
+	 * @creates | result
+	 * @inspects | this
 	 * 
 	 * @post | result != null
 	 * @post
@@ -140,7 +148,8 @@ public class ShapeGroup {
 	/**
 	 * Initializes this object to represent a leaf shape group that directly contains the given shape.
 	 * 
-	 * @mutates | this
+	 * @mutates_properties | this
+	 * @inspects | shape
 	 * 
 	 * @throws IllegalArgumentException if argument {@code shape} is null.
 	 *    | shape == null
@@ -195,7 +204,8 @@ public class ShapeGroup {
 	/**
 	 * Initializes this object to represent a non-leaf shape group that directly contains the given subgroups, in the given order.
 	 * 
-	 * @mutates | this
+	 * @mutates_properties | this, ...Arrays.stream(subgroups).peek(subgroup -> subgroup.getParentGroup()).toArray()
+	 * @inspects | subgroups
 	 * 
 	 * @throws IllegalArgumentException if argument {@code subgroups} is null.
 	 *    | subgroups == null
@@ -220,8 +230,6 @@ public class ShapeGroup {
 	 *    | getShape() == null
 	 * @post This subgroups contains the given subgroups
 	 *    | getSubgroups() == new ArrayList<ShapeGroup>(Arrays.asList(subgroups))
-	 * @post The properties of the given subgroups have remained unchanged
-	 *    | Arrays.stream(subgroups).filter(subgroup -> LogicalMap.equalsExcept(subgroup.getState(), old(subgroup.getState()), "parentShapegroup") != true).findAny() == null
 	 * @post This parent shape group equals {@code null}
 	 *    | getParentGroup() == null
 	 */
@@ -270,6 +278,9 @@ public class ShapeGroup {
 	/**
 	 * Moves this shape group to the front of its parent's list of subgroups.
 	 * 
+	 * @mutates_properties | getParentGroup().getSubgroups()
+	 * @inspects | this
+	 * 
 	 * @throws IllegalStateException if this ShapeGroup is not part of a parent group.
 	 *    | this.getParentGroup() == null
 	 * 
@@ -298,6 +309,9 @@ public class ShapeGroup {
 	
 	/**
 	 * Moves this shape group to the front of its parent's list of subgroups.
+	 * 
+	 * @mutates_properties | getParentGroup().getSubgroups()
+	 * @inspects | this
 	 * 
 	 * @throws IllegalStateException if this ShapeGroup is not part of a parent group.
 	 *    | this.getParentGroup() == null
@@ -329,6 +343,9 @@ public class ShapeGroup {
 	 * Returns the coordinates in the global coordinate system of the point whose coordinates
 	 * in this shape group's inner coordinate system are the given coordinates.
 	 * 
+	 * @mutates | nothing
+	 * @inspects | this
+	 * 
 	 * @throws IllegalArgumentException if argument {@code innerCoordinates} is {@code null}.
 	 *    | innerCoordinates == null
 	 */
@@ -356,6 +373,12 @@ public class ShapeGroup {
 	/**
 	 * Returns the coordinates in this shape group's inner coordinate system of the point whose coordinates
 	 * in the global coordinate system are the given coordinates.
+	 * 
+	 * @mutates | nothing
+	 * @inspects | this
+	 * 
+	 * @throws IllegalArgumentException if argument {@code globalCoordinates} is {@code null}.
+	 *    | globalCoordinates == null
 	 */
 	public IntPoint toInnerCoordinates(IntPoint globalCoordinates) {
 		if (globalCoordinates == null) {
@@ -385,6 +408,12 @@ public class ShapeGroup {
 	/**
 	 * Returns the coordinates in this shape group's inner coordinate system of the vector whose coordinates
 	 * in the global coordinate system are the given coordinates.
+	 * 
+	 * @mutates | nothing
+	 * @inspects | this
+	 * 
+	 * @throws IllegalArgumentException if argument {@code relativeGlobalCoordinates} is {@code null}.
+	 *    | relativeGlobalCoordinates == null
 	 */
 	public IntVector toInnerCoordinates(IntVector relativeGlobalCoordinates) {
 		if (relativeGlobalCoordinates == null) {
@@ -409,6 +438,13 @@ public class ShapeGroup {
 		return new IntVector((int) x, (int) y);
 	}
 	
+	/**
+	 * Returns a textual representation of a sequence of drawing commands for drawing the shapes contained directly or indirectly by this shape group,
+	 * expressed in this shape group's outer coordinate system.
+	 * 
+	 * @mutates | nothing
+	 * @inspects | this
+	 */
 	public String getDrawingCommands() {
 		String bc = "\n";
 		
@@ -459,6 +495,8 @@ public class ShapeGroup {
 	
 	/**
 	 * Returns the shape directly contained by this shape group, or null if this is a non-leaf shape group.
+	 * 
+	 * @basic
 	 */
 	public RoundedPolygon getShape() {
 		return shape;
@@ -542,6 +580,9 @@ public class ShapeGroup {
 	 * 
 	 * @post The result is null if this.getShape is not null, else the elements of the resulting List are not null.
 	 *    | (this.getShape() != null) ? result == null : Arrays.stream(result.toArray(new ShapeGroup[] {})).allMatch(e -> e != null)
+	 *    
+	 * @peerObjects
+	 * @basic
 	 */
 	public List<ShapeGroup> getSubgroups() {
 		if(subgroups == null) {
@@ -553,6 +594,9 @@ public class ShapeGroup {
 	
 	/**
 	 * Returns the shape group that directly contains this shape group, or null if no shape group directly contains this shape group.
+	 * 
+	 * @peerObject
+	 * @basic
 	 */
 	public ShapeGroup getParentGroup() {
 		return parentShapegroup;
@@ -563,6 +607,8 @@ public class ShapeGroup {
 	 * 
 	 * @post The result is not {@code null}
 	 *    | result != null
+	 *    
+	 * @basic
 	 */
 	public Extent getOriginalExtent() {
 		return originalExtent;
@@ -573,6 +619,8 @@ public class ShapeGroup {
 	 * 
 	 * @post The result is not {@code null}
 	 *    | result != null
+	 *    
+	 * @basic
 	 */
 	public Extent getExtent() {
 		return extent;
@@ -581,7 +629,7 @@ public class ShapeGroup {
 	/**
 	 * Registers the given extent as this shape group's extent, expressed in this shape group's outer coordinate system.
 	 * 
-	 * @mutates | this
+	 * @mutates_properties | this.getExtent()
 	 * 
 	 * @throws IllegalArgumentException if argument {@code newExtent} is {@code null}.
 	 *    | newExtent == null
