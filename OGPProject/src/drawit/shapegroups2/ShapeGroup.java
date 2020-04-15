@@ -111,15 +111,15 @@ public class ShapeGroup {
 	 *    | shape == null
 	 *    
 	 * @post This extent has the smallest left and top of all vertices of the given {@code shape} and the largest right and bottom.
-	 *    | getExtent() == Extent.ofLeftTopRightBottom(Arrays.stream(shape.getVertices()).mapToInt(vertex -> vertex.getX()).min().getAsInt(), 
-	 *    |												Arrays.stream(shape.getVertices()).mapToInt(vertex -> vertex.getY()).min().getAsInt(), 
-	 *    |												Arrays.stream(shape.getVertices()).mapToInt(vertex -> vertex.getX()).max().getAsInt(), 
-	 *    |												Arrays.stream(shape.getVertices()).mapToInt(vertex -> vertex.getY()).max().getAsInt())
+	 *    | getExtent().getLeft() == Arrays.stream(shape.getVertices()).mapToInt(vertex -> vertex.getX()).min().getAsInt() &&
+	 *    |	getExtent().getTop() == Arrays.stream(shape.getVertices()).mapToInt(vertex -> vertex.getY()).min().getAsInt() && 
+	 *    |	getExtent().getRight() == Arrays.stream(shape.getVertices()).mapToInt(vertex -> vertex.getX()).max().getAsInt() &&
+	 *    |	getExtent().getBottom() == Arrays.stream(shape.getVertices()).mapToInt(vertex -> vertex.getY()).max().getAsInt()
 	 * @post This original extent has the smallest left and top of all vertices of the given {@code shape} and the largest right and bottom.
-	 *    | getOriginalExtent() == Extent.ofLeftTopRightBottom(Arrays.stream(shape.getVertices()).mapToInt(vertex -> vertex.getX()).min().getAsInt(), 
-	 *    |												Arrays.stream(shape.getVertices()).mapToInt(vertex -> vertex.getY()).min().getAsInt(), 
-	 *    |												Arrays.stream(shape.getVertices()).mapToInt(vertex -> vertex.getX()).max().getAsInt(), 
-	 *    |												Arrays.stream(shape.getVertices()).mapToInt(vertex -> vertex.getY()).max().getAsInt())
+	 *    | getOriginalExtent().getLeft() == Arrays.stream(shape.getVertices()).mapToInt(vertex -> vertex.getX()).min().getAsInt() &&
+	 *    |	getOriginalExtent().getTop() == Arrays.stream(shape.getVertices()).mapToInt(vertex -> vertex.getY()).min().getAsInt() &&
+	 *    |	getOriginalExtent().getRight() == Arrays.stream(shape.getVertices()).mapToInt(vertex -> vertex.getX()).max().getAsInt() &&
+	 *    |	getOriginalExtent().getBottom() == Arrays.stream(shape.getVertices()).mapToInt(vertex -> vertex.getY()).max().getAsInt()
 	 * @post This shape equals the given {@code shape}
 	 *    | getShape() == shape
 	 * @post This subgroups equals {@code null}
@@ -175,19 +175,19 @@ public class ShapeGroup {
 	 *    | Arrays.stream(subgroups).filter(subgroup -> subgroup.getParentGroup() != null).findAny() != null 
 	 *    
 	 * @post This extent has the smallest left and top of all vertices of the given {@code shape} and the largest right and bottom.
-	 *    | getExtent() == Extent.ofLeftTopRightBottom(Arrays.stream(subgroups).mapToInt(subgroup -> subgroup.getExtent().getLeft()).min().getAsInt(), 
-	 *    |												Arrays.stream(subgroups).mapToInt(subgroup -> subgroup.getExtent().getTop()).min().getAsInt(), 
-	 *    |												Arrays.stream(subgroups).mapToInt(subgroup -> subgroup.getExtent().getRight()).max().getAsInt(), 
-	 *    |												Arrays.stream(subgroups).mapToInt(subgroup -> subgroup.getExtent().getBottom()).max().getAsInt())
+	 *    | getExtent().getLeft() == Arrays.stream(subgroups).mapToInt(subgroup -> subgroup.getExtent().getLeft()).min().getAsInt() &&
+	 *    |	getExtent().getTop() == Arrays.stream(subgroups).mapToInt(subgroup -> subgroup.getExtent().getTop()).min().getAsInt() &&
+	 *    |	getExtent().getRight() == Arrays.stream(subgroups).mapToInt(subgroup -> subgroup.getExtent().getRight()).max().getAsInt() &&
+	 *    |	getExtent().getBottom() == Arrays.stream(subgroups).mapToInt(subgroup -> subgroup.getExtent().getBottom()).max().getAsInt()
 	 * @post This original extent has the smallest left and top of all vertices of the given {@code shape} and the largest right and bottom.
-	 *    | getOriginalExtent() == Extent.ofLeftTopRightBottom(Arrays.stream(subgroups).mapToInt(subgroup -> subgroup.getExtent().getLeft()).min().getAsInt(), 
-	 *    |												Arrays.stream(subgroups).mapToInt(subgroup -> subgroup.getExtent().getTop()).min().getAsInt(), 
-	 *    |												Arrays.stream(subgroups).mapToInt(subgroup -> subgroup.getExtent().getRight()).max().getAsInt(), 
-	 *    |												Arrays.stream(subgroups).mapToInt(subgroup -> subgroup.getExtent().getBottom()).max().getAsInt())
+	 *    | getOriginalExtent().getLeft() == Arrays.stream(subgroups).mapToInt(subgroup -> subgroup.getExtent().getLeft()).min().getAsInt() &&
+	 *    |	getOriginalExtent().getTop() == Arrays.stream(subgroups).mapToInt(subgroup -> subgroup.getExtent().getTop()).min().getAsInt() &&
+	 *    |	getOriginalExtent().getRight() == Arrays.stream(subgroups).mapToInt(subgroup -> subgroup.getExtent().getRight()).max().getAsInt() &&
+	 *    |	getOriginalExtent().getBottom() == Arrays.stream(subgroups).mapToInt(subgroup -> subgroup.getExtent().getBottom()).max().getAsInt()
 	 * @post This shape equals {@code null}
 	 *    | getShape() == null
 	 * @post This subgroups contains the given subgroups
-	 *    | getSubgroups() == new ArrayList<ShapeGroup>(Arrays.asList(subgroups))
+	 *    | getSubgroups().equals(new ArrayList<ShapeGroup>(Arrays.asList(subgroups)))
 	 * @post This parent shape group equals {@code null}
 	 *    | getParentGroup() == null
 	 */
