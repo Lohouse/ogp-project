@@ -43,11 +43,11 @@ public class ShapeGroup {
 	private Extent extent;
 	private Extent originalExtent;
 	
-	
+
+	//TODO: Add @mutates | nothing. Currently gives compilation errors when added.
 	/**
 	 * Returns the state of this subgroup as a map that maps property names to property values.
 	 * 
-	 * @mutates | nothing
 	 * @creates | result
 	 * @inspects | this
 	 * 
@@ -78,12 +78,12 @@ public class ShapeGroup {
 						"extent", Optional.ofNullable(extent),
 						"originalExtent", Optional.ofNullable(originalExtent));
 	}
-	
+
+	//TODO: Add @mutates | nothing. Currently gives compilation errors when added.
 	/**
 	 * Returns a map that maps each shape group related directly or indirectly to this shape group
 	 * to its state, represented as a map from property names to property values.
 	 * 
-	 * @mutates | nothing
 	 * @creates | result
 	 * @inspects | this
 	 * 
@@ -142,10 +142,10 @@ public class ShapeGroup {
 		);
 	}
 
+	//TODO: Add @mutates_properties | this. Currently gives compilation errors when added.
 	/**
 	 * Initializes this object to represent a leaf shape group that directly contains the given shape.
 	 * 
-	 * @mutates_properties | this
 	 * @inspects | shape
 	 * 
 	 * @throws IllegalArgumentException if argument {@code shape} is null.
@@ -198,10 +198,10 @@ public class ShapeGroup {
 		this.parentShapegroup = null;
 	}
 
+	//TODO: Add @mutates_properties | this, ...Arrays.stream(subgroups).peek(subgroup -> subgroup.getParentGroup()).toArray(). Currently gives compilation errors when added.
 	/**
 	 * Initializes this object to represent a non-leaf shape group that directly contains the given subgroups, in the given order.
 	 * 
-	 * @mutates_properties | this, ...Arrays.stream(subgroups).peek(subgroup -> subgroup.getParentGroup()).toArray()
 	 * @inspects | subgroups
 	 * 
 	 * @throws IllegalArgumentException if argument {@code subgroups} is null.
@@ -335,12 +335,12 @@ public class ShapeGroup {
 		parentShapegroup.subgroups.remove(this);
 		parentShapegroup.subgroups.add(this);
 	}
-	
+
+	//TODO: Add @mutates | nothing. Currently gives compilation errors when added.
 	/**
 	 * Returns the coordinates in the global coordinate system of the point whose coordinates
 	 * in this shape group's inner coordinate system are the given coordinates.
 	 * 
-	 * @mutates | nothing
 	 * @inspects | this
 	 * 
 	 * @throws IllegalArgumentException if argument {@code innerCoordinates} is {@code null}.
@@ -366,12 +366,12 @@ public class ShapeGroup {
 		
 		return new IntPoint((int) x, (int) y);
 	}
-	
+
+	//TODO: Add @mutates | nothing. Currently gives compilation errors when added.
 	/**
 	 * Returns the coordinates in this shape group's inner coordinate system of the point whose coordinates
 	 * in the global coordinate system are the given coordinates.
 	 * 
-	 * @mutates | nothing
 	 * @inspects | this
 	 * 
 	 * @throws IllegalArgumentException if argument {@code globalCoordinates} is {@code null}.
@@ -401,12 +401,12 @@ public class ShapeGroup {
 		
 		return new IntPoint((int) x, (int) y);
 	}
-	
+
+	//TODO: Add @mutates | nothing. Currently gives compilation errors when added.
 	/**
 	 * Returns the coordinates in this shape group's inner coordinate system of the vector whose coordinates
 	 * in the global coordinate system are the given coordinates.
 	 * 
-	 * @mutates | nothing
 	 * @inspects | this
 	 * 
 	 * @throws IllegalArgumentException if argument {@code relativeGlobalCoordinates} is {@code null}.
@@ -434,12 +434,12 @@ public class ShapeGroup {
 		
 		return new IntVector((int) x, (int) y);
 	}
-	
+
+	//TODO: Add @mutates | nothing. Currently gives compilation errors when added.
 	/**
 	 * Returns a textual representation of a sequence of drawing commands for drawing the shapes contained directly or indirectly by this shape group,
 	 * expressed in this shape group's outer coordinate system.
 	 * 
-	 * @mutates | nothing
 	 * @inspects | this
 	 */
 	public String getDrawingCommands() {

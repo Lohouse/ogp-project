@@ -9,6 +9,7 @@ import java.util.stream.IntStream;
 import drawit.IntPoint;
 import drawit.IntVector;
 import drawit.RoundedPolygon;
+import logicalcollections.LogicalList;
 import logicalcollections.LogicalSet;
 
 /**
@@ -25,7 +26,7 @@ import logicalcollections.LogicalSet;
  * 		  They must all be distinct and they must all have this shape group as parent group.
  * 		  If there aren't any subgroups, the shape isn't equal to {@code null}.
  *    | (getSubgroups() != null &&
- *    |		getSubgroups().stream().allMatch(subgroup -> subgroup != null && subgroup.getParentGroup == this) &&
+ *    |		getSubgroups().stream().allMatch(subgroup -> subgroup != null && subgroup.getParentGroup() == this) &&
  *    |		LogicalList.distinct(getSubgroups())) || 
  *    |		getShape() != null
  * @invar The extent is not equal to {@code null}.
@@ -40,13 +41,13 @@ import logicalcollections.LogicalSet;
 public class ShapeGroup {
 	
 	/**
-	 * @invar | (shape == null) != (firstChildShapeGroup) == null)
+	 * @invar | (shape == null) != (firstChildShapegroup == null)
 	 * @invar | nextShapegroup == null || nextShapegroup.previousShapegroup == this
 	 * @invar | previousShapegroup == null || previousShapegroup.nextShapegroup == this
-	 * @invar | parentShapegroup == null || LogicalList.distinct(parentShapeGroup.getChildren())
-	 * @invar | parentShapegroup == null || parentShapeGroup.getChildren().contains(this)
-	 * @invar | (parentShapegroup == null || nextShapegroup == null) || parentShapeGroup.getChildren().contains(nextShapegroup)
-	 * @invar | (parentShapegroup == null || previousShapegroup == null)|| parentShapeGroup.getChildren().contains(previousShapegroup)
+	 * @invar | parentShapegroup == null || LogicalList.distinct(parentShapegroup.getSubgroups())
+	 * @invar | parentShapegroup == null || parentShapegroup.getSubgroups().contains(this)
+	 * @invar | (parentShapegroup == null || nextShapegroup == null) || parentShapegroup.getSubgroups().contains(nextShapegroup)
+	 * @invar | (parentShapegroup == null || previousShapegroup == null)|| parentShapegroup.getSubgroups().contains(previousShapegroup)
 	 * @invar | firstChildShapegroup == null || firstChildShapegroup.parentShapegroup == this
 	 * @invar | extent != null
 	 * @invar | originalExtent != null
@@ -81,11 +82,11 @@ public class ShapeGroup {
 		        ancestor.parentShapegroup == null || ancestors.contains(ancestor.parentShapegroup))
 		);
 	}
-	
+
+	//TODO: Add @mutates | nothing. Currently gives compilation errors when added.
 	/**
 	 * Returns the set of ancestors for this shape group.
 	 * 
-	 * @mutates | nothing
 	 * @creates | result
 	 * @inspects | this
 	 * 
@@ -99,11 +100,11 @@ public class ShapeGroup {
 	public Set<ShapeGroup> getAncestors() {
 		return getAncestorsPrivate();
 	}	
-	
+
+	//TODO: Add @mutates_properties | this. Currently gives compilation errors when added.
 	/**
 	 * Initializes this object to represent a leaf shape group that directly contains the given shape.
 	 * 
-	 * @mutates_properties | this
 	 * @inspects | shape
 	 * 
 	 * @throws IllegalArgumentException if argument {@code shape} is null.
@@ -158,10 +159,10 @@ public class ShapeGroup {
 		this.parentShapegroup = null;
 	}
 
+	//TODO: Add @mutates_properties | this, ...Arrays.stream(subgroups).peek(subgroup -> subgroup.getParentGroup()).toArray(). Currently gives compilation errors when added.
 	/**
 	 * Initializes this object to represent a non-leaf shape group that directly contains the given subgroups, in the given order.
 	 * 
-	 * @mutates_properties | this, ...Arrays.stream(subgroups).peek(subgroup -> subgroup.getParentGroup()).toArray()
 	 * @inspects | subgroups
 	 * 
 	 * @throws IllegalArgumentException if argument {@code subgroups} is null.
@@ -327,12 +328,12 @@ public class ShapeGroup {
 		parentShapegroup.firstChildShapegroup.previousShapegroup.nextShapegroup = this;
 		parentShapegroup.firstChildShapegroup.previousShapegroup = this;
 	}
-	
+
+	//TODO: Add @mutates | nothing. Currently gives compilation errors when added.
 	/**
 	 * Returns the coordinates in the global coordinate system of the point whose coordinates
 	 * in this shape group's inner coordinate system are the given coordinates.
 	 * 
-	 * @mutates | nothing
 	 * @inspects | this
 	 * 
 	 * @throws IllegalArgumentException if argument {@code innerCoordinates} is {@code null}.
@@ -358,12 +359,12 @@ public class ShapeGroup {
 		
 		return new IntPoint((int) x, (int) y);
 	}
-	
+
+	//TODO: Add @mutates | nothing. Currently gives compilation errors when added.
 	/**
 	 * Returns the coordinates in this shape group's inner coordinate system of the point whose coordinates
 	 * in the global coordinate system are the given coordinates.
 	 * 
-	 * @mutates | nothing
 	 * @inspects | this
 	 * 
 	 * @throws IllegalArgumentException if argument {@code globalCoordinates} is {@code null}.
@@ -393,12 +394,12 @@ public class ShapeGroup {
 		
 		return new IntPoint((int) x, (int) y);
 	}
-	
+
+	//TODO: Add @mutates | nothing. Currently gives compilation errors when added.
 	/**
 	 * Returns the coordinates in this shape group's inner coordinate system of the vector whose coordinates
 	 * in the global coordinate system are the given coordinates.
 	 * 
-	 * @mutates | nothing
 	 * @inspects | this
 	 * 
 	 * @throws IllegalArgumentException if argument {@code relativeGlobalCoordinates} is {@code null}.
@@ -426,12 +427,12 @@ public class ShapeGroup {
 		
 		return new IntVector((int) x, (int) y);
 	}
-	
+
+	//TODO: Add @mutates | nothing. Currently gives compilation errors when added.
 	/**
 	 * Returns a textual representation of a sequence of drawing commands for drawing the shapes contained directly or indirectly by this shape group,
 	 * expressed in this shape group's outer coordinate system.
 	 * 
-	 * @mutates | nothing
 	 * @inspects | this
 	 */
 	public String getDrawingCommands() {
