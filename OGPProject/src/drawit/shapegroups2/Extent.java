@@ -316,4 +316,32 @@ public class Extent {
 		
 		return new Extent(left, top, width, newHeight);
 	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if (!(o instanceof Extent)) {
+			return false;
+		}
+		
+		Extent ext = (Extent) o;
+		
+		if (getRight() == ext.getRight() && getLeft() == ext.getLeft()
+				&& getTop() == ext.getTop() && getBottom() == ext.getBottom()) {
+			return true;
+		}
+		
+		return false;
+	}
+	
+	@Override
+	public int hashCode() {
+		// TODO
+		throw new RuntimeException("not implemented");
+	}
+	
+	@Override
+	public String toString() {
+		// TODO
+		throw new RuntimeException("not implemented");
+	}
 }

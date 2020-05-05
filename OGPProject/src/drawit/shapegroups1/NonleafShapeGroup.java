@@ -1,5 +1,5 @@
 package drawit.shapegroups1;
 
-public class NonleafShapeGroup {
+public class NonleafShapeGroup extends ShapeGroup {
 
 }
