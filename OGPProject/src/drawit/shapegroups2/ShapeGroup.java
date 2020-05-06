@@ -28,8 +28,8 @@ public class ShapeGroup {
 	 *    | nextShapegroup != this
 	 * @invar | (parentShapegroup == null) == (previousShapegroup == null)
 	 * @invar | parentShapegroup == null || nextShapegroup.parentShapegroup == parentShapegroup && nextShapegroup.previousShapegroup == this
-	 * @invar | parentShapegroup == null || previousShapegroup.parentShapegroup == parentShapegroup && previousShapegroup.nextSibling == this
-	 * @invar | parentShapegroup == null || parentShapegroup.getSubgroupsPrivate().contains(this)
+	 * @invar | parentShapegroup == null || previousShapegroup.parentShapegroup == parentShapegroup && previousShapegroup.nextShapegroup == this
+	 * @invar | parentShapegroup == null || parentShapegroup.getSubgroups().contains(this)
 	 * @invar | !getAncestorsPrivate().contains(this)
 	 * 
 	 * @peerObject
@@ -50,7 +50,7 @@ public class ShapeGroup {
 	Extent originalExtent;
 	
 	
-	private Set<ShapeGroup> getAncestorsPrivate() {
+	Set<ShapeGroup> getAncestorsPrivate() {
 		return LogicalSet.<ShapeGroup>matching(ancestors ->
 		    (parentShapegroup == null || ancestors.contains(parentShapegroup)) &&
 		    ancestors.allMatch(ancestor ->
@@ -79,8 +79,6 @@ public class ShapeGroup {
 	//TODO: Add @mutates_properties | this. Currently gives compilation errors when added.
 	/**
 	 * Initializes this object.
-	 * 
-	 * @inspects | shape
 	 * 
 	 * @post This parent shape group equals {@code null}
 	 *    | getParentGroup() == null

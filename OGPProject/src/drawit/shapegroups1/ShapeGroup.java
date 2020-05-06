@@ -50,7 +50,7 @@ public class ShapeGroup {
 		return getAncestorsPrivate();
 	}
 	
-	private Set<ShapeGroup> getAncestorsPrivate() {
+	Set<ShapeGroup> getAncestorsPrivate() {
 		return LogicalSet.<ShapeGroup>matching(ancestors ->
 			parentShapegroup == null || ancestors.contains(parentShapegroup) &&
 			ancestors.allMatch(ancestor -> ancestor.parentShapegroup == null || ancestors.contains(ancestor.parentShapegroup))

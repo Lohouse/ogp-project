@@ -19,7 +19,7 @@ public class LeafShapeGroup extends ShapeGroup {
 	/**
 	 * @invar | shape != null
 	 * 
-	 * @invar | firstChild == null || firstChild.parent == this
+	 * @invar | firstChildShapegroup == null || firstChild.parent == this
 	 * @invar | (parentShapegroup == null) == (nextShapegroup == null)
 	 * @invar A non-leaf shape group has at least two subgroups
 	 *    | nextShapegroup != this
