@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import drawit.IntPoint;
+import logicalcollections.LogicalList;
 
 /**
  * Each instance of this class represents a shape group that defines a
@@ -21,7 +22,7 @@ public class NonleafShapeGroup extends ShapeGroup {
 	/**
 	 * @invar | subgroups != null
 	 * @invar | LogicalList.distinct(subgroups)
-	 * @invar | subgroups.stream().allMatch(g -> g != null && g.parent == this)
+	 * @invar | subgroups.stream().allMatch(g -> g != null && g.parentShapegroup == this)
 	 *
 	 * @representationObject
 	 * @peerObjects

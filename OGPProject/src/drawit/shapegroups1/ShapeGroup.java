@@ -26,7 +26,7 @@ import logicalcollections.LogicalList;
 public class ShapeGroup {
 	
 	/**
-	 * @invar | parent == null || parent.subgroups != null && parent.subgroups.contains(this)
+	 * @invar | parentShapegroup == null || parentShapegroup.subgroups != null && parentShapegroup.subgroups.contains(this)
 	 * @invar | !getAncestorsPrivate().contains(this)
 	 * 
 	 * @peerObject

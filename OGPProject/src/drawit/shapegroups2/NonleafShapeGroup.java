@@ -6,6 +6,7 @@ import java.util.List;
 import drawit.IntPoint;
 
 import java.util.ArrayList;
+import logicalcollections.LogicalList;
 
 /**
  * Each instance of this class represents a shape group that defines a

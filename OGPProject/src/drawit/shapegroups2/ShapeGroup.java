@@ -23,13 +23,13 @@ import logicalcollections.LogicalSet;
 public class ShapeGroup {
 	
 	/**
-	 * @invar | (parent == null) == (nextSibling == null)
+	 * @invar | (parentShapegroup == null) == (nextShapegroup == null)
 	 * @invar A non-leaf shape group has at least two subgroups
-	 *    | nextSibling != this
-	 * @invar | (parent == null) == (previousSibling == null)
-	 * @invar | parent == null || nextSibling.parent == parent && nextSibling.previousSibling == this
-	 * @invar | parent == null || previousSibling.parent == parent && previousSibling.nextSibling == this
-	 * @invar | parent == null || parent.getSubgroupsPrivate().contains(this)
+	 *    | nextShapegroup != this
+	 * @invar | (parentShapegroup == null) == (previousShapegroup == null)
+	 * @invar | parentShapegroup == null || nextShapegroup.parentShapegroup == parentShapegroup && nextShapegroup.previousShapegroup == this
+	 * @invar | parentShapegroup == null || previousShapegroup.parentShapegroup == parentShapegroup && previousShapegroup.nextSibling == this
+	 * @invar | parentShapegroup == null || parentShapegroup.getSubgroupsPrivate().contains(this)
 	 * @invar | !getAncestorsPrivate().contains(this)
 	 * 
 	 * @peerObject

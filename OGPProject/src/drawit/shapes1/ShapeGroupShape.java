@@ -35,7 +35,9 @@ public class ShapeGroupShape {
 	 * Returns whether this shape group's extent contains the given point, expressed in shape coordinates.
 	 */
 	public boolean contains(IntPoint p) {
+		//TODO
 		
+		throw new RuntimeException("not implemented");
 	}
 	
 	/**
@@ -83,6 +85,11 @@ public class ShapeGroupShape {
 				// Niet van toepassing?
 			}
 		}
+		
+
+		//TODO
+		
+		throw new RuntimeException("not implemented");
 	}
 	
 	/**
@@ -90,7 +97,9 @@ public class ShapeGroupShape {
 	 * returns the coordinates of the point in the shape coordinate system.
 	 */
 	public IntPoint toShapeCoordinates(IntPoint p) {
+		//TODO
 		
+		throw new RuntimeException("not implemented");		
 	}
 	
 	/**
@@ -98,7 +107,9 @@ public class ShapeGroupShape {
 	 * returns the coordinates of the point in the global coordinate system.
 	 */
 	public IntPoint toGlobalCoordinates(IntPoint p) {
+		//TODO
 		
+		throw new RuntimeException("not implemented");		
 	}
 	
 }
