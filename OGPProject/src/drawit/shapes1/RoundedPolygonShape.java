@@ -75,17 +75,17 @@ public class RoundedPolygonShape implements Shape {
 		List<ControlPoint> result = new ArrayList<ControlPoint>();
 		IntPoint[] vertices = polygon.getVertices();
 		for (int i = 0 ; i < vertices.length ; i++) {
-			result.add(new ControlPoint() { //TODO: is dit zelfs half juist?
-				int i;
+			final int j = i;	// Is dit wel een goede methode?
+			result.add(new ControlPoint() {				
 				public IntPoint getLocation() {
-					return toShapeCoordinates(vertices[i]); //moet deze toShapeCoordinates wel?
+					return toShapeCoordinates(vertices[j]); //TODO: Checken of deze toShapeCoordinates wel mag hier
 				}
 				public void move(IntVector delta) {
-					IntPoint newVertex = vertices[i].plus(delta);
-					polygon.update(i, newVertex);
+					IntPoint newVertex = vertices[j].plus(delta);
+					polygon.update(j, newVertex);
 				}
 				public void remove() {
-					polygon.remove(i);
+					polygon.remove(j);
 				}
 			});
 		}

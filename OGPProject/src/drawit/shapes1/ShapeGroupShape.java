@@ -5,6 +5,7 @@ import java.util.List;
 
 import drawit.IntPoint;
 import drawit.IntVector;
+import drawit.shapegroups1.Extent;
 import drawit.shapegroups1.ShapeGroup;
 
 /**
@@ -35,9 +36,11 @@ public class ShapeGroupShape {
 	 * Returns whether this shape group's extent contains the given point, expressed in shape coordinates.
 	 */
 	public boolean contains(IntPoint p) {
-		//TODO
-		
-		throw new RuntimeException("not implemented");
+		Extent extent = group.getExtent();
+		if(extent.getLeft() <= p.getX() && extent.getRight() >= p.getX() && extent.getTop() >= p.getY() && extent.getBottom() >= p.getY()) {
+			return true;
+		}
+		return false;
 	}
 	
 	/**
@@ -82,24 +85,26 @@ public class ShapeGroupShape {
 				p.plus(delta);
 			}
 			public void remove() {
-				// Niet van toepassing?
+				// Hoe removen zelfs?
 			}
 		}
 		
-
-		//TODO
+		List<ControlPoint> result = new ArrayList<ControlPoint>();
 		
-		throw new RuntimeException("not implemented");
+		result.add(new PointControl(group.getExtent().getTopLeft()));	//Deze extent nog converteren naar het shape coordinate system?
+		result.add(new PointControl(group.getExtent().getBottomRight()));	//Idem
+		
+		return (ControlPoint[]) result.toArray();
 	}
+	
+	//TODO: Wat als de extent van de parent group verandert?
 	
 	/**
 	 * Given the coordinates of a point in the global coordinate system, 
 	 * returns the coordinates of the point in the shape coordinate system.
 	 */
 	public IntPoint toShapeCoordinates(IntPoint p) {
-		//TODO
-		
-		throw new RuntimeException("not implemented");		
+		return group.getParentGroup().toInnerCoordinates(p);
 	}
 	
 	/**
@@ -107,9 +112,7 @@ public class ShapeGroupShape {
 	 * returns the coordinates of the point in the global coordinate system.
 	 */
 	public IntPoint toGlobalCoordinates(IntPoint p) {
-		//TODO
-		
-		throw new RuntimeException("not implemented");		
+		return group.getParentGroup().toGlobalCoordinates(p);		
 	}
 	
 }
