@@ -1,79 +1,54 @@
 package drawit.shapegroups2;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.IntStream;
 
 import drawit.IntPoint;
 import drawit.IntVector;
-import drawit.RoundedPolygon;
-import logicalcollections.LogicalList;
 import logicalcollections.LogicalSet;
 
 /**
- * Each instance of this class represents a shape group. A shape group is either a leaf group,
- * in which case it directly contains a single shape,or it is a non-leaf group, in which case
- * it directly contains two or more subgroups, which are themselves shape groups.
- * Besides directly or indirectly grouping one or more shapes, a shape group defines a
- * transformation (i.e. a displacement and/or a horizontal and/or vertical scaling) of the
- * shapes it contains.
+ * Each instance of this class represents a shape group that defines a
+ * transformation (i.e. a displacement and/or a horizontal and/or vertical scaling) 
+ * of the shapes it contains.
  * 
- * @invar This shape group either has a shape or subgroups.
- *    | (getShape() == null) != (getSubgroups() == null)
- * @invar If there are subgroups, none may be equal to {@code null}
- * 		  They must all be distinct and they must all have this shape group as parent group.
- * 		  If there aren't any subgroups, the shape isn't equal to {@code null}.
- *    | (getSubgroups() != null &&
- *    |		getSubgroups().stream().allMatch(subgroup -> subgroup != null && subgroup.getParentGroup() == this) &&
- *    |		LogicalList.distinct(getSubgroups())) || 
- *    |		getShape() != null
- * @invar The extent is not equal to {@code null}.
- * 	  | getExtent() != null
- * @invar The original extent is not equal to {@code null}.
- * 	  | getOriginalExtent() != null
  * @invar The shape group is a root group, or it is among its parent's subgroups.
- * 	  | getParentGroup() == null || getParentGroup().getSubgroups().contains(this)
+ * 	  | getParentGroup() == null ||
+ *    | getParentGroup().getSubgroups() != null && getParentGroup().getSubgroups().contains(this)
  * @invar The shape group does not have itself as an ancestor
  * 	  | !getAncestors().contains(this)
  */
 public class ShapeGroup {
 	
 	/**
-	 * @invar | (shape == null) != (firstChildShapegroup == null)
-	 * @invar | nextShapegroup == null || nextShapegroup.previousShapegroup == this
-	 * @invar | previousShapegroup == null || previousShapegroup.nextShapegroup == this
-	 * @invar | parentShapegroup == null || LogicalList.distinct(parentShapegroup.getSubgroups())
-	 * @invar | parentShapegroup == null || parentShapegroup.getSubgroups().contains(this)
-	 * @invar | (parentShapegroup == null || nextShapegroup == null) || parentShapegroup.getSubgroups().contains(nextShapegroup)
-	 * @invar | (parentShapegroup == null || previousShapegroup == null)|| parentShapegroup.getSubgroups().contains(previousShapegroup)
-	 * @invar | firstChildShapegroup == null || firstChildShapegroup.parentShapegroup == this
-	 * @invar | extent != null
-	 * @invar | originalExtent != null
+	 * @invar | (parent == null) == (nextSibling == null)
+	 * @invar A non-leaf shape group has at least two subgroups
+	 *    | nextSibling != this
+	 * @invar | (parent == null) == (previousSibling == null)
+	 * @invar | parent == null || nextSibling.parent == parent && nextSibling.previousSibling == this
+	 * @invar | parent == null || previousSibling.parent == parent && previousSibling.nextSibling == this
+	 * @invar | parent == null || parent.getSubgroupsPrivate().contains(this)
+	 * @invar | !getAncestorsPrivate().contains(this)
 	 * 
 	 * @peerObject
 	 */
-	private ShapeGroup parentShapegroup;
+	NonleafShapeGroup parentShapegroup;
 	
 	/**
 	 * @peerObject
 	 */
-	private ShapeGroup firstChildShapegroup;
+	ShapeGroup nextShapegroup;
 	
 	/**
 	 * @peerObject
 	 */
-	private ShapeGroup nextShapegroup;
+	ShapeGroup previousShapegroup;
 	
-	/**
-	 * @peerObject
-	 */
-	private ShapeGroup previousShapegroup;
+	Extent extent;
+	Extent originalExtent;
 	
-	private RoundedPolygon shape;
-	private Extent extent;
-	private Extent originalExtent;
 	
 	private Set<ShapeGroup> getAncestorsPrivate() {
 		return LogicalSet.<ShapeGroup>matching(ancestors ->
@@ -103,142 +78,17 @@ public class ShapeGroup {
 
 	//TODO: Add @mutates_properties | this. Currently gives compilation errors when added.
 	/**
-	 * Initializes this object to represent a leaf shape group that directly contains the given shape.
+	 * Initializes this object.
 	 * 
 	 * @inspects | shape
 	 * 
-	 * @throws IllegalArgumentException if argument {@code shape} is null.
-	 *    | shape == null
-	 *    
-	 * @post This extent has the smallest left and top of all vertices of the given {@code shape} and the largest right and bottom.
-	 *    | getExtent().getLeft() == Arrays.stream(shape.getVertices()).mapToInt(vertex -> vertex.getX()).min().getAsInt() &&
-	 *    |	getExtent().getTop() == Arrays.stream(shape.getVertices()).mapToInt(vertex -> vertex.getY()).min().getAsInt() && 
-	 *    |	getExtent().getRight() == Arrays.stream(shape.getVertices()).mapToInt(vertex -> vertex.getX()).max().getAsInt() &&
-	 *    |	getExtent().getBottom() == Arrays.stream(shape.getVertices()).mapToInt(vertex -> vertex.getY()).max().getAsInt()
-	 * @post This original extent has the smallest left and top of all vertices of the given {@code shape} and the largest right and bottom.
-	 *    | getOriginalExtent().getLeft() == Arrays.stream(shape.getVertices()).mapToInt(vertex -> vertex.getX()).min().getAsInt() &&
-	 *    |	getOriginalExtent().getTop() == Arrays.stream(shape.getVertices()).mapToInt(vertex -> vertex.getY()).min().getAsInt() &&
-	 *    |	getOriginalExtent().getRight() == Arrays.stream(shape.getVertices()).mapToInt(vertex -> vertex.getX()).max().getAsInt() &&
-	 *    |	getOriginalExtent().getBottom() == Arrays.stream(shape.getVertices()).mapToInt(vertex -> vertex.getY()).max().getAsInt()
-	 * @post This shape equals the given {@code shape}
-	 *    | getShape() == shape
-	 * @post This subgroups equals {@code null}
-	 *    | getSubgroups() == null
 	 * @post This parent shape group equals {@code null}
 	 *    | getParentGroup() == null
 	 */
-	public ShapeGroup(RoundedPolygon shape) {
-		if (shape == null) {
-			throw new IllegalArgumentException("argument shape is null");
-		}
-
-		int top = Integer.MAX_VALUE;
-		int bottom = Integer.MIN_VALUE;
-		int left = Integer.MAX_VALUE;
-		int right = Integer.MIN_VALUE;
-		for (IntPoint vertex : shape.getVertices()) {
-			if (vertex.getX() > right) {
-				right = vertex.getX();
-			}
-			if (vertex.getX() < left) {
-				left = vertex.getX();
-			}
-			if (vertex.getY() < top) {
-				top = vertex.getY();
-			}
-			if (vertex.getY() > bottom) {
-				bottom = vertex.getY();
-			}
-		}
-		
-		this.extent = this.originalExtent = Extent.ofLeftTopRightBottom(left, top, right, bottom);
-		this.shape = shape;
-		this.firstChildShapegroup = null;
-		this.nextShapegroup = null;
-		this.previousShapegroup = null;
+	public ShapeGroup() {
 		this.parentShapegroup = null;
 	}
 
-	//TODO: Add @mutates_properties | this, ...Arrays.stream(subgroups).peek(subgroup -> subgroup.getParentGroup()).toArray(). Currently gives compilation errors when added.
-	/**
-	 * Initializes this object to represent a non-leaf shape group that directly contains the given subgroups, in the given order.
-	 * 
-	 * @inspects | subgroups
-	 * 
-	 * @throws IllegalArgumentException if argument {@code subgroups} is null.
-	 *    | subgroups == null
-	 * @throws IllegalArgumentException if less than two shapegroups are present in {@code subgroups}.
-	 *    | subgroups.length < 2
-	 * @throws IllegalArgumentException if any subgroup in {@code subgroups} is null.
-	 *    | Arrays.stream(subgroups).filter(subgroup -> subgroup == null).findAny() != null 
-	 * @throws IllegalArgumentException if any subgroup in {@code subgroups} is already in a group or has multiple occurences in the given array.
-	 *    | Arrays.stream(subgroups).filter(subgroup -> subgroup.getParentGroup() != null).findAny() != null 
-	 *    
-	 * @post This extent has the smallest left and top of all vertices of the given {@code shape} and the largest right and bottom.
-	 *    | getExtent().getLeft() == Arrays.stream(subgroups).mapToInt(subgroup -> subgroup.getExtent().getLeft()).min().getAsInt() &&
-	 *    |	getExtent().getTop() == Arrays.stream(subgroups).mapToInt(subgroup -> subgroup.getExtent().getTop()).min().getAsInt() &&
-	 *    |	getExtent().getRight() == Arrays.stream(subgroups).mapToInt(subgroup -> subgroup.getExtent().getRight()).max().getAsInt() &&
-	 *    |	getExtent().getBottom() == Arrays.stream(subgroups).mapToInt(subgroup -> subgroup.getExtent().getBottom()).max().getAsInt()
-	 * @post This original extent has the smallest left and top of all vertices of the given {@code shape} and the largest right and bottom.
-	 *    | getOriginalExtent().getLeft() == Arrays.stream(subgroups).mapToInt(subgroup -> subgroup.getExtent().getLeft()).min().getAsInt() &&
-	 *    |	getOriginalExtent().getTop() == Arrays.stream(subgroups).mapToInt(subgroup -> subgroup.getExtent().getTop()).min().getAsInt() &&
-	 *    |	getOriginalExtent().getRight() == Arrays.stream(subgroups).mapToInt(subgroup -> subgroup.getExtent().getRight()).max().getAsInt() &&
-	 *    |	getOriginalExtent().getBottom() == Arrays.stream(subgroups).mapToInt(subgroup -> subgroup.getExtent().getBottom()).max().getAsInt()
-	 * @post This shape equals {@code null}
-	 *    | getShape() == null
-	 * @post This subgroups contains the given subgroups
-	 *    | getSubgroups().equals(new ArrayList<ShapeGroup>(Arrays.asList(subgroups)))
-	 * @post This parent shape group equals {@code null}
-	 *    | getParentGroup() == null
-	 */
-	public ShapeGroup(ShapeGroup[] subgroups) {
-		if (subgroups == null) {
-			throw new IllegalArgumentException("argument subgroups is null");
-		}
-		if (subgroups.length < 2) {
-			throw new IllegalArgumentException("less than 2 elements in argument subgroups");	
-		}
-				
-		int top = Integer.MAX_VALUE;
-		int bottom = Integer.MIN_VALUE;
-		int left = Integer.MAX_VALUE;
-		int right = Integer.MIN_VALUE;
-		for (int i = 0; i < subgroups.length; i++) {
-			ShapeGroup subgroup = subgroups[i];
-			
-			if (subgroup == null) {
-				throw new IllegalArgumentException("element of argument subgroups is null");
-			}
-			if (subgroup.getParentGroup() != null)
-			{
-				throw new IllegalArgumentException("element of argument subgroups is already in a ShapeGroup or has multiple occurences in the given array");
-			}
-			
-			subgroup.parentShapegroup = this;
-			subgroup.nextShapegroup = subgroups[(i + 1) % subgroups.length];
-			subgroup.previousShapegroup = subgroups[Math.floorMod(i - 1, subgroups.length)];
-			
-			if (subgroup.getExtent().getRight() > right) {
-				right = subgroup.getExtent().getRight();
-			}
-			if (subgroup.getExtent().getLeft() < left) {
-				left = subgroup.getExtent().getLeft();
-			}
-			if (subgroup.getExtent().getTop() < top) {
-				top = subgroup.getExtent().getTop();
-			}
-			if (subgroup.getExtent().getBottom() > bottom) {
-				bottom = subgroup.getExtent().getBottom();
-			}
-		}
-		
-		this.extent = this.originalExtent = Extent.ofLeftTopRightBottom(left, top, right, bottom);
-		this.shape = null;
-		this.firstChildShapegroup = subgroups[0];
-		this.nextShapegroup = null;
-		this.previousShapegroup = null;
-		this.parentShapegroup = null;
-	}
 	
 	/**
 	 * Moves this shape group to the front of its parent's list of subgroups.
@@ -464,10 +314,12 @@ public class ShapeGroup {
 			}
 		}
 		
-		if (shape != null) {
-			commands += shape.getDrawingCommands() + bc;
+		if (this instanceof LeafShapeGroup) {
+			LeafShapeGroup leafGroup = (LeafShapeGroup) this;
+			commands += leafGroup.shape.getDrawingCommands() + bc;
 		} else {
-			List<ShapeGroup> subgroups = getSubgroups();
+			NonleafShapeGroup nonleafGroup = (NonleafShapeGroup) this;
+			List<ShapeGroup> subgroups = nonleafGroup.getSubgroups();
 			for (int i = subgroups.size() - 1; i >= 0; i--) {
 				commands += subgroups.get(i).getDrawingCommands() + bc;				
 			}
@@ -482,124 +334,14 @@ public class ShapeGroup {
 		
 		return commands;
 	}
-	
-	/**
-	 * Returns the shape directly contained by this shape group, or null if this is a non-leaf shape group.
-	 * 
-	 * @basic
-	 */
-	public RoundedPolygon getShape() {
-		return shape;
-	}
-	
-	/**
-	 * Returns the subgroup at the given (zero-based) index in this non-leaf shape group's list of subgroups.
-	 * 
-     * @throws IllegalStateException if this is a leaf shape group.
-	 *    | this.getSubgroups() == null
-	 * @throws IllegalArgumentException if the given index is smaller than zero or greater than or equal to the amount of subgroups.
-	 *    | index < 0 || index >= this.getSubgroupCount()
-	 * 
-	 * @post The result is the subgroup at the given index.
-	 * 	  | result.equals(getSubgroups().get(index)) == true
-	 */
-	public ShapeGroup getSubgroup(int index) {
-		if (index < 0 || index >= getSubgroupCount()) {
-			throw new IllegalArgumentException("argument index is out of bounds");
-		}
 		
-		List<ShapeGroup> subGroups = getSubgroups();
-		
-		if (subGroups == null) {
-			throw new IllegalStateException("this shape group is not a non-leaf shape group");
-		}
-		
-		return subGroups.get(index);
-	}
-	
-	/**
-	 * Return the first subgroup in this non-leaf shape group's list of subgroups whose extent contains the given point,
-	 * expressed in this shape group's inner coordinate system.
-	 * 
-	 * @throws IllegalArgumentException if argument {@code innerCoordinates} is {@code null}.
-	 *    | innerCoordinates == null
-	 * @throws IllegalStateException if this is a leaf shape group.
-	 *    | this.getSubgroups() == null
-	 *     
-	 * @post The result equals the first subgroup whose extent contains the given point.
-	 * 	  | result == Arrays.stream(this.getSubgroups().toArray(new ShapeGroup[getSubgroupCount()]))
-	 * 	  |		.filter(subgroup -> subgroup.getExtent().contains(innerCoordinates)).findFirst().orElse(null)
-	 */
-	public ShapeGroup getSubgroupAt(IntPoint innerCoordinates) {
-		if (innerCoordinates == null) {
-			throw new IllegalArgumentException("argument innerCoordinates is null");
-		}
-
-		List<ShapeGroup> subgroups = getSubgroups();
-		
-		if (subgroups == null) {
-			throw new IllegalStateException("this shape group is not a non-leaf shape group");
-		}
-
-		for (ShapeGroup subgroup : subgroups) {
-			if (subgroup.getExtent().contains(innerCoordinates)) {
-				return subgroup;
-			}
-		}
-		
-		return null;
-	}
-	
-	/**
-	 * Returns the number of subgroups of this non-leaf shape group.
-	 * 
-	 * @throws IllegalStateException if this is a leaf shape group.
-	 *    | this.getSubgroups() == null
-	 *    
-	 * @post The result equals the amount of subgroups.
-	 * 	  | result == this.getSubgroups().size()
-	 */
-	public int getSubgroupCount() {
-		List<ShapeGroup> subGroups = getSubgroups();
-		if (subGroups == null) {
-			throw new IllegalStateException("this shape group is not a non-leaf shape group");
-		}
-		
-		return subGroups.size();
-	}
-	
-	/**
-	 * Returns the list of subgroups of this shape group, or null if this is a leaf shape group.
-	 * 
-	 * @post The result is null if this.getShape is not null, else the elements of the resulting List are not null.
-	 *    | (this.getShape() != null) ? result == null : Arrays.stream(result.toArray(new ShapeGroup[] {})).allMatch(e -> e != null)
-	 *    
-	 * @peerObjects
-	 * @basic
-	 */
-	public List<ShapeGroup> getSubgroups() {
-		List<ShapeGroup> subgroupsList = new ArrayList<ShapeGroup>();
-		
-		if (firstChildShapegroup == null) {
-			return null;
-		}
-		
-		ShapeGroup currentShapegroup = firstChildShapegroup;
-		do {
-			subgroupsList.add(currentShapegroup);
-			currentShapegroup = currentShapegroup.nextShapegroup;
-		} while (currentShapegroup != firstChildShapegroup);
-		
-		return subgroupsList;
-	}
-	
 	/**
 	 * Returns the shape group that directly contains this shape group, or null if no shape group directly contains this shape group.
 	 * 
 	 * @peerObject
 	 * @basic
 	 */
-	public ShapeGroup getParentGroup() {
+	public NonleafShapeGroup getParentGroup() {
 		return parentShapegroup;
 	}
 	
