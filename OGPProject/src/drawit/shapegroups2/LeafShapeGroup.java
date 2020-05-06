@@ -18,16 +18,6 @@ public class LeafShapeGroup extends ShapeGroup {
 	
 	/**
 	 * @invar | shape != null
-	 * 
-	 * @invar | firstChildShapegroup == null || firstChild.parent == this
-	 * @invar | (parentShapegroup == null) == (nextShapegroup == null)
-	 * @invar A non-leaf shape group has at least two subgroups
-	 *    | nextShapegroup != this
-	 * @invar | (parentShapegroup == null) == (previousSibling == null)
-	 * @invar | parentShapegroup == null || nextShapegroup.parentShapegroup == parentShapegroup && nextShapegroup.previousSibling == this
-	 * @invar | parentShapegroup == null || previousSibling.parent == parentShapegroup && previousSibling.nextSibling == this
-	 * @invar | parentShapegroup == null || parentShapegroup.getSubgroupsPrivate().contains(this)
-	 * @invar | !getAncestorsPrivate().contains(this)
 	 */
 	RoundedPolygon shape;
 	

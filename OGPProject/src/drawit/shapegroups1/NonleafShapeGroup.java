@@ -13,7 +13,6 @@ import logicalcollections.LogicalList;
  * of the shapes it contains.
  * A non-leaf shape group directly contains two or more subgroups, which are themselves shape groups.
  * 
- * @invar | getSubgroups() != null
  * @invar | LogicalList.distinct(getSubgroups())
  * @invar | getSubgroups().stream().allMatch(g -> g != null && g.getParentGroup() == this)
  */
@@ -163,11 +162,7 @@ public class NonleafShapeGroup extends ShapeGroup {
 	 * @basic
 	 */
 	public List<ShapeGroup> getSubgroups() {
-		if(subgroups == null) { //TODO: dit in post-conditie?
-			return null;
-		}
-		
-		return new ArrayList<ShapeGroup>(subgroups); 
+			return new ArrayList<ShapeGroup>(subgroups); 
 	}
 	
 }

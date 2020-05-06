@@ -14,8 +14,6 @@ import logicalcollections.LogicalList;
  * of the shapes it contains.
  * A non-leaf shape group directly contains two or more subgroups, which are themselves shape groups.
  * 
- * @invar The shape group must have subgroups. //TODO: Hoe formeel deel doen?
- * 
  * @invar None of the subgroups may be equal to {@code null}
  * 		  They must all be distinct and they must all have this shape group as parent group.
  *    | getSubgroups().stream().allMatch(subgroup -> subgroup != null && subgroup.getParentGroup() == this) &&
