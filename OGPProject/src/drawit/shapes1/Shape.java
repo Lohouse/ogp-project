@@ -26,7 +26,5 @@ public interface Shape {
 	  */
 	 IntPoint toGlobalCoordinates(IntPoint p);
 	 
-	 ControlPoint[] createControlPoints();
-	 
-	 
+	 ControlPoint[] createControlPoints();	 
 }
