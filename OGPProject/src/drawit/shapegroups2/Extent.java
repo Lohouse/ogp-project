@@ -318,30 +318,38 @@ public class Extent {
 	}
 	
 	@Override
-	public boolean equals(Object o) {
-		if (!(o instanceof Extent)) {
-			return false;
-		}
-		
-		Extent ext = (Extent) o;
-		
-		if (getRight() == ext.getRight() && getLeft() == ext.getLeft()
-				&& getTop() == ext.getTop() && getBottom() == ext.getBottom()) {
+	public boolean equals(Object obj) {
+		if (this == obj)
 			return true;
-		}
-		
-		return false;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Extent other = (Extent) obj;
+		if (getBottom() != other.getBottom())
+			return false;
+		if (getLeft() != other.getLeft())
+			return false;
+		if (getRight() != other.getRight())
+			return false;
+		if (getTop() != other.getTop())
+			return false;
+		return true;
 	}
 	
 	@Override
 	public int hashCode() {
-		// TODO
-		throw new RuntimeException("not implemented");
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + getBottom();
+		result = prime * result + getLeft();
+		result = prime * result + getRight();
+		result = prime * result + getTop();
+		return result;
 	}
 	
 	@Override
 	public String toString() {
-		// TODO
-		throw new RuntimeException("not implemented");
+		return "Extent[T:" + getTop() + " B:" + getBottom() + " L:" + getLeft() + " R:" + getRight() + "]";
 	}
 }
