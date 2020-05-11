@@ -75,7 +75,7 @@ public class NonleafShapeGroup extends ShapeGroup {
 		int left = Integer.MAX_VALUE;
 		int right = Integer.MIN_VALUE;
 		for (int i = 0; i < subgroups.length; i++) {
-			NonleafShapeGroup subgroup = (NonleafShapeGroup) subgroups[i];
+			ShapeGroup subgroup = subgroups[i];
 			
 			if (subgroup == null) {
 				throw new IllegalArgumentException("element of argument subgroups is null");

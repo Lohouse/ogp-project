@@ -616,8 +616,8 @@ class DrawItTest {
 		triangle.setVertices(new IntPoint[] {new IntPoint(10, 10), new IntPoint(30, 10), new IntPoint(20, 20)});
 		
 		// ShapeGroup: leaf group constructor, getExtent tests
-		drawit.shapegroups1.ShapeGroup di1leaf1 = new drawit.shapegroups1.ShapeGroup(triangle);
-		drawit.shapegroups2.ShapeGroup di2leaf1 = new drawit.shapegroups2.ShapeGroup(triangle);
+		drawit.shapegroups1.ShapeGroup di1leaf1 = new drawit.shapegroups1.LeafShapeGroup(triangle);
+		drawit.shapegroups2.ShapeGroup di2leaf1 = new drawit.shapegroups2.LeafShapeGroup(triangle);
 		assert di1leaf1.getExtent().getTopLeft().equals(new IntPoint(10, 10)) && di1leaf1.getExtent().getBottomRight().equals(new IntPoint(30, 20));
 		assert di2leaf1.getExtent().getTopLeft().equals(new IntPoint(10, 10)) && di2leaf1.getExtent().getBottomRight().equals(new IntPoint(30, 20));
 		
@@ -628,14 +628,14 @@ class DrawItTest {
 		assert di2leaf1.getOriginalExtent().getTopLeft().equals(new IntPoint(10, 10)) && di2leaf1.getOriginalExtent().getBottomRight().equals(new IntPoint(30, 20));
 		assert di1leaf1.getExtent().getTopLeft().equals(new IntPoint(0, 0)) && di1leaf1.getExtent().getBottomRight().equals(new IntPoint(20, 10));
 		assert di2leaf1.getExtent().getTopLeft().equals(new IntPoint(0, 0)) && di2leaf1.getExtent().getBottomRight().equals(new IntPoint(20, 10));
-		drawit.shapegroups1.ShapeGroup di1leaf2 = new drawit.shapegroups1.ShapeGroup(triangle);
-		drawit.shapegroups2.ShapeGroup di2leaf2 = new drawit.shapegroups2.ShapeGroup(triangle);
+		drawit.shapegroups1.ShapeGroup di1leaf2 = new drawit.shapegroups1.LeafShapeGroup(triangle);
+		drawit.shapegroups2.ShapeGroup di2leaf2 = new drawit.shapegroups2.LeafShapeGroup(triangle);
 		di1leaf2.setExtent(drawit.shapegroups1.Extent.ofLeftTopWidthHeight(0, 0, 20, 10));
 		di2leaf2.setExtent(drawit.shapegroups2.Extent.ofLeftTopWidthHeight(0, 0, 20, 10));
 
 		// ShapeGroup: non-leaf group constructor, getExtent tests
-		drawit.shapegroups1.ShapeGroup di1nonLeaf = new drawit.shapegroups1.ShapeGroup(new drawit.shapegroups1.ShapeGroup[] {di1leaf1, di1leaf2});
-		drawit.shapegroups2.ShapeGroup di2nonLeaf = new drawit.shapegroups2.ShapeGroup(new drawit.shapegroups2.ShapeGroup[] {di2leaf1, di2leaf2});
+		drawit.shapegroups1.ShapeGroup di1nonLeaf = new drawit.shapegroups1.NonleafShapeGroup(new drawit.shapegroups1.ShapeGroup[] {di1leaf1, di1leaf2});
+		drawit.shapegroups2.ShapeGroup di2nonLeaf = new drawit.shapegroups2.NonleafShapeGroup(new drawit.shapegroups2.ShapeGroup[] {di2leaf1, di2leaf2});
 		assert di1nonLeaf.getExtent().getTopLeft().equals(new IntPoint(0, 0)) && di1nonLeaf.getExtent().getBottomRight().equals(new IntPoint(20, 10));
 		assert di2nonLeaf.getExtent().getTopLeft().equals(new IntPoint(0, 0)) && di2nonLeaf.getExtent().getBottomRight().equals(new IntPoint(20, 10));
 		di1nonLeaf.setExtent(drawit.shapegroups1.Extent.ofLeftTopWidthHeight(0, 0, 10, 5));
@@ -665,7 +665,7 @@ class DrawItTest {
 		boolean thrown = false;
 		try {
 			RoundedPolygon nullPolygon = null;
-			drawit.shapegroups1.ShapeGroup excGroup = new drawit.shapegroups1.ShapeGroup(nullPolygon);
+			drawit.shapegroups1.ShapeGroup excGroup = new drawit.shapegroups1.LeafShapeGroup(nullPolygon);
 		} catch (IllegalArgumentException e) {
 			thrown = true;
 		}
@@ -673,7 +673,7 @@ class DrawItTest {
 		thrown = false;
 		try {
 			RoundedPolygon nullPolygon = null;
-			drawit.shapegroups2.ShapeGroup excGroup = new drawit.shapegroups2.ShapeGroup(nullPolygon);
+			drawit.shapegroups2.ShapeGroup excGroup = new drawit.shapegroups2.LeafShapeGroup(nullPolygon);
 		} catch (IllegalArgumentException e) {
 			thrown = true;
 		}
@@ -682,8 +682,8 @@ class DrawItTest {
 		try {
 			RoundedPolygon exampleRoundedPolygon = new RoundedPolygon();
 			exampleRoundedPolygon.setVertices(new IntPoint[]{new IntPoint(0, 0), new IntPoint(20, 0), new IntPoint(10, 10)});
-			drawit.shapegroups1.ShapeGroup[] smallPolygonGroup = new drawit.shapegroups1.ShapeGroup[] {new drawit.shapegroups1.ShapeGroup(exampleRoundedPolygon)};
-			drawit.shapegroups1.ShapeGroup excGroup = new drawit.shapegroups1.ShapeGroup(smallPolygonGroup);
+			drawit.shapegroups1.ShapeGroup[] smallPolygonGroup = new drawit.shapegroups1.ShapeGroup[] {new drawit.shapegroups1.LeafShapeGroup(exampleRoundedPolygon)};
+			drawit.shapegroups1.ShapeGroup excGroup = new drawit.shapegroups1.NonleafShapeGroup(smallPolygonGroup);
 		} catch (IllegalArgumentException e) {
 			thrown = true;
 		}
@@ -692,8 +692,8 @@ class DrawItTest {
 		try {
 			RoundedPolygon exampleRoundedPolygon = new RoundedPolygon();
 			exampleRoundedPolygon.setVertices(new IntPoint[]{new IntPoint(0, 0), new IntPoint(20, 0), new IntPoint(10, 10)});
-			drawit.shapegroups2.ShapeGroup[] smallPolygonGroup = new drawit.shapegroups2.ShapeGroup[] {new drawit.shapegroups2.ShapeGroup(exampleRoundedPolygon)};
-			drawit.shapegroups2.ShapeGroup excGroup = new drawit.shapegroups2.ShapeGroup(smallPolygonGroup);
+			drawit.shapegroups2.ShapeGroup[] smallPolygonGroup = new drawit.shapegroups2.ShapeGroup[] {new drawit.shapegroups2.LeafShapeGroup(exampleRoundedPolygon)};
+			drawit.shapegroups2.ShapeGroup excGroup = new drawit.shapegroups2.NonleafShapeGroup(smallPolygonGroup);
 		} catch (IllegalArgumentException e) {
 			thrown = true;
 		}
@@ -702,8 +702,8 @@ class DrawItTest {
 		try {
 			RoundedPolygon exampleRoundedPolygon = new RoundedPolygon();
 			exampleRoundedPolygon.setVertices(new IntPoint[]{new IntPoint(0, 0), new IntPoint(20, 0), new IntPoint(10, 10)});
-			drawit.shapegroups1.ShapeGroup[] nullPolygonGroup = new drawit.shapegroups1.ShapeGroup[] {new drawit.shapegroups1.ShapeGroup(exampleRoundedPolygon), null};
-			drawit.shapegroups1.ShapeGroup excGroup = new drawit.shapegroups1.ShapeGroup(nullPolygonGroup);
+			drawit.shapegroups1.ShapeGroup[] nullPolygonGroup = new drawit.shapegroups1.ShapeGroup[] {new drawit.shapegroups1.LeafShapeGroup(exampleRoundedPolygon), null};
+			drawit.shapegroups1.ShapeGroup excGroup = new drawit.shapegroups1.NonleafShapeGroup(nullPolygonGroup);
 		} catch (IllegalArgumentException e) {
 			thrown = true;
 		}
@@ -712,8 +712,8 @@ class DrawItTest {
 		try {
 			RoundedPolygon exampleRoundedPolygon = new RoundedPolygon();
 			exampleRoundedPolygon.setVertices(new IntPoint[]{new IntPoint(0, 0), new IntPoint(20, 0), new IntPoint(10, 10)});
-			drawit.shapegroups2.ShapeGroup[] nullPolygonGroup = new drawit.shapegroups2.ShapeGroup[] {new drawit.shapegroups2.ShapeGroup(exampleRoundedPolygon), null};
-			drawit.shapegroups2.ShapeGroup excGroup = new drawit.shapegroups2.ShapeGroup(nullPolygonGroup);
+			drawit.shapegroups2.ShapeGroup[] nullPolygonGroup = new drawit.shapegroups2.ShapeGroup[] {new drawit.shapegroups2.LeafShapeGroup(exampleRoundedPolygon), null};
+			drawit.shapegroups2.ShapeGroup excGroup = new drawit.shapegroups2.NonleafShapeGroup(nullPolygonGroup);
 		} catch (IllegalArgumentException e) {
 			thrown = true;
 		}
@@ -722,9 +722,9 @@ class DrawItTest {
 		try {
 			RoundedPolygon exampleRoundedPolygon = new RoundedPolygon();
 			exampleRoundedPolygon.setVertices(new IntPoint[]{new IntPoint(0, 0), new IntPoint(20, 0), new IntPoint(10, 10)});
-			drawit.shapegroups1.ShapeGroup exampleGroup = new drawit.shapegroups1.ShapeGroup(exampleRoundedPolygon);
+			drawit.shapegroups1.ShapeGroup exampleGroup = new drawit.shapegroups1.LeafShapeGroup(exampleRoundedPolygon);
 			drawit.shapegroups1.ShapeGroup[] multipleSameInstance = new drawit.shapegroups1.ShapeGroup[] {exampleGroup, exampleGroup};
-			drawit.shapegroups1.ShapeGroup excGroup = new drawit.shapegroups1.ShapeGroup(multipleSameInstance);
+			drawit.shapegroups1.ShapeGroup excGroup = new drawit.shapegroups1.NonleafShapeGroup(multipleSameInstance);
 		} catch (IllegalArgumentException e) {
 			thrown = true;
 		}
@@ -733,9 +733,9 @@ class DrawItTest {
 		try {
 			RoundedPolygon exampleRoundedPolygon = new RoundedPolygon();
 			exampleRoundedPolygon.setVertices(new IntPoint[]{new IntPoint(0, 0), new IntPoint(20, 0), new IntPoint(10, 10)});
-			drawit.shapegroups2.ShapeGroup exampleGroup = new drawit.shapegroups2.ShapeGroup(exampleRoundedPolygon);
+			drawit.shapegroups2.ShapeGroup exampleGroup = new drawit.shapegroups2.LeafShapeGroup(exampleRoundedPolygon);
 			drawit.shapegroups2.ShapeGroup[] multipleSameInstance = new drawit.shapegroups2.ShapeGroup[] {exampleGroup, exampleGroup};
-			drawit.shapegroups2.ShapeGroup excGroup = new drawit.shapegroups2.ShapeGroup(multipleSameInstance);
+			drawit.shapegroups2.ShapeGroup excGroup = new drawit.shapegroups2.NonleafShapeGroup(multipleSameInstance);
 		} catch (IllegalArgumentException e) {
 			thrown = true;
 		}
@@ -750,26 +750,26 @@ class DrawItTest {
 		rp3.setVertices(new IntPoint[]{new IntPoint(0, 20), new IntPoint(20, 20), new IntPoint(10, 40)});
 		RoundedPolygon rp4 = new RoundedPolygon();
 		rp4.setVertices(new IntPoint[]{new IntPoint(-20, 20), new IntPoint(-5, 20), new IntPoint(-15, 40)});
-		drawit.shapegroups1.ShapeGroup di1lsg1 = new drawit.shapegroups1.ShapeGroup(rp1);
-		drawit.shapegroups1.ShapeGroup di1lsg2 = new drawit.shapegroups1.ShapeGroup(rp2);
-		drawit.shapegroups1.ShapeGroup di1lsg3 = new drawit.shapegroups1.ShapeGroup(rp3);
-		drawit.shapegroups1.ShapeGroup di1lsg4 = new drawit.shapegroups1.ShapeGroup(rp4);
+		drawit.shapegroups1.LeafShapeGroup di1lsg1 = new drawit.shapegroups1.LeafShapeGroup(rp1);
+		drawit.shapegroups1.LeafShapeGroup di1lsg2 = new drawit.shapegroups1.LeafShapeGroup(rp2);
+		drawit.shapegroups1.LeafShapeGroup di1lsg3 = new drawit.shapegroups1.LeafShapeGroup(rp3);
+		drawit.shapegroups1.LeafShapeGroup di1lsg4 = new drawit.shapegroups1.LeafShapeGroup(rp4);
 		assert di1lsg1.getShape() == rp1;
 		assert di1lsg2.getShape() == rp2;
 		assert di1lsg3.getShape() == rp3;
 		assert di1lsg4.getShape() == rp4;
 		drawit.shapegroups1.ShapeGroup[] di1lsgGroup = new drawit.shapegroups1.ShapeGroup[] {di1lsg1, di1lsg2, di1lsg3, di1lsg4};
-		drawit.shapegroups1.ShapeGroup di1psg = new drawit.shapegroups1.ShapeGroup(di1lsgGroup);
-		drawit.shapegroups2.ShapeGroup di2lsg1 = new drawit.shapegroups2.ShapeGroup(rp1);
-		drawit.shapegroups2.ShapeGroup di2lsg2 = new drawit.shapegroups2.ShapeGroup(rp2);
-		drawit.shapegroups2.ShapeGroup di2lsg3 = new drawit.shapegroups2.ShapeGroup(rp3);
-		drawit.shapegroups2.ShapeGroup di2lsg4 = new drawit.shapegroups2.ShapeGroup(rp4);
+		drawit.shapegroups1.NonleafShapeGroup di1psg = new drawit.shapegroups1.NonleafShapeGroup(di1lsgGroup);
+		drawit.shapegroups2.LeafShapeGroup di2lsg1 = new drawit.shapegroups2.LeafShapeGroup(rp1);
+		drawit.shapegroups2.LeafShapeGroup di2lsg2 = new drawit.shapegroups2.LeafShapeGroup(rp2);
+		drawit.shapegroups2.LeafShapeGroup di2lsg3 = new drawit.shapegroups2.LeafShapeGroup(rp3);
+		drawit.shapegroups2.LeafShapeGroup di2lsg4 = new drawit.shapegroups2.LeafShapeGroup(rp4);
 		assert di2lsg1.getShape() == rp1;
 		assert di2lsg2.getShape() == rp2;
 		assert di2lsg3.getShape() == rp3;
 		assert di2lsg4.getShape() == rp4;
 		drawit.shapegroups2.ShapeGroup[] di2lsgGroup = new drawit.shapegroups2.ShapeGroup[] {di2lsg1, di2lsg2, di2lsg3, di2lsg4};
-		drawit.shapegroups2.ShapeGroup di2psg = new drawit.shapegroups2.ShapeGroup(di2lsgGroup);
+		drawit.shapegroups2.NonleafShapeGroup di2psg = new drawit.shapegroups2.NonleafShapeGroup(di2lsgGroup);
 
 		// ShapeGroup: getSubroups, getSubgroup, getSubgroupCount, getParen(), order and hierarchy tests
 		assert di1psg.getSubgroupCount() == di1lsgGroup.length;
@@ -884,8 +884,8 @@ class DrawItTest {
 		// ShapeGroup: toInnerCoordinates test
 		RoundedPolygon rp100 = new RoundedPolygon();
 		rp100.setVertices(new IntPoint[] {new IntPoint(50, 50), new IntPoint(100, 50), new IntPoint(100, 100), new IntPoint(50, 100)});
-		drawit.shapegroups1.ShapeGroup di1sg100 = new drawit.shapegroups1.ShapeGroup(rp100);
-		drawit.shapegroups2.ShapeGroup di2sg100 = new drawit.shapegroups2.ShapeGroup(rp100);
+		drawit.shapegroups1.ShapeGroup di1sg100 = new drawit.shapegroups1.LeafShapeGroup(rp100);
+		drawit.shapegroups2.ShapeGroup di2sg100 = new drawit.shapegroups2.LeafShapeGroup(rp100);
 		assert di1sg100.getExtent().getTopLeft().equals(new IntPoint(50, 50)) && di1sg100.getExtent().getBottomRight().equals(new IntPoint(100, 100));
 		assert di2sg100.getExtent().getTopLeft().equals(new IntPoint(50, 50)) && di2sg100.getExtent().getBottomRight().equals(new IntPoint(100, 100));
 		assert di1sg100.toInnerCoordinates(new IntVector(100, 100)).getX() == 100 && di1sg100.toInnerCoordinates(new IntVector(100, 100)).getY() == 100;
