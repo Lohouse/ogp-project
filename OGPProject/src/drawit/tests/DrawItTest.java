@@ -17,7 +17,8 @@ import drawit.IntPoint;
 import drawit.IntVector;
 import drawit.PointArrays;
 import drawit.RoundedPolygon;
-import drawit.shapegroups1.ShapeGroup;
+import drawit.shapegroups1.NonleafShapeGroup;
+import drawit.shapegroups2.ShapeGroup;
 
 class DrawItTest {
 
@@ -952,5 +953,64 @@ class DrawItTest {
 		assert di2sg100.toInnerCoordinates(new IntVector(100, 100)).getX() == 50 && di2sg100.toInnerCoordinates(new IntVector(100, 100)).getY() == 50;
 		
 		// ShapeGroup: getDrawingCommands tests
+	}
+	
+	@Test
+	void testShapes() {
+		// RoundedPolygonShape: constructor, getParent, getShape tests
+		RoundedPolygon rp101 = new RoundedPolygon();
+		rp101.setVertices(new IntPoint[] {new IntPoint(50, 50), new IntPoint(100, 50), new IntPoint(100, 100), new IntPoint(50, 100)});
+		drawit.shapegroups1.ShapeGroup sg1 = new drawit.shapegroups1.LeafShapeGroup(rp101);
+		drawit.shapegroups2.ShapeGroup sg2 = new drawit.shapegroups2.LeafShapeGroup(rp101);
+		
+		drawit.shapes1.RoundedPolygonShape rps1a = new drawit.shapes1.RoundedPolygonShape(null, rp101);
+		drawit.shapes1.RoundedPolygonShape rps1b = new drawit.shapes1.RoundedPolygonShape(sg1, rp101);
+		drawit.shapes2.RoundedPolygonShape rps2a = new drawit.shapes2.RoundedPolygonShape(null, rp101);
+		drawit.shapes2.RoundedPolygonShape rps2b = new drawit.shapes2.RoundedPolygonShape(sg2, rp101);
+		
+		assert rps1a.getParent() == null;
+		assert rps1b.getParent() == sg1;
+		assert rps2a.getParent() == null;
+		assert rps2b.getParent() == sg2;
+		
+		assert rps1a.getPolygon() == rp101;
+		assert rps1b.getPolygon() == rp101;
+		assert rps2a.getPolygon() == rp101;
+		assert rps2b.getPolygon() == rp101;
+		
+		// RoundedPolygonShape: toShapeCoordinates, toGlobalCoordinates, contains tests
+		//TODO
+		
+		// RoundedPolygonShape: createControlPoints tests
+		//TODO
+		
+		// ShapeGroupShape: constructor, getShapeGroup tests
+		RoundedPolygon rp102 = new RoundedPolygon();
+		rp102.setVertices(new IntPoint[]{new IntPoint(0, 0), new IntPoint(20, 0), new IntPoint(10, 10)});
+		RoundedPolygon rp103 = new RoundedPolygon();
+		rp103.setVertices(new IntPoint[]{new IntPoint(-20, 0), new IntPoint(-5, 0), new IntPoint(-10, 10)});
+		drawit.shapegroups1.LeafShapeGroup sg3a = new drawit.shapegroups1.LeafShapeGroup(rp102);
+		drawit.shapegroups1.LeafShapeGroup sg4a = new drawit.shapegroups1.LeafShapeGroup(rp103);
+		drawit.shapegroups1.ShapeGroup[] sg3p4a = new drawit.shapegroups1.ShapeGroup[] {sg3a, sg4a};
+		drawit.shapegroups1.NonleafShapeGroup sg5a = new drawit.shapegroups1.NonleafShapeGroup(sg3p4a);
+		drawit.shapegroups2.LeafShapeGroup sg3b = new drawit.shapegroups2.LeafShapeGroup(rp102);
+		drawit.shapegroups2.LeafShapeGroup sg4b = new drawit.shapegroups2.LeafShapeGroup(rp103);
+		drawit.shapegroups2.ShapeGroup[] sg3p4b = new drawit.shapegroups2.ShapeGroup[] {sg3b, sg4b};
+		drawit.shapegroups2.NonleafShapeGroup sg5b = new drawit.shapegroups2.NonleafShapeGroup(sg3p4b);
+		
+		drawit.shapes1.ShapeGroupShape sgs1 = new drawit.shapes1.ShapeGroupShape(sg5a);
+		drawit.shapes2.ShapeGroupShape sgs2 = new drawit.shapes2.ShapeGroupShape(sg5b);
+		
+		assert sgs1.getShapeGroup() == sg5a;
+		assert sgs2.getShapeGroup() == sg5b;
+		
+		// ShapeGroupShape: toShapeCoordinates, toGlobalCoordinates, contains tests
+		//TODO
+		
+		// ShapeGroupShape: getDrawingCommands tests
+		//TODO
+		
+		// ShapeGroupShape: createControlPoints tests
+		//TODO
 	}
 }

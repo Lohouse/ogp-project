@@ -3,7 +3,9 @@ package drawit;
 import java.awt.Color;
 import java.util.Arrays;
 import java.util.stream.IntStream;
+import drawit.shapegroups1.Extent;
 
+//TODO: post-condition for bounding box?
 /**
  * An instance of this class is a mutable abstraction storing a rounded polygon defined
    by a set of 2D points with integer coordinates and a nonnegative corner radius.
@@ -17,6 +19,8 @@ import java.util.stream.IntStream;
  *    | PointArrays.checkDefinesProperPolygon(this.getVertices()) == null
  * @invar This RoundedPolygon's color is not null.
  *    | this.getColor() != null
+ * @invar This RoundedPolygon's bounding box is not null.
+ * 	  | this.getBoundingBox() != null
  */
 public class RoundedPolygon {
 	
@@ -26,12 +30,14 @@ public class RoundedPolygon {
 	 * @invar | Arrays.stream(vertices).allMatch(e -> e != null)
 	 * @invar | PointArrays.checkDefinesProperPolygon(vertices) == null
 	 * @invar | color != null
+	 * @invar | box != null
 	 * 
 	 * @representationObject
 	 */
 	private IntPoint[] vertices;
 	private int radius;
 	private Color color;
+	private Extent box;
 	
 	/**
 	 * Initializes an unrounded (radius 0) and empty (no initial vertices) polygon.
@@ -44,11 +50,14 @@ public class RoundedPolygon {
 	 *    | this.getRadius() == 0
 	 * @post This RoundedPolygon initially has a white color.
 	 *    | this.getColor() == Color.WHITE
+	 * @post The initial bounding box only contains the origin.
+	 *    | this.getBoundingBox().equals(Extent.ofLeftTopRightBottom(0, 0, 0, 0))
 	 */
 	public RoundedPolygon() {
 		vertices = new IntPoint[]{};
 		radius = 0;
 		color = Color.WHITE;
+		box = Extent.ofLeftTopRightBottom(0, 0, 0, 0);
 	}
 	
 	/** 
@@ -135,6 +144,7 @@ public class RoundedPolygon {
 		}
 		
 		vertices = newVertices;
+		updateBox();
 	}
 	
 	/**
@@ -178,6 +188,7 @@ public class RoundedPolygon {
 		}
 		
 		vertices = newVertices;
+		updateBox();
 	}
 
 	/**
@@ -211,6 +222,39 @@ public class RoundedPolygon {
 		}
 		
 		vertices = newVertices;
+		updateBox();
+	}
+	
+	/**
+	 * Updates the bounding box to represent the current vertices.
+     * 
+     * @mutates | box
+     * 
+     * @post The left coordinate of the bounding box is equal to the smallest x-value of the vertices.
+     *    | getBoundingBox().getLeft() == Arrays.stream(getVertices()).mapToInt(vertex -> vertex.getX()).min().getAsInt()
+     * @post The right coordinate of the bounding box is equal to the largest x-value of the vertices.
+     *    | getBoundingBox().getRight() == Arrays.stream(getVertices()).mapToInt(vertex -> vertex.getX()).max().getAsInt()
+     * @post The top coordinate of the bounding box is equal to the smallest y-value of the vertices.
+     *    | getBoundingBox().getTop() == Arrays.stream(getVertices()).mapToInt(vertex -> vertex.getY()).min().getAsInt()
+     * @post The bottom coordinate of the bounding box is equal to the largest y-value of the vertices.
+     *    | getBoundingBox().getBottom() == Arrays.stream(getVertices()).mapToInt(vertex -> vertex.getY()).max().getAsInt()
+	 */
+	public void updateBox() {
+		int top = Integer.MAX_VALUE;
+		int bottom = Integer.MIN_VALUE;
+		int left = Integer.MAX_VALUE;
+		int right = Integer.MIN_VALUE;
+		
+		for(IntPoint vertex : vertices) {
+			int x = vertex.getX();
+			int y = vertex.getY();
+			if(x < left) left = x;
+			else if(x > right) right = x;
+			if(y < top) top = y;
+			if(y > bottom) bottom = y;
+		}
+		
+		box = Extent.ofLeftTopRightBottom(left, top, right, bottom);
 	}
 	
 	/**
@@ -355,6 +399,7 @@ public class RoundedPolygon {
 		}
 		
 		vertices = newVertices.clone();
+		updateBox();
 	}
 	
 	/**
@@ -384,5 +429,15 @@ public class RoundedPolygon {
 		}
 		
 		this.color = color;
+	}
+	
+	/**
+	 * Returns the bounding box for this polygon.
+	 * 
+	 * @post The result is not {@code null}
+	 *    | result != null
+	 */
+	public Extent getBoundingBox() {
+		return box;
 	}
 }
