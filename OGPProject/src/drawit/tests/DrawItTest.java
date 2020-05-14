@@ -2,8 +2,11 @@ package drawit.tests;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.IntStream;
 
 import org.junit.jupiter.api.Test;
@@ -608,6 +611,57 @@ class DrawItTest {
 		assert extent2.contains(extentIntPoint6);
 		assert extent2.contains(extentIntPoint7);
 		assert !extent2.contains(extentIntPoint8);
+
+		// Extent: equals, hashCode
+		drawit.shapegroups1.Extent extent17 = drawit.shapegroups1.Extent.ofLeftTopRightBottom(50, 20, 80, 40);
+		drawit.shapegroups1.Extent extent18 = drawit.shapegroups1.Extent.ofLeftTopWidthHeight(50, 20, 30, 20);
+		drawit.shapegroups1.Extent extent19 = drawit.shapegroups1.Extent.ofLeftTopRightBottom(30, 30, 35, 40);
+		List<drawit.shapegroups1.Extent> extentList1 = new ArrayList<drawit.shapegroups1.Extent>();
+		extentList1.add(extent17);
+		Set<drawit.shapegroups1.Extent> extentSet1 = new HashSet<drawit.shapegroups1.Extent>();
+		extentSet1.add(extent17);
+
+		assert extent17 != extent18;
+		assert extent17 != extent19;
+		assert extent17.equals(extent18);
+		assert !extent17.equals(extent19);
+		assert extent17.hashCode() == extent18.hashCode();
+		assert extent17.hashCode() != extent19.hashCode();
+		assert extentList1.contains(extent17);
+		assert extentList1.contains(extent18);
+		assert !extentList1.contains(extent19);
+		assert extentSet1.contains(extent17);
+		assert extentSet1.contains(extent18);
+		assert !extentSet1.contains(extent19);
+
+		drawit.shapegroups2.Extent extent20 = drawit.shapegroups2.Extent.ofLeftTopRightBottom(50, 20, 80, 40);
+		drawit.shapegroups2.Extent extent21 = drawit.shapegroups2.Extent.ofLeftTopWidthHeight(50, 20, 30, 20);
+		drawit.shapegroups2.Extent extent22 = drawit.shapegroups2.Extent.ofLeftTopRightBottom(30, 30, 35, 40);
+		List<drawit.shapegroups2.Extent> extentList2 = new ArrayList<drawit.shapegroups2.Extent>();
+		extentList2.add(extent20);
+		Set<drawit.shapegroups2.Extent> extentSet2 = new HashSet<drawit.shapegroups2.Extent>();
+		extentSet2.add(extent20);
+
+		assert extent20 != extent21;
+		assert extent20 != extent22;
+		assert extent20.equals(extent21);
+		assert !extent20.equals(extent22);
+		assert extent20.hashCode() == extent21.hashCode();
+		assert extent20.hashCode() != extent22.hashCode();
+		assert extentList2.contains(extent20);
+		assert extentList2.contains(extent21);
+		assert !extentList2.contains(extent22);
+		assert extentSet2.contains(extent20);
+		assert extentSet2.contains(extent21);
+		assert !extentSet2.contains(extent22);
+		
+		// Extent: toString
+		assert extent17.toString().equals("Extent[L:50 T:20 R:80 B:40]");
+		assert extent20.toString().equals("Extent[L:50 T:20 R:80 B:40]");
+		assert extent18.toString().equals("Extent[L:50 T:20 R:80 B:40]");
+		assert extent21.toString().equals("Extent[L:50 T:20 R:80 B:40]");
+		assert extent19.toString().equals("Extent[L:30 T:30 R:35 B:40]");
+		assert extent22.toString().equals("Extent[L:30 T:30 R:35 B:40]");
 	}
 	
 	@Test

@@ -350,6 +350,6 @@ public class Extent {
 	
 	@Override
 	public String toString() {
-		return "Extent[T:" + getTop() + " B:" + getBottom() + " L:" + getLeft() + " R:" + getRight() + "]";
+		return "Extent[L:" + getLeft() + " T:" + getTop() + " R:" + getRight() + " B:" + getBottom() + "]";
 	}
 }
