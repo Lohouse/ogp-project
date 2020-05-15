@@ -1,8 +1,5 @@
 package drawit.shapes2;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import drawit.IntPoint;
 import drawit.IntVector;
 import drawit.shapegroups2.Extent;
@@ -15,7 +12,7 @@ import drawit.shapes2.ControlPoint;
  * 
  * @immutable
  */
-public class ShapeGroupShape implements Shape{
+public class ShapeGroupShape implements Shape {
 	
 	ShapeGroup group;
 
@@ -37,11 +34,7 @@ public class ShapeGroupShape implements Shape{
 	 * Returns whether this shape group's extent contains the given point, expressed in shape coordinates.
 	 */
 	public boolean contains(IntPoint p) {
-		Extent extent = group.getExtent();
-		if(extent.getLeft() <= p.getX() && extent.getRight() >= p.getX() && extent.getTop() >= p.getY() && extent.getBottom() >= p.getY()) {
-			return true;
-		}
-		return false;
+		return group.getExtent().contains(p);
 	}
 	
 	/**
@@ -72,30 +65,39 @@ public class ShapeGroupShape implements Shape{
 	 * a client is no longer allowed to call getLocation or move on any of the returned ControlPoint objects. 
 	 * There is one exception: a client can perform any number of consecutive move calls on the same ControlPoint object.
 	 */
-	public ControlPoint[] createControlPoints() {
-		class PointControl implements ControlPoint {
-			IntPoint p;
-			
-			public PointControl(IntPoint p) {
-				this.p = p;
-			}	
-			public IntPoint getLocation() {
-				return p; //Juiste coordinate system?
-			}
-			public void move(IntVector delta) {
-				p.plus(delta);
-			}
-			public void remove() {
-				// Hoe removen zelfs?
-			}
-		}
+	public ControlPoint[] createControlPoints() {		
+		Extent ext = group.getExtent();
 		
-		List<ControlPoint> result = new ArrayList<ControlPoint>();
-		
-		result.add(new PointControl(group.getExtent().getTopLeft()));	//Deze extent nog converteren naar het shape coordinate system?
-		result.add(new PointControl(group.getExtent().getBottomRight()));	//Idem
-		
-		return (ControlPoint[]) result.toArray();
+		return new ControlPoint[] {		
+			new ControlPoint() { //TODO: Deze extent nog converteren naar het shape coordinate system?
+				public IntPoint getLocation() {
+					return ext.getTopLeft(); //TODO: Checken of deze toShapeCoordinates wel mag hier
+				}
+				public void move(IntVector delta) {
+					group.setExtent(Extent.ofLeftTopRightBottom(ext.getLeft() + delta.getX(),
+							ext.getTop() + delta.getY(),
+							ext.getRight(),
+							ext.getBottom()));
+				}
+				public void remove() {
+					throw new IllegalArgumentException("Can't remove the ControlPoint of a ShapeGroup");
+				}
+			},			
+			new ControlPoint() { //TODO: Deze extent nog converteren naar het shape coordinate system?
+				public IntPoint getLocation() {
+					return ext.getBottomRight(); //TODO: Checken of deze toShapeCoordinates wel mag hier
+				}
+				public void move(IntVector delta) {
+					group.setExtent(Extent.ofLeftTopRightBottom(ext.getLeft(),
+							ext.getTop(),
+							ext.getRight() + delta.getX(),
+							ext.getBottom() + delta.getY()));
+				}
+				public void remove() {
+					throw new IllegalArgumentException("Can't remove the ControlPoint of a ShapeGroup");
+				}
+			}
+		};
 	}
 	
 	//TODO: Wat als de extent van de parent group verandert?
@@ -105,6 +107,11 @@ public class ShapeGroupShape implements Shape{
 	 * returns the coordinates of the point in the shape coordinate system.
 	 */
 	public IntPoint toShapeCoordinates(IntPoint p) {
+		if (group.getParentGroup() == null)
+		{
+			return p;
+		}
+		
 		return group.getParentGroup().toInnerCoordinates(p);
 	}
 	
@@ -113,6 +120,11 @@ public class ShapeGroupShape implements Shape{
 	 * returns the coordinates of the point in the global coordinate system.
 	 */
 	public IntPoint toGlobalCoordinates(IntPoint p) {
+		if (group.getParentGroup() == null)
+		{
+			return p;
+		}
+		
 		return group.getParentGroup().toGlobalCoordinates(p);		
 	}
 	

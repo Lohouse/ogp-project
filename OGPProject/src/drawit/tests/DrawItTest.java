@@ -20,6 +20,7 @@ import drawit.RoundedPolygon;
 import drawit.shapegroups1.Extent;
 import drawit.shapegroups1.NonleafShapeGroup;
 import drawit.shapegroups1.exporter.ShapeGroupExporter;
+import drawit.shapes1.ControlPoint;
 
 class DrawItTest {
 

@@ -72,16 +72,16 @@ public class RoundedPolygonShape implements Shape {
 	 * There is one exception: a client can perform any number of consecutive move calls on the same ControlPoint object.
 	 */
 	public ControlPoint[] createControlPoints() {
-		List<ControlPoint> result = new ArrayList<ControlPoint>();
 		IntPoint[] vertices = polygon.getVertices();
+		ControlPoint[] result = new ControlPoint[vertices.length];
 		for (int i = 0 ; i < vertices.length ; i++) {
 			final int j = i;	// Is dit wel een goede methode?
-			result.add(new ControlPoint() {				
+			result[i] = (new ControlPoint() {				
 				public IntPoint getLocation() {
-					return toShapeCoordinates(vertices[j]); //TODO: Checken of deze toShapeCoordinates wel mag hier
+					return vertices[j]; //TODO: Checken of deze toShapeCoordinates wel mag hier
 				}
 				public void move(IntVector delta) {
-					IntPoint newVertex = vertices[j].plus(delta);
+					IntPoint newVertex = vertices[j].plus(toShapeCoordinates(delta));
 					polygon.update(j, newVertex);
 				}
 				public void remove() {
@@ -89,7 +89,7 @@ public class RoundedPolygonShape implements Shape {
 				}
 			});
 		}
-		return (ControlPoint[]) result.toArray();
+		return result;
 	}
 	
 	/**
@@ -99,9 +99,9 @@ public class RoundedPolygonShape implements Shape {
 	public IntPoint toShapeCoordinates(IntPoint p) {
 		if(parent == null) {
 			return p;
-		} else {
-			return parent.toInnerCoordinates(p);
 		}
+		
+		return parent.toInnerCoordinates(p);
 	}
 	
 	/**
@@ -111,8 +111,17 @@ public class RoundedPolygonShape implements Shape {
 	public IntPoint toGlobalCoordinates(IntPoint p) {
 		if(parent == null) {
 			return p;
-		} else {
-			return parent.toGlobalCoordinates(p);
 		}
+		
+		return parent.toGlobalCoordinates(p);
+	}
+	
+	//TODO: This is an extra private method. Docs, etc required?
+	private IntVector toShapeCoordinates(IntVector v) {
+		if (parent == null) {
+			return v;
+		}
+		
+		return parent.toInnerCoordinates(v);
 	}
 }
