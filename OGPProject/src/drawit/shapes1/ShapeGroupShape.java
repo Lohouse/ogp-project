@@ -73,8 +73,9 @@ public class ShapeGroupShape implements Shape {
 					return ext.getTopLeft(); //TODO: Checken of deze toShapeCoordinates wel mag hier
 				}
 				public void move(IntVector delta) {
-					group.setExtent(Extent.ofLeftTopRightBottom(ext.getLeft() + delta.getX(),
-							ext.getTop() + delta.getY(),
+					IntVector shapeDelta = toShapeCoordinates(delta);
+					group.setExtent(Extent.ofLeftTopRightBottom(ext.getLeft() + shapeDelta.getX(),
+							ext.getTop() + shapeDelta.getY(),
 							ext.getRight(),
 							ext.getBottom()));
 				}
@@ -87,13 +88,14 @@ public class ShapeGroupShape implements Shape {
 					return ext.getBottomRight(); //TODO: Checken of deze toShapeCoordinates wel mag hier
 				}
 				public void move(IntVector delta) {
+					IntVector shapeDelta = toShapeCoordinates(delta);
 					group.setExtent(Extent.ofLeftTopRightBottom(ext.getLeft(),
 							ext.getTop(),
-							ext.getRight() + delta.getX(),
-							ext.getBottom() + delta.getY()));
+							ext.getRight() + shapeDelta.getX(),
+							ext.getBottom() + shapeDelta.getY()));
 				}
 				public void remove() {
-					throw new IllegalArgumentException("Can't remove the ControlPoint of a ShapeGroup");
+					throw new UnsupportedOperationException("Can't remove the ControlPoint of a ShapeGroup");
 				}
 			}
 		};
@@ -127,4 +129,12 @@ public class ShapeGroupShape implements Shape {
 		return group.getParentGroup().toGlobalCoordinates(p);		
 	}
 	
+	//TODO: This is an extra private method. Docs, etc required?
+	private IntVector toShapeCoordinates(IntVector v) {
+		if (group.getParentGroup() == null) {
+			return v;
+		}
+		
+		return group.getParentGroup().toInnerCoordinates(v);
+	}
 }
