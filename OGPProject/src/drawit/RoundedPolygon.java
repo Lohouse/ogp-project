@@ -51,13 +51,13 @@ public class RoundedPolygon {
 	 * @post This RoundedPolygon initially has a white color.
 	 *    | this.getColor() == Color.WHITE
 	 * @post The initial bounding box only contains the origin.
-	 *    | this.getBoundingBox().equals(Extent.ofLeftTopRightBottom(0, 0, 0, 0))
+	 *    | this.getBoundingBox().equals(Extent.ofLeftTopRightBottom(Integer.MIN_VALUE, Integer.MIN_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE))
 	 */
 	public RoundedPolygon() {
 		vertices = new IntPoint[]{};
 		radius = 0;
 		color = Color.WHITE;
-		box = Extent.ofLeftTopRightBottom(0, 0, 0, 0);
+		box = Extent.ofLeftTopRightBottom(Integer.MIN_VALUE, Integer.MIN_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE); //TODO: Is this correct? Also check corresponding post-condition
 	}
 	
 	/** 
@@ -228,16 +228,22 @@ public class RoundedPolygon {
 	/**
 	 * Updates the bounding box to represent the current vertices.
      * 
-     * @mutates | box
-     * 
      * @post The left coordinate of the bounding box is equal to the smallest x-value of the vertices.
      *    | getBoundingBox().getLeft() == Arrays.stream(getVertices()).mapToInt(vertex -> vertex.getX()).min().getAsInt()
-     * @post The right coordinate of the bounding box is equal to the largest x-value of the vertices.
-     *    | getBoundingBox().getRight() == Arrays.stream(getVertices()).mapToInt(vertex -> vertex.getX()).max().getAsInt()
+     * @post The right coordinate of the bounding box is equal to the largest x-value of the vertices, or one greater than
+     *       the largest x-value of the vertices only if the largest x-value of the vertices is equal to the smallest x-value of the vertices.
+     *    | getBoundingBox().getRight() == (Arrays.stream(getVertices()).mapToInt(vertex -> vertex.getX()).min().getAsInt()
+     *    |     == Arrays.stream(getVertices()).mapToInt(vertex -> vertex.getX()).max().getAsInt() ?
+     *    |     Arrays.stream(getVertices()).mapToInt(vertex -> vertex.getX()).max().getAsInt() + 1:
+     *    |     Arrays.stream(getVertices()).mapToInt(vertex -> vertex.getX()).max().getAsInt())
      * @post The top coordinate of the bounding box is equal to the smallest y-value of the vertices.
      *    | getBoundingBox().getTop() == Arrays.stream(getVertices()).mapToInt(vertex -> vertex.getY()).min().getAsInt()
-     * @post The bottom coordinate of the bounding box is equal to the largest y-value of the vertices.
-     *    | getBoundingBox().getBottom() == Arrays.stream(getVertices()).mapToInt(vertex -> vertex.getY()).max().getAsInt()
+     * @post The bottom coordinate of the bounding box is equal to the largest y-value of the vertices, or one greater than
+     *       the largest y-value of the vertices only if the largest y-value of the vertices is equal to the smallest y-value of the vertices.
+     *    | getBoundingBox().getBottom() == (Arrays.stream(getVertices()).mapToInt(vertex -> vertex.getY()).max().getAsInt()
+     *    |     == Arrays.stream(getVertices()).mapToInt(vertex -> vertex.getY()).min().getAsInt() ?
+     *    |     Arrays.stream(getVertices()).mapToInt(vertex -> vertex.getY()).max().getAsInt() + 1:
+     *    |     Arrays.stream(getVertices()).mapToInt(vertex -> vertex.getY()).max().getAsInt())
 	 */
 	public void updateBox() {
 		int top = Integer.MAX_VALUE;
@@ -249,10 +255,13 @@ public class RoundedPolygon {
 			int x = vertex.getX();
 			int y = vertex.getY();
 			if(x < left) left = x;
-			else if(x > right) right = x;
+			if(x > right) right = x;
 			if(y < top) top = y;
 			if(y > bottom) bottom = y;
 		}
+
+		if (left == right) right++;
+		if (top == bottom) bottom++; //TODO: Is this correct?
 		
 		box = Extent.ofLeftTopRightBottom(left, top, right, bottom);
 	}

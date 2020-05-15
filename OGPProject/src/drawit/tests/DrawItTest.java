@@ -1,13 +1,13 @@
 package drawit.tests;
 
-import static org.junit.jupiter.api.Assertions.assertAll;
-
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
-import java.util.stream.IntStream;
 
 import org.junit.jupiter.api.Test;
 
@@ -17,8 +17,9 @@ import drawit.IntPoint;
 import drawit.IntVector;
 import drawit.PointArrays;
 import drawit.RoundedPolygon;
+import drawit.shapegroups1.Extent;
 import drawit.shapegroups1.NonleafShapeGroup;
-import drawit.shapegroups2.ShapeGroup;
+import drawit.shapegroups1.exporter.ShapeGroupExporter;
 
 class DrawItTest {
 
@@ -1012,5 +1013,67 @@ class DrawItTest {
 		
 		// ShapeGroupShape: createControlPoints tests
 		//TODO
+	}
+	
+	@Test
+	void testShapeGroupExporter() {
+		// ShapeGroupExporter: toPlainData
+		RoundedPolygon rp1 = new RoundedPolygon();
+		rp1.setVertices(new IntPoint[] {new IntPoint(50, 50), new IntPoint(100, 50), new IntPoint(100, 100), new IntPoint(50, 100)});
+		rp1.setColor(Color.BLUE);
+		RoundedPolygon rp2 = new RoundedPolygon();
+		rp2.setVertices(new IntPoint[]{new IntPoint(-20, 0), new IntPoint(-5, 0), new IntPoint(-10, 10)});
+		RoundedPolygon rp3 = new RoundedPolygon();
+		rp3.setVertices(new IntPoint[]{new IntPoint(0, 0), new IntPoint(20, 0), new IntPoint(10, 10)});
+		rp3.setRadius(15);
+
+		drawit.shapegroups1.ShapeGroup lsg1 = new drawit.shapegroups1.LeafShapeGroup(rp1);
+		drawit.shapegroups1.ShapeGroup lsg2 = new drawit.shapegroups1.LeafShapeGroup(rp2);
+		lsg2.setExtent(Extent.ofLeftTopRightBottom(-10, -10, 30, 30));
+		drawit.shapegroups1.ShapeGroup lsg3 = new drawit.shapegroups1.LeafShapeGroup(rp3);
+		drawit.shapegroups1.ShapeGroup nlsg1 = new drawit.shapegroups1.NonleafShapeGroup(new drawit.shapegroups1.ShapeGroup[] {lsg2, lsg3});
+		drawit.shapegroups1.ShapeGroup nlsg2 = new drawit.shapegroups1.NonleafShapeGroup(new drawit.shapegroups1.ShapeGroup[] {lsg1, nlsg1});
+		
+		Object supposedPlainData = Map.of(
+			    "originalExtent", Map.of("left", nlsg2.getOriginalExtent().getLeft(), "top", nlsg2.getOriginalExtent().getTop(), "right", nlsg2.getOriginalExtent().getRight(), "bottom", nlsg2.getOriginalExtent().getBottom()),
+			    "extent", Map.of("left", nlsg2.getExtent().getLeft(), "top", nlsg2.getExtent().getTop(), "right", nlsg2.getExtent().getRight(), "bottom", nlsg2.getExtent().getBottom()),
+			    "subgroups", List.of(
+			        Map.of(
+			            "originalExtent", Map.of("left", lsg1.getOriginalExtent().getLeft(), "top", lsg1.getOriginalExtent().getTop(), "right", lsg1.getOriginalExtent().getRight(), "bottom", lsg1.getOriginalExtent().getBottom()),
+			            "extent", Map.of("left", lsg1.getExtent().getLeft(), "top", lsg1.getExtent().getTop(), "right", lsg1.getExtent().getRight(), "bottom", lsg1.getExtent().getBottom()),
+			            "shape", Map.of(
+			                "vertices", List.of(
+			                    Map.of("x", rp1.getVertices()[0].getX(), "y", rp1.getVertices()[0].getY()),
+			                    Map.of("x", rp1.getVertices()[1].getX(), "y", rp1.getVertices()[1].getY()),
+			                    Map.of("x", rp1.getVertices()[2].getX(), "y", rp1.getVertices()[2].getY()),
+			                    Map.of("x", rp1.getVertices()[3].getX(), "y", rp1.getVertices()[3].getY())),
+			                "radius", rp1.getRadius(),
+			                "color", Map.of("red", rp1.getColor().getRed(), "green", rp1.getColor().getGreen(), "blue", rp1.getColor().getBlue()))),
+			        Map.of(
+			            "originalExtent", Map.of("left", nlsg1.getOriginalExtent().getLeft(), "top", nlsg1.getOriginalExtent().getTop(), "right", nlsg1.getOriginalExtent().getRight(), "bottom", nlsg1.getOriginalExtent().getBottom()),
+			            "extent", Map.of("left", nlsg1.getExtent().getLeft(), "top", nlsg1.getExtent().getTop(), "right", nlsg1.getExtent().getRight(), "bottom", nlsg1.getExtent().getBottom()),
+			            "subgroups", List.of(
+						        Map.of(
+						            "originalExtent", Map.of("left", lsg2.getOriginalExtent().getLeft(), "top", lsg2.getOriginalExtent().getTop(), "right", lsg2.getOriginalExtent().getRight(), "bottom", lsg2.getOriginalExtent().getBottom()),
+						            "extent", Map.of("left", lsg2.getExtent().getLeft(), "top", lsg2.getExtent().getTop(), "right", lsg2.getExtent().getRight(), "bottom", lsg2.getExtent().getBottom()),
+						            "shape", Map.of(
+						                "vertices", List.of(
+						                    Map.of("x", rp2.getVertices()[0].getX(), "y", rp2.getVertices()[0].getY()),
+						                    Map.of("x", rp2.getVertices()[1].getX(), "y", rp2.getVertices()[1].getY()),
+						                    Map.of("x", rp2.getVertices()[2].getX(), "y", rp2.getVertices()[2].getY())),
+						                "radius", rp2.getRadius(),
+						                "color", Map.of("red", rp2.getColor().getRed(), "green", rp2.getColor().getGreen(), "blue", rp2.getColor().getBlue()))),
+						        Map.of(
+						            "originalExtent", Map.of("left", lsg3.getOriginalExtent().getLeft(), "top", lsg3.getOriginalExtent().getTop(), "right", lsg3.getOriginalExtent().getRight(), "bottom", lsg3.getOriginalExtent().getBottom()),
+						            "extent", Map.of("left", lsg3.getExtent().getLeft(), "top", lsg3.getExtent().getTop(), "right", lsg3.getExtent().getRight(), "bottom", lsg3.getExtent().getBottom()),
+						            "shape", Map.of(
+					            		"vertices", List.of(
+						                    Map.of("x", rp3.getVertices()[0].getX(), "y", rp3.getVertices()[0].getY()),
+						                    Map.of("x", rp3.getVertices()[1].getX(), "y", rp3.getVertices()[1].getY()),
+						                    Map.of("x", rp3.getVertices()[2].getX(), "y", rp3.getVertices()[2].getY())),
+						                "radius", rp3.getRadius(),
+						                "color", Map.of("red", rp3.getColor().getRed(), "green", rp3.getColor().getGreen(), "blue", rp3.getColor().getBlue())))))));
+
+		assert ShapeGroupExporter.toPlainData(nlsg2).equals(supposedPlainData);
 	}
 }
