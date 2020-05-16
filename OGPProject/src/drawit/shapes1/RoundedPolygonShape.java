@@ -75,10 +75,10 @@ public class RoundedPolygonShape implements Shape {
 		IntPoint[] vertices = polygon.getVertices();
 		ControlPoint[] result = new ControlPoint[vertices.length];
 		for (int i = 0 ; i < vertices.length ; i++) {
-			final int j = i;	// Is dit wel een goede methode?
+			final int j = i;
 			result[i] = (new ControlPoint() {				
 				public IntPoint getLocation() {
-					return vertices[j]; //TODO: Checken of deze toShapeCoordinates wel mag hier
+					return vertices[j];
 				}
 				public void move(IntVector delta) {
 					IntPoint newVertex = vertices[j].plus(toShapeCoordinates(delta));
@@ -116,7 +116,10 @@ public class RoundedPolygonShape implements Shape {
 		return parent.toGlobalCoordinates(p);
 	}
 	
-	//TODO: This is an extra private method. Docs, etc required?
+	/**
+	 * Given the coordinates of a vector in the global coordinate system, 
+	 * returns the coordinates of the vector in the shape coordinate system.
+	 */
 	private IntVector toShapeCoordinates(IntVector v) {
 		if (parent == null) {
 			return v;

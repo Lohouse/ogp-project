@@ -458,6 +458,16 @@ class DrawItTest {
 	}
 	
 	@Test
+	void testPreciseRoundedPolygonContainsTestStrategy() {
+		//TODO: implement tests
+	}
+	
+	@Test
+	void testFastRoundedPolygonContainsTestStrategy() {
+		//TODO: implement tests
+	}
+	
+	@Test
 	void testExtent() {
 		// Extent: Static factory methods and getters tests
 		drawit.shapegroups1.Extent extent1 = drawit.shapegroups1.Extent.ofLeftTopRightBottom(5, 2, 10, 10);
@@ -981,7 +991,21 @@ class DrawItTest {
 		assert rps2b.getPolygon() == rp101;
 		
 		// RoundedPolygonShape: toShapeCoordinates, toGlobalCoordinates, contains tests
-		//TODO
+		IntPoint testPoint = new IntPoint(1,-2);
+		assert rps1a.toShapeCoordinates(testPoint) == testPoint;
+		assert rps1b.toShapeCoordinates(testPoint) == rps1b.getParent().toInnerCoordinates(testPoint);
+		assert rps2a.toShapeCoordinates(testPoint) == testPoint;
+		assert rps2b.toShapeCoordinates(testPoint) == rps2b.getParent().toInnerCoordinates(testPoint);
+		
+		assert rps1a.toShapeCoordinates(testPoint) == testPoint;
+		assert rps1b.toShapeCoordinates(testPoint) == rps1b.getParent().toGlobalCoordinates(testPoint);
+		assert rps2a.toShapeCoordinates(testPoint) == testPoint;
+		assert rps2b.toShapeCoordinates(testPoint) == rps2b.getParent().toGlobalCoordinates(testPoint);
+		
+		assert rps1a.contains(testPoint) == rps1a.getPolygon().contains(testPoint);
+		assert rps1b.contains(testPoint) == rps1b.getPolygon().contains(testPoint);
+		assert rps2a.contains(testPoint) == rps2a.getPolygon().contains(testPoint);
+		assert rps2b.contains(testPoint) == rps2b.getPolygon().contains(testPoint);
 		
 		// RoundedPolygonShape: createControlPoints tests
 		//TODO

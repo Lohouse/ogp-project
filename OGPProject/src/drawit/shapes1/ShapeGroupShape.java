@@ -68,9 +68,9 @@ public class ShapeGroupShape implements Shape {
 		Extent ext = group.getExtent();
 		
 		return new ControlPoint[] {		
-			new ControlPoint() { //TODO: Deze extent nog converteren naar het shape coordinate system?
+			new ControlPoint() { 
 				public IntPoint getLocation() {
-					return ext.getTopLeft(); //TODO: Checken of deze toShapeCoordinates wel mag hier
+					return ext.getTopLeft(); 
 				}
 				public void move(IntVector delta) {
 					IntVector shapeDelta = toShapeCoordinates(delta);
@@ -83,9 +83,9 @@ public class ShapeGroupShape implements Shape {
 					throw new IllegalArgumentException("Can't remove the ControlPoint of a ShapeGroup");
 				}
 			},
-			new ControlPoint() { //TODO: Deze extent nog converteren naar het shape coordinate system?
+			new ControlPoint() { 
 				public IntPoint getLocation() {
-					return ext.getBottomRight(); //TODO: Checken of deze toShapeCoordinates wel mag hier
+					return ext.getBottomRight();
 				}
 				public void move(IntVector delta) {
 					IntVector shapeDelta = toShapeCoordinates(delta);
@@ -100,8 +100,6 @@ public class ShapeGroupShape implements Shape {
 			}
 		};
 	}
-	
-	//TODO: Wat als de extent van de parent group verandert?
 	
 	/**
 	 * Given the coordinates of a point in the global coordinate system, 
@@ -129,7 +127,10 @@ public class ShapeGroupShape implements Shape {
 		return group.getParentGroup().toGlobalCoordinates(p);		
 	}
 	
-	//TODO: This is an extra private method. Docs, etc required?
+	/**
+	 * Given the coordinates of a vector in the global coordinate system, 
+	 * returns the coordinates of the vector in the shape coordinate system.
+	 */
 	private IntVector toShapeCoordinates(IntVector v) {
 		if (group.getParentGroup() == null) {
 			return v;
