@@ -993,14 +993,14 @@ class DrawItTest {
 		// RoundedPolygonShape: toShapeCoordinates, toGlobalCoordinates, contains tests
 		IntPoint testPoint = new IntPoint(1,-2);
 		assert rps1a.toShapeCoordinates(testPoint) == testPoint;
-		assert rps1b.toShapeCoordinates(testPoint) == rps1b.getParent().toInnerCoordinates(testPoint);
+		assert rps1b.toShapeCoordinates(testPoint).equals(rps1b.getParent().toInnerCoordinates(testPoint));
 		assert rps2a.toShapeCoordinates(testPoint) == testPoint;
-		assert rps2b.toShapeCoordinates(testPoint) == rps2b.getParent().toInnerCoordinates(testPoint);
+		assert rps2b.toShapeCoordinates(testPoint).equals(rps2b.getParent().toInnerCoordinates(testPoint));
 		
 		assert rps1a.toShapeCoordinates(testPoint) == testPoint;
-		assert rps1b.toShapeCoordinates(testPoint) == rps1b.getParent().toGlobalCoordinates(testPoint);
+		assert rps1b.toShapeCoordinates(testPoint).equals(rps1b.getParent().toGlobalCoordinates(testPoint));
 		assert rps2a.toShapeCoordinates(testPoint) == testPoint;
-		assert rps2b.toShapeCoordinates(testPoint) == rps2b.getParent().toGlobalCoordinates(testPoint);
+		assert rps2b.toShapeCoordinates(testPoint).equals(rps2b.getParent().toGlobalCoordinates(testPoint));
 		
 		assert rps1a.contains(testPoint) == rps1a.getPolygon().contains(testPoint);
 		assert rps1b.contains(testPoint) == rps1b.getPolygon().contains(testPoint);
@@ -1008,9 +1008,30 @@ class DrawItTest {
 		assert rps2b.contains(testPoint) == rps2b.getPolygon().contains(testPoint);
 		
 		// RoundedPolygonShape: createControlPoints tests
-		//TODO
+		IntPoint[] cccVertices = rp101.getVertices();
+		ControlPoint[] cccResult = new ControlPoint[cccVertices.length];
+		for (int i = 0 ; i < cccVertices.length ; i++) {
+			final int j = i;
+			cccResult[i] = (new ControlPoint() {				
+				public IntPoint getLocation() {
+					return cccVertices[j];
+				}
+				public void move(IntVector delta) {
+					IntPoint temp = rps1a.toShapeCoordinates(new IntPoint(delta.getX(), delta.getY()));
+					IntPoint newVertex = cccVertices[j].plus(new IntVector(temp.getX(), temp.getY()));
+					rp101.update(j, newVertex);
+				}
+				public void remove() {
+					rp101.remove(j);
+				}
+			});
+		}
+		//Arrays.stream(rps1a.createControlPoints()).forEach(p -> System.out.println(p));
+		//Arrays.stream(rps1a.createControlPoints()).forEach(p -> System.out.println(p));
+		//assert rps1a.createControlPoints().equals(cccResult);
+		//TODO: fix this
 		
-		// ShapeGroupShape: constructor, getShapeGroup tests
+		// ShapeGroupShape: constructor, getShapeGroup, getParent, toShapeCoordinates, toGlobalCoordinates tests
 		RoundedPolygon rp102 = new RoundedPolygon();
 		rp102.setVertices(new IntPoint[]{new IntPoint(0, 0), new IntPoint(20, 0), new IntPoint(10, 10)});
 		RoundedPolygon rp103 = new RoundedPolygon();
@@ -1030,11 +1051,34 @@ class DrawItTest {
 		assert sgs1.getShapeGroup() == sg5a;
 		assert sgs2.getShapeGroup() == sg5b;
 		
-		// ShapeGroupShape: toShapeCoordinates, toGlobalCoordinates, contains tests
-		//TODO
+		assert sgs1.getParent() == null;
+		assert sgs2.getParent() == null;
+		
+		IntPoint testPoint2 = new IntPoint(1,-2);
+		assert sgs1.toShapeCoordinates(testPoint2) == testPoint2;
+		assert sgs2.toShapeCoordinates(testPoint2) == testPoint2;
+		assert sgs1.toGlobalCoordinates(testPoint2) == testPoint2;
+		assert sgs2.toGlobalCoordinates(testPoint2) == testPoint2;
+		
+		drawit.shapegroups1.NonleafShapeGroup sgsParent1 = new drawit.shapegroups1.NonleafShapeGroup(new drawit.shapegroups1.ShapeGroup[] {sg5a, new drawit.shapegroups1.LeafShapeGroup(rp102)});
+		drawit.shapegroups2.NonleafShapeGroup sgsParent2 = new drawit.shapegroups2.NonleafShapeGroup(new drawit.shapegroups2.ShapeGroup[] {sg5b, new drawit.shapegroups2.LeafShapeGroup(rp102)});
+		
+		assert sgs1.getParent() == sgsParent1;
+		assert sgs2.getParent() == sgsParent2;
+		
+		assert sgs1.toShapeCoordinates(testPoint2).equals(sgs1.getParent().toInnerCoordinates(testPoint2));
+		assert sgs2.toShapeCoordinates(testPoint2).equals(sgs2.getParent().toInnerCoordinates(testPoint2));
+		assert sgs1.toGlobalCoordinates(testPoint2).equals(sgs1.getParent().toGlobalCoordinates(testPoint2));
+		assert sgs2.toGlobalCoordinates(testPoint2).equals(sgs2.getParent().toGlobalCoordinates(testPoint2));
+		
+		
+		// ShapeGroupShape: contains tests
+		assert sgs1.contains(testPoint2) == sgs1.getShapeGroup().getExtent().contains(testPoint2);
+		assert sgs2.contains(testPoint2) == sgs2.getShapeGroup().getExtent().contains(testPoint2);
 		
 		// ShapeGroupShape: getDrawingCommands tests
-		//TODO
+		assert sgs1.getDrawingCommands().equals(sgs1.getShapeGroup().getDrawingCommands());
+		assert sgs2.getDrawingCommands().equals(sgs2.getShapeGroup().getDrawingCommands());
 		
 		// ShapeGroupShape: createControlPoints tests
 		//TODO
