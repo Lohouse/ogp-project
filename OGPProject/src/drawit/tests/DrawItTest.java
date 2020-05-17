@@ -3,7 +3,6 @@ package drawit.tests;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -17,10 +16,6 @@ import drawit.IntPoint;
 import drawit.IntVector;
 import drawit.PointArrays;
 import drawit.RoundedPolygon;
-import drawit.shapegroups1.Extent;
-import drawit.shapegroups1.NonleafShapeGroup;
-import drawit.shapegroups1.exporter.ShapeGroupExporter;
-import drawit.shapes1.ControlPoint;
 
 class DrawItTest {
 
@@ -1008,28 +1003,62 @@ class DrawItTest {
 		assert rps2b.contains(testPoint) == rps2b.getPolygon().contains(testPoint);
 		
 		// RoundedPolygonShape: createControlPoints tests
-		IntPoint[] cccVertices = rp101.getVertices();
-		ControlPoint[] cccResult = new ControlPoint[cccVertices.length];
-		for (int i = 0 ; i < cccVertices.length ; i++) {
-			final int j = i;
-			cccResult[i] = (new ControlPoint() {				
-				public IntPoint getLocation() {
-					return cccVertices[j];
-				}
-				public void move(IntVector delta) {
-					IntPoint temp = rps1a.toShapeCoordinates(new IntPoint(delta.getX(), delta.getY()));
-					IntPoint newVertex = cccVertices[j].plus(new IntVector(temp.getX(), temp.getY()));
-					rp101.update(j, newVertex);
-				}
-				public void remove() {
-					rp101.remove(j);
-				}
-			});
+		RoundedPolygon cpRp1 = new RoundedPolygon();
+		cpRp1.setVertices(new IntPoint[]{new IntPoint(0, 0), new IntPoint(20, 0), new IntPoint(10, 10), new IntPoint(0, 10)});
+		drawit.shapes1.RoundedPolygonShape cpRps1 = new drawit.shapes1.RoundedPolygonShape(null, cpRp1);
+		drawit.shapes1.ControlPoint[] cpRps1cps = cpRps1.createControlPoints();
+		RoundedPolygon cpRp2 = new RoundedPolygon();
+		cpRp2.setVertices(new IntPoint[]{new IntPoint(0, 0), new IntPoint(20, 0), new IntPoint(10, 10), new IntPoint(0, 10)});
+		drawit.shapes2.RoundedPolygonShape cpRps2 = new drawit.shapes2.RoundedPolygonShape(null, cpRp2);
+		drawit.shapes2.ControlPoint[] cpRps2cps = cpRps2.createControlPoints();
+
+		assert cpRps1cps[1].getLocation().equals(new IntPoint(20, 0));
+		assert cpRps2cps[1].getLocation().equals(new IntPoint(20, 0));
+		cpRps1cps[1].move(new IntVector(3, -2));
+		cpRps2cps[1].move(new IntVector(3, -2));
+		assert cpRps1.getPolygon().getVertices()[1].equals(new IntPoint(23, -2));
+		assert cpRps2.getPolygon().getVertices()[1].equals(new IntPoint(23, -2));
+
+		assert cpRps1.getPolygon().getVertices().length == 4;
+		assert cpRps2.getPolygon().getVertices().length == 4;
+		cpRps1cps[1].remove();
+		cpRps2cps[1].remove();
+		assert cpRps1.getPolygon().getVertices().length == 3;
+		assert cpRps2.getPolygon().getVertices().length == 3;
+		
+		RoundedPolygon cpRp3 = new RoundedPolygon();
+		cpRp3.setVertices(new IntPoint[]{new IntPoint(0, 0), new IntPoint(20, 0), new IntPoint(10, 10), new IntPoint(0, 10)});
+		RoundedPolygon cpRp4 = new RoundedPolygon();
+		cpRp4.setVertices(new IntPoint[]{new IntPoint(0, 0), new IntPoint(20, 0), new IntPoint(10, 10), new IntPoint(0, 10)});
+		drawit.shapegroups1.ShapeGroup cpSg1 = new drawit.shapegroups1.LeafShapeGroup(cpRp3);
+		drawit.shapes1.ShapeGroupShape cpSgs1 = new drawit.shapes1.ShapeGroupShape(cpSg1);
+		drawit.shapes1.ControlPoint[] cpSps1cps = cpSgs1.createControlPoints();
+		drawit.shapegroups2.ShapeGroup cpSg2 = new drawit.shapegroups2.LeafShapeGroup(cpRp4);
+		drawit.shapes2.ShapeGroupShape cpSgs2 = new drawit.shapes2.ShapeGroupShape(cpSg2);
+		drawit.shapes2.ControlPoint[] cpSps2cps = cpSgs2.createControlPoints();
+
+		assert cpSgs1.getShapeGroup().getExtent().equals(drawit.shapegroups1.Extent.ofLeftTopRightBottom(0, 0, 20, 10));
+		assert cpSgs2.getShapeGroup().getExtent().equals(drawit.shapegroups2.Extent.ofLeftTopRightBottom(0, 0, 20, 10));
+		assert cpSps1cps[1].getLocation().equals(new IntPoint(20, 10));
+		assert cpSps1cps[1].getLocation().equals(new IntPoint(20, 10));
+		cpSps1cps[0].move(new IntVector(-10, -5));
+		cpSps2cps[0].move(new IntVector(-10, -5));
+		assert cpSgs1.getShapeGroup().getExtent().equals(drawit.shapegroups1.Extent.ofLeftTopRightBottom(-10, -5, 20, 10));
+		assert cpSgs2.getShapeGroup().getExtent().equals(drawit.shapegroups2.Extent.ofLeftTopRightBottom(-10, -5, 20, 10));
+		boolean thrown = false;
+		try {
+			cpSps1cps[0].remove();
+		} catch (UnsupportedOperationException e) {
+			thrown = true;
 		}
-		//Arrays.stream(rps1a.createControlPoints()).forEach(p -> System.out.println(p));
-		//Arrays.stream(rps1a.createControlPoints()).forEach(p -> System.out.println(p));
-		//assert rps1a.createControlPoints().equals(cccResult);
-		//TODO: fix this
+		assert thrown;
+		thrown = false;
+		try {
+			cpSps2cps[0].remove();
+		} catch (UnsupportedOperationException e) {
+			thrown = true;
+		}
+		assert thrown;	
 		
 		// ShapeGroupShape: constructor, getShapeGroup, getParent, toShapeCoordinates, toGlobalCoordinates tests
 		RoundedPolygon rp102 = new RoundedPolygon();
@@ -1098,7 +1127,7 @@ class DrawItTest {
 
 		drawit.shapegroups1.ShapeGroup lsg1 = new drawit.shapegroups1.LeafShapeGroup(rp1);
 		drawit.shapegroups1.ShapeGroup lsg2 = new drawit.shapegroups1.LeafShapeGroup(rp2);
-		lsg2.setExtent(Extent.ofLeftTopRightBottom(-10, -10, 30, 30));
+		lsg2.setExtent(drawit.shapegroups1.Extent.ofLeftTopRightBottom(-10, -10, 30, 30));
 		drawit.shapegroups1.ShapeGroup lsg3 = new drawit.shapegroups1.LeafShapeGroup(rp3);
 		drawit.shapegroups1.ShapeGroup nlsg1 = new drawit.shapegroups1.NonleafShapeGroup(new drawit.shapegroups1.ShapeGroup[] {lsg2, lsg3});
 		drawit.shapegroups1.ShapeGroup nlsg2 = new drawit.shapegroups1.NonleafShapeGroup(new drawit.shapegroups1.ShapeGroup[] {lsg1, nlsg1});
@@ -1143,6 +1172,6 @@ class DrawItTest {
 						                "radius", rp3.getRadius(),
 						                "color", Map.of("red", rp3.getColor().getRed(), "green", rp3.getColor().getGreen(), "blue", rp3.getColor().getBlue())))))));
 
-		assert ShapeGroupExporter.toPlainData(nlsg2).equals(supposedPlainData);
+		assert drawit.shapegroups1.exporter.ShapeGroupExporter.toPlainData(nlsg2).equals(supposedPlainData);
 	}
 }

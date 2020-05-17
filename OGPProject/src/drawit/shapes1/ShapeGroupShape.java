@@ -80,7 +80,7 @@ public class ShapeGroupShape implements Shape {
 							ext.getBottom()));
 				}
 				public void remove() {
-					throw new IllegalArgumentException("Can't remove the ControlPoint of a ShapeGroup");
+					throw new UnsupportedOperationException("Can't remove the ControlPoint of a ShapeGroup");
 				}
 			},
 			new ControlPoint() { 
