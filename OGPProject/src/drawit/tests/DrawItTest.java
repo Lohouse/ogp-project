@@ -454,12 +454,42 @@ class DrawItTest {
 	
 	@Test
 	void testPreciseRoundedPolygonContainsTestStrategy() {
-		//TODO: implement tests
+		RoundedPolygon polygon = new RoundedPolygon();
+		polygon.setVertices(new IntPoint[]{new IntPoint(2, 1), new IntPoint(6, 1), new IntPoint(2, 5)});		
+		IntPoint testP1 = new IntPoint(1,1);
+		IntPoint testP2 = new IntPoint(4,3);
+		IntPoint testP3 = new IntPoint(3,2);
+		IntPoint testP4 = new IntPoint(2,3);
+		IntPoint testP5 = new IntPoint(5,3);
+		IntPoint testP6 = new IntPoint(5,4);
+		
+		drawit.PreciseRoundedPolygonContainsTestStrategy PRPCTS = new drawit.PreciseRoundedPolygonContainsTestStrategy();
+		assert !PRPCTS.contains(polygon, testP1);
+		assert PRPCTS.contains(polygon, testP2);
+		assert PRPCTS.contains(polygon, testP3);
+		assert PRPCTS.contains(polygon, testP4);
+		assert !PRPCTS.contains(polygon, testP5);
+		assert !PRPCTS.contains(polygon, testP6);
 	}
 	
 	@Test
 	void testFastRoundedPolygonContainsTestStrategy() {
-		//TODO: implement tests
+		RoundedPolygon polygon = new RoundedPolygon();
+		polygon.setVertices(new IntPoint[]{new IntPoint(2, 1), new IntPoint(6, 1), new IntPoint(2, 5)});		
+		IntPoint testP1 = new IntPoint(1,1);
+		IntPoint testP2 = new IntPoint(4,3);
+		IntPoint testP3 = new IntPoint(3,2);
+		IntPoint testP4 = new IntPoint(2,3);
+		IntPoint testP5 = new IntPoint(5,3);
+		IntPoint testP6 = new IntPoint(5,4);
+		
+		drawit.FastRoundedPolygonContainsTestStrategy FRPCTS = new drawit.FastRoundedPolygonContainsTestStrategy();
+		assert !FRPCTS.contains(polygon, testP1);
+		assert FRPCTS.contains(polygon, testP2);
+		assert FRPCTS.contains(polygon, testP3);
+		assert FRPCTS.contains(polygon, testP4);
+		assert FRPCTS.contains(polygon, testP5);
+		assert FRPCTS.contains(polygon, testP6);
 	}
 	
 	@Test
@@ -1026,40 +1056,6 @@ class DrawItTest {
 		assert cpRps1.getPolygon().getVertices().length == 3;
 		assert cpRps2.getPolygon().getVertices().length == 3;
 		
-		RoundedPolygon cpRp3 = new RoundedPolygon();
-		cpRp3.setVertices(new IntPoint[]{new IntPoint(0, 0), new IntPoint(20, 0), new IntPoint(10, 10), new IntPoint(0, 10)});
-		RoundedPolygon cpRp4 = new RoundedPolygon();
-		cpRp4.setVertices(new IntPoint[]{new IntPoint(0, 0), new IntPoint(20, 0), new IntPoint(10, 10), new IntPoint(0, 10)});
-		drawit.shapegroups1.ShapeGroup cpSg1 = new drawit.shapegroups1.LeafShapeGroup(cpRp3);
-		drawit.shapes1.ShapeGroupShape cpSgs1 = new drawit.shapes1.ShapeGroupShape(cpSg1);
-		drawit.shapes1.ControlPoint[] cpSps1cps = cpSgs1.createControlPoints();
-		drawit.shapegroups2.ShapeGroup cpSg2 = new drawit.shapegroups2.LeafShapeGroup(cpRp4);
-		drawit.shapes2.ShapeGroupShape cpSgs2 = new drawit.shapes2.ShapeGroupShape(cpSg2);
-		drawit.shapes2.ControlPoint[] cpSps2cps = cpSgs2.createControlPoints();
-
-		assert cpSgs1.getShapeGroup().getExtent().equals(drawit.shapegroups1.Extent.ofLeftTopRightBottom(0, 0, 20, 10));
-		assert cpSgs2.getShapeGroup().getExtent().equals(drawit.shapegroups2.Extent.ofLeftTopRightBottom(0, 0, 20, 10));
-		assert cpSps1cps[1].getLocation().equals(new IntPoint(20, 10));
-		assert cpSps1cps[1].getLocation().equals(new IntPoint(20, 10));
-		cpSps1cps[0].move(new IntVector(-10, -5));
-		cpSps2cps[0].move(new IntVector(-10, -5));
-		assert cpSgs1.getShapeGroup().getExtent().equals(drawit.shapegroups1.Extent.ofLeftTopRightBottom(-10, -5, 20, 10));
-		assert cpSgs2.getShapeGroup().getExtent().equals(drawit.shapegroups2.Extent.ofLeftTopRightBottom(-10, -5, 20, 10));
-		boolean thrown = false;
-		try {
-			cpSps1cps[0].remove();
-		} catch (UnsupportedOperationException e) {
-			thrown = true;
-		}
-		assert thrown;
-		thrown = false;
-		try {
-			cpSps2cps[0].remove();
-		} catch (UnsupportedOperationException e) {
-			thrown = true;
-		}
-		assert thrown;	
-		
 		// ShapeGroupShape: constructor, getShapeGroup, getParent, toShapeCoordinates, toGlobalCoordinates tests
 		RoundedPolygon rp102 = new RoundedPolygon();
 		rp102.setVertices(new IntPoint[]{new IntPoint(0, 0), new IntPoint(20, 0), new IntPoint(10, 10)});
@@ -1109,8 +1105,40 @@ class DrawItTest {
 		assert sgs1.getDrawingCommands().equals(sgs1.getShapeGroup().getDrawingCommands());
 		assert sgs2.getDrawingCommands().equals(sgs2.getShapeGroup().getDrawingCommands());
 		
-		// ShapeGroupShape: createControlPoints tests
-		//TODO
+		// ShapeGroupShape: createControlPoints tests		
+		RoundedPolygon cpRp3 = new RoundedPolygon();
+		cpRp3.setVertices(new IntPoint[]{new IntPoint(0, 0), new IntPoint(20, 0), new IntPoint(10, 10), new IntPoint(0, 10)});
+		RoundedPolygon cpRp4 = new RoundedPolygon();
+		cpRp4.setVertices(new IntPoint[]{new IntPoint(0, 0), new IntPoint(20, 0), new IntPoint(10, 10), new IntPoint(0, 10)});
+		drawit.shapegroups1.ShapeGroup cpSg1 = new drawit.shapegroups1.LeafShapeGroup(cpRp3);
+		drawit.shapes1.ShapeGroupShape cpSgs1 = new drawit.shapes1.ShapeGroupShape(cpSg1);
+		drawit.shapes1.ControlPoint[] cpSps1cps = cpSgs1.createControlPoints();
+		drawit.shapegroups2.ShapeGroup cpSg2 = new drawit.shapegroups2.LeafShapeGroup(cpRp4);
+		drawit.shapes2.ShapeGroupShape cpSgs2 = new drawit.shapes2.ShapeGroupShape(cpSg2);
+		drawit.shapes2.ControlPoint[] cpSps2cps = cpSgs2.createControlPoints();
+
+		assert cpSgs1.getShapeGroup().getExtent().equals(drawit.shapegroups1.Extent.ofLeftTopRightBottom(0, 0, 20, 10));
+		assert cpSgs2.getShapeGroup().getExtent().equals(drawit.shapegroups2.Extent.ofLeftTopRightBottom(0, 0, 20, 10));
+		assert cpSps1cps[1].getLocation().equals(new IntPoint(20, 10));
+		assert cpSps1cps[1].getLocation().equals(new IntPoint(20, 10));
+		cpSps1cps[0].move(new IntVector(-10, -5));
+		cpSps2cps[0].move(new IntVector(-10, -5));
+		assert cpSgs1.getShapeGroup().getExtent().equals(drawit.shapegroups1.Extent.ofLeftTopRightBottom(-10, -5, 20, 10));
+		assert cpSgs2.getShapeGroup().getExtent().equals(drawit.shapegroups2.Extent.ofLeftTopRightBottom(-10, -5, 20, 10));
+		boolean thrown = false;
+		try {
+			cpSps1cps[0].remove();
+		} catch (UnsupportedOperationException e) {
+			thrown = true;
+		}
+		assert thrown;
+		thrown = false;
+		try {
+			cpSps2cps[0].remove();
+		} catch (UnsupportedOperationException e) {
+			thrown = true;
+		}
+		assert thrown;	
 	}
 	
 	@Test
