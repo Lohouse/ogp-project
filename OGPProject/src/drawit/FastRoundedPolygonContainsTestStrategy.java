@@ -12,7 +12,7 @@ public class FastRoundedPolygonContainsTestStrategy implements RoundedPolygonCon
      * @pre Argument {@code point} is not {@code null}.
      *    | point != null
      *    
-	 * @post The result is {@code true} iff point is contained by the polygon's bounding box. //TODO: Fast will not strengthen this condition, is this OK?
+	 * @post The result is {@code true} iff point is contained by the polygon's bounding box.
 	 *    | result == polygon.getBoundingBox().contains(point)
 	 */
 	public boolean contains(RoundedPolygon polygon, IntPoint point) {

@@ -127,6 +127,8 @@ public class RoundedPolygon {
 	 *    |     i == index || this.getVertices()[i].equals(old(this.getVertices())[i]))
 	 * @post This polygon's vertex at index {@code index} is equal to {@code point}.
 	 *    | this.getVertices()[index] == point
+	 * @post The bounding box gets updated. 
+	 *    | this.getBoundingBox() != old(this.getBoundingBox())
 	 */
 	public void update(int index, IntPoint point) {
 		if (point == null) {
@@ -171,6 +173,8 @@ public class RoundedPolygon {
 	 * @post This polygon's vertices after index {@code index} have its place within the polygon shifted up by 1 compared to the previous state of this polygon.
 	 *    | IntStream.range(index + 1, this.getVertices().length).allMatch(i -> 
 	 *    |     this.getVertices()[i].equals(old(this.getVertices())[i - 1]))
+	 * @post The bounding box gets updated. 
+	 *    | this.getBoundingBox() != old(this.getBoundingBox())
 	 */
 	public void insert(int index, IntPoint point) {
 		if (point == null) {
@@ -208,6 +212,8 @@ public class RoundedPolygon {
 	 * @post This polygon's vertices starting at index {@code index} have its place within the polygon shifted down by 1 compared to the previous state of this polygon.
 	 *    | IntStream.range(index, this.getVertices().length).allMatch(i -> 
 	 *    |     this.getVertices()[i].equals(old(this.getVertices())[i + 1]))
+	 * @post The bounding box gets updated. 
+	 *    | this.getBoundingBox() != old(this.getBoundingBox())
 	 */
 	public void remove(int index) {
 		if (!(0 <= index && index < getVertices().length)) {
@@ -397,6 +403,8 @@ public class RoundedPolygon {
 	 * @post This polygon's vertices are equal to the elements of {@code newVertices}.
 	 *    | IntStream.range(0, getVertices().length).allMatch(i -> 
 	 *    |     this.getVertices()[i].equals(newVertices[i]))
+	 * @post The bounding box gets updated. 
+	 *    | this.getBoundingBox() != old(this.getBoundingBox())
 	 */
 	public void setVertices(IntPoint[] newVertices) {
 		if (newVertices == null || Arrays.stream(newVertices).anyMatch(e -> e == null)) {
