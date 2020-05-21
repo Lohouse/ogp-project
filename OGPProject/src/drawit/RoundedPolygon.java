@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.stream.IntStream;
 import drawit.shapegroups1.Extent;
 
-//TODO: post-condition for bounding box?
 /**
  * An instance of this class is a mutable abstraction storing a rounded polygon defined
    by a set of 2D points with integer coordinates and a nonnegative corner radius.
@@ -57,7 +56,7 @@ public class RoundedPolygon {
 		vertices = new IntPoint[]{};
 		radius = 0;
 		color = Color.WHITE;
-		box = Extent.ofLeftTopRightBottom(Integer.MIN_VALUE, Integer.MIN_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE); //TODO: Is this correct? Also check corresponding post-condition
+		box = Extent.ofLeftTopRightBottom(Integer.MIN_VALUE, Integer.MIN_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE);
 	}
 	
 	/** 
@@ -267,7 +266,7 @@ public class RoundedPolygon {
 		}
 
 		if (left == right) right++;
-		if (top == bottom) bottom++; //TODO: Is this correct?
+		if (top == bottom) bottom++;
 		
 		box = Extent.ofLeftTopRightBottom(left, top, right, bottom);
 	}

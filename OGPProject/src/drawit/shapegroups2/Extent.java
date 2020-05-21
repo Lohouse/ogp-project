@@ -2,7 +2,6 @@ package drawit.shapegroups2;
 
 import drawit.IntPoint;
 
-//TODO: Immutable object?
 /**
  * Each instance of this class represents a nonempty rectangular area in a 2D coordinate system, 
  * whose edges are parallel to the coordinate axes.
